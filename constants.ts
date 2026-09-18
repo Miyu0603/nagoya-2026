@@ -215,7 +215,7 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
   'kix_transfer': {
     id: 'kix_transfer',
     title: '關西機場 → 名古屋（落地再決定）',
-    description: '近鐵整點 = ひのとり（約 125 分），30 分 = アーバンライナー（約 139 分），特急券在月台黃色售票機現買即可。\n空港急行比ラピート慢 7 分鐘，但不用特急券。\n南海難波站走到近鐵大阪難波站要出站步行 8–10 分鐘，每個方案只剩 15 分緩衝，不要在難波逛。',
+    description: '南海票已在 Klook 買好，但沒有指定車次——出關後上 Klook 線上選車次＋劃位再進站。\n近鐵整點 = ひのとり（約 125 分），30 分 = アーバンライナー（約 139 分），特急券在月台黃色售票機現買即可。\n空港急行比ラピート慢 7 分鐘，但不用特急券。\n南海難波站走到近鐵大阪難波站要出站步行 8–10 分鐘，每個方案只剩 15 分緩衝，不要在難波逛。',
     address: '南海関西空港駅',
     openingHours: 'ラピート 每小時 05・35 分／空港急行 約每 15 分',
   },
@@ -555,7 +555,7 @@ export const ITINERARY: DaySchedule[] = [
       { time: '10:35', description: '抵達關西機場 T1' },
       { time: '10:35', description: '入境、提行李', note: '先辦好 Visit Japan Web。KIX 尖峰抓 45 分鐘' },
       { time: '11:25', description: '走到南海關西空港站', note: '約 5 分' },
-      { time: '11:35', description: '関西空港 → 難波 12:13', locationId: 'kix_transfer', isHighlight: true, note: '落地看狀況選班次，南海難波走到近鐵大阪難波要 8–10 分',
+      { time: '11:35', description: '関西空港 → 難波 12:13', locationId: 'kix_transfer', isHighlight: true, note: 'Klook 已購票、尚未劃位，現場再線上選車次與劃位。南海難波走到近鐵大阪難波要 8–10 分',
         origin: '関西空港', legs: [{ via: '南海ラピート', to: '難波', arrive: '12:13' }],
         alternatives: [
           { when: '很順', detail: '11:05 ラピート → 難波 11:43' },
