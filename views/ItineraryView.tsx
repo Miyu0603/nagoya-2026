@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ITINERARY, LOCATION_DETAILS } from '../constants';
 import { ItineraryEvent, EventCategory } from '../types';
 import { BedIcon, MapIcon, ClockIcon, PinIcon, TicketIcon } from '../components/Icons';
@@ -138,7 +139,18 @@ const TransitLink: React.FC<{ via: string }> = ({ via }) => (
   </div>
 );
 
-/* ── 事件詳情：底部彈出的車票式彈窗 ── */
+/* ── 事件詳情：底部彈出的車票式彈窗 ──
+ * 兩段高度：collapsed（內容高度，最多 88vh）／expanded（96vh）。
+ * 上滑展開，下滑一次收回 collapsed，再下滑一次才關閉。
+ * 透過 portal 掛在 body，否則會被 <main> 的堆疊脈絡壓在 TabBar 底下。
+ */
+const SHEET_EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const SHEET_MS = 320;
+const COLLAPSED_RATIO = 0.88;
+const EXPANDED_RATIO = 0.96;
+const DRAG_DOWN_THRESHOLD = 90;
+const DRAG_UP_THRESHOLD = 60;
+
 const EventSheet: React.FC<{
   dayIdx: number;
   eventIdx: number;
@@ -148,20 +160,79 @@ const EventSheet: React.FC<{
   const day = ITINERARY[dayIdx];
   const event = day.events[eventIdx];
   const location = event.locationId ? LOCATION_DETAILS[event.locationId] : undefined;
-  const [entered, setEntered] = useState(false);
-  const [dragY, setDragY] = useState(0);
-  const sheetRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({ startY: 0, active: false });
 
+  const [entered, setEntered] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [dragY, setDragY] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [viewportH, setViewportH] = useState(() => window.innerHeight);
+  const [contentH, setContentH] = useState(0);
+
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef({ startY: 0, dy: 0, active: false });
+  const closeTimer = useRef<number | null>(null);
+
+  const maxH = viewportH * EXPANDED_RATIO;
+  const collapsedH = Math.min(contentH || viewportH * 0.5, viewportH * COLLAPSED_RATIO);
+  // 只要還沒撐到最高就能往上拉。不要求「內容超出」——多數彈窗內容不到 88vh，
+  // 那樣判斷會讓手勢幾乎永遠不能用。
+  const canExpand = collapsedH < maxH - 8;
+  const baseH = expanded ? maxH : collapsedH;
+  const liveH = Math.max(140, Math.min(maxH, baseH - dragY));
+
+  const requestClose = React.useCallback(() => {
+    setClosing(true);
+    closeTimer.current = window.setTimeout(onClose, SHEET_MS);
+  }, [onClose]);
+
+  useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
+
+  // 進場
   useEffect(() => {
     const raf = requestAnimationFrame(() => setEntered(true));
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // 內容高度：字體載入或內容變動都要重量
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const measure = () => setContentH(el.scrollHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [dayIdx, eventIdx]);
+
+  useEffect(() => {
+    const onResize = () => setViewportH(window.innerHeight);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Esc 關閉，並鎖住下層捲動（body 與行程的 <main> 都要鎖，否則背景會跟著滑）
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') requestClose(); };
+    document.addEventListener('keydown', onKey);
+
+    const main = document.querySelector('main');
+    const prevBody = document.body.style.overflow;
+    const prevMain = main ? main.style.overflowY : '';
+    document.body.style.overflow = 'hidden';
+    if (main) main.style.overflowY = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevBody;
+      if (main) main.style.overflowY = prevMain;
+    };
+  }, [requestClose]);
+
   /**
-   * 下滑關閉。內容很長時捲到底才看得到「關閉」，背景又只剩一小條不好點，
-   * 所以補這個手勢。只有在內容已經捲到最上面時才接手，否則交給正常捲動。
-   * touchmove 要 preventDefault，必須用 passive: false 自己掛，不能走 React 的 onTouchMove。
+   * 拖曳。只有內容捲到最上面時才接手勢，否則交給正常捲動。
+   * touchmove 要 preventDefault，必須自己掛 passive: false，不能走 React 的 onTouchMove。
    */
   useEffect(() => {
     const el = sheetRef.current;
@@ -169,30 +240,35 @@ const EventSheet: React.FC<{
 
     const onStart = (e: TouchEvent) => {
       if (el.scrollTop > 0) { dragRef.current.active = false; return; }
-      dragRef.current = { startY: e.touches[0].clientY, active: true };
+      dragRef.current = { startY: e.touches[0].clientY, dy: 0, active: true };
     };
 
     const onMove = (e: TouchEvent) => {
       if (!dragRef.current.active) return;
       const dy = e.touches[0].clientY - dragRef.current.startY;
-      if (dy <= 0) {
-        // 往上拉就還給捲動
-        dragRef.current.active = false;
-        setDragY(0);
-        return;
-      }
+      // 已經展到最高、或沒東西可展，就不接往上拉
+      if (dy < 0 && (expanded || !canExpand)) return;
       e.preventDefault();
-      // 拉越遠阻力越大，避免整張被拖離畫面
-      setDragY(dy > 120 ? 120 + (dy - 120) * 0.35 : dy);
+      dragRef.current.dy = dy;
+      setDragging(true);
+      setDragY(dy);
     };
 
+    // 位移記在 ref，不從 setState 的 updater 裡讀——那裡面不能有副作用
     const onEnd = () => {
       if (!dragRef.current.active) return;
+      const dy = dragRef.current.dy;
       dragRef.current.active = false;
-      setDragY(current => {
-        if (current > 110) onClose();
-        return 0;
-      });
+      dragRef.current.dy = 0;
+      setDragging(false);
+      setDragY(0);
+
+      if (dy > DRAG_DOWN_THRESHOLD) {
+        if (expanded) setExpanded(false);   // 整頁 → 收回原本高度
+        else requestClose();                // 原本高度 → 關閉
+      } else if (dy < -DRAG_UP_THRESHOLD && canExpand && !expanded) {
+        setExpanded(true);                  // → 整頁
+      }
     };
 
     el.addEventListener('touchstart', onStart, { passive: true });
@@ -205,18 +281,7 @@ const EventSheet: React.FC<{
       el.removeEventListener('touchend', onEnd);
       el.removeEventListener('touchcancel', onEnd);
     };
-  }, [onClose]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onClose]);
+  }, [expanded, canExpand, requestClose]);
 
   const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -230,28 +295,34 @@ const EventSheet: React.FC<{
     </div>
   );
 
-  return (
+  const hasActions = Boolean(location?.mapUrl) || Boolean(location?.reservation && event.locationId);
+  const visible = entered && !closing;
+
+  return createPortal(
     <div
-      onClick={onClose}
+      onClick={requestClose}
       role="dialog"
       aria-modal="true"
       aria-label={event.description}
-      className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(43,43,43,0.34)] transition-opacity duration-[260ms] ease-in-out"
-      style={{ opacity: entered ? 1 : 0 }}
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-[rgba(43,43,43,0.34)]"
+      style={{ opacity: visible ? 1 : 0, transition: `opacity 280ms ${SHEET_EASE}` }}
     >
       <div
         ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-h-[92%] overflow-y-auto overscroll-contain bg-washi-white shadow-tk-sheet"
+        className="w-full overflow-y-auto overscroll-contain bg-washi-white shadow-tk-sheet rounded-t-tk-lg"
         style={{
-          borderRadius: '8px 8px 26px 26px',
-          transform: `translateY(${entered ? dragY : 16}px)`,
-          transition: dragRef.current.active ? 'none' : 'transform 300ms ease-in-out',
+          height: liveH,
+          transform: visible ? 'translateY(0)' : 'translateY(100%)',
+          transition: dragging
+            ? 'none'
+            : `height ${SHEET_MS}ms ${SHEET_EASE}, transform ${SHEET_MS}ms ${SHEET_EASE}`,
         }}
       >
+        <div ref={contentRef}>
         {/* 票根頭 */}
         <div className="bg-white border-b border-dashed border-rule-500 px-5 pt-2 pb-3.5">
-          {/* 抓握條：下滑關閉的提示 */}
+          {/* 抓握條：上滑展開、下滑收合 */}
           <div className="flex justify-center pb-2.5">
             <span className="w-9 h-[5px] rounded-full bg-rule-500" />
           </div>
@@ -352,6 +423,7 @@ const EventSheet: React.FC<{
 
           {location?.address && metaRow(<PinIcon className="w-[15px] h-[15px]" />, '住所', location.address)}
 
+          {hasActions && (
           <div className="flex gap-[9px] mt-0.5">
             {location?.mapUrl && (
               <a
@@ -373,16 +445,13 @@ const EventSheet: React.FC<{
                 訂位詳情
               </button>
             )}
-            <button
-              onClick={onClose}
-              className="flex-1 min-h-[46px] rounded-tk bg-white border border-rule-500 text-ink-600 text-[13px] font-medium tracking-[0.06em] active:bg-washi-tint"
-            >
-              關閉
-            </button>
           </div>
+          )}
+        </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
