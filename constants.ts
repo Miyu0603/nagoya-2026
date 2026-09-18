@@ -1,0 +1,708 @@
+import { DaySchedule, ChecklistItem, LocationDetail, UsefulLink, EmergencyContact, Voucher, WeatherSpot } from './types';
+
+// ============================================================
+// 2026 名古屋・東京・橫濱（9/23–9/29）
+// 沿用九州版 schema，僅替換資料內容。
+// JAPANESE_PHRASES 已移除 audio 欄位（九州版音檔在 kyushu-2026 repo），
+// 需要語音的話再自行補 audio 路徑。
+// ============================================================
+
+/* 記帳：Google Apps Script
+ * 沒有預設值是刻意的 —— 九州那份 GAS 綁的是舊試算表，填錯會把這趟的帳寫進上一趟。
+ * 新試算表重新部署 GAS 後，把 /exec 網址放進 .env 的 VITE_GOOGLE_SCRIPT_URL。
+ * 沒設定時記帳頁會顯示「尚未設定」，不會靜默失敗。 */
+export const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || '';
+// 試算表裡的分頁名稱（不是檔名）
+export const GOOGLE_SHEET_NAME = import.meta.env.VITE_GOOGLE_SHEET_NAME || '2026名古屋';
+export const GOOGLE_SHEET_URL = import.meta.env.VITE_GOOGLE_SHEET_URL || 'https://docs.google.com/spreadsheets/d/1mfWxi3NT0I0W0MQlqCT7FcZjrLoQJ7BRvKDdn73aNQU/edit?gid=70649433#gid=70649433';
+
+export const PRE_TRIP_NOTES = [
+  "亞運 9/19–10/4 在愛知・名古屋舉行，名古屋段人潮與交通管制都會比平常誇張",
+  "9 月下旬日本仍熱，但早晚溫差大，薄外套要帶",
+  "護照務必每日隨身攜帶，宅配行李不收護照現金電子產品",
+  "9/26 蓬萊軒要一早排隊，前一晚先把行李整理好"
+];
+
+export const TODO_LIST: ChecklistItem[] = [
+  { id: 'todo_1', text: 'Visit Japan Web 辦好' },
+  { id: 'todo_2', text: 'eSIM（7 日）' },
+  { id: 'todo_3', text: '名古屋城 9/23 延長閉園與最後入場時間' },
+  { id: 'todo_4', text: 'プラネタリア YOKOHAMA 9/28 場次（五天前才開放）' },
+  { id: 'todo_5', text: '蒲田 日本工学院アリーナ 活動開場時間' },
+  { id: 'todo_6', text: 'CENTER BEEF 関内 當日開店時間' },
+  { id: 'todo_7', text: 'World Porters 9/28 閉館時間' },
+  { id: 'todo_8', text: '深川江戸資料館 9/29 有無臨時休館' },
+  { id: 'todo_9', text: 'Suica（企鵝版）' },
+];
+
+export const PACKING_CARRY_ON: ChecklistItem[] = [
+  { id: 'co_1', text: '充電用具（手機、手錶、行充）' },
+  { id: 'co_2', text: '護照' },
+  { id: 'co_3', text: '信用卡' },
+  { id: 'co_4', text: '錢包（日幣）' },
+  { id: 'co_5', text: '耳機' },
+  { id: 'co_6', text: '行動電源' },
+  { id: 'co_7', text: '保溫杯' },
+  { id: 'co_8', text: '牙線棒' },
+  { id: 'co_9', text: '護唇膏' },
+  { id: 'co_10', text: '雨傘' },
+  { id: 'co_11', text: '袖珍包面紙' },
+  { id: 'co_12', text: '口罩' },
+  { id: 'co_13', text: '眼藥水' },
+  { id: 'co_14', text: '防曬用品（外套袖套）' },
+  { id: 'co_15', text: '好走的鞋（清澄庭園飛石、野毛山上坡）' },
+];
+
+export const PACKING_CHECKED: ChecklistItem[] = [
+  { id: 'ch_1', text: '浴巾、毛巾' },
+  { id: 'ch_2', text: '錢包（台幣）' },
+  { id: 'ch_3', text: '換洗衣物（衣褲鞋襪）' },
+  { id: 'ch_4', text: '行李袋（備用，購物用）' },
+  { id: 'ch_5', text: '保養品（卸妝、小藍瓶、凝露）' },
+  { id: 'ch_6', text: '化妝品（DD、遮瑕、眼線、腮紅、口紅）' },
+  { id: 'ch_7', text: '防曬噴霧' },
+  { id: 'ch_8', text: '護髮' },
+  { id: 'ch_9', text: '牙刷牙膏' },
+  { id: 'ch_10', text: '折疊衣架' },
+  { id: 'ch_11', text: '毛夾、髮夾、髮圈' },
+  { id: 'ch_12', text: '梳子' },
+  { id: 'ch_13', text: '睡衣' },
+  { id: 'ch_14', text: '藥品（內外用、痠痛藥）' },
+  { id: 'ch_15', text: '小洗衣板' },
+  { id: 'ch_16', text: '離子夾' },
+  { id: 'ch_17', text: '定型液' },
+  { id: 'ch_18', text: '指甲剪' },
+  { id: 'ch_19', text: '薄外套' },
+];
+
+export const USEFUL_LINKS: UsefulLink[] = [
+  { title: 'Visit Japan Web（入境手續）', url: 'https://vjw-lp.digital.go.jp/zh-hant/' },
+  { title: '名古屋城 官網', url: 'https://www.nagoyajo.city.nagoya.jp/' },
+  { title: 'AICHI NAGOYA ART&LIGHTS', url: 'https://www.pref.aichi.jp/' },
+  { title: 'プラネタリア YOKOHAMA 場次', url: 'https://planetarium.konicaminolta.jp/' },
+  { title: '近鐵特急 時刻表', url: 'https://www.kintetsu.co.jp/' },
+  { title: '南海電鐵 關西機場', url: 'https://www.nankai.co.jp/' },
+  { title: 'Skyliner 時刻表', url: 'https://www.keisei.co.jp/' },
+];
+
+/* 旅遊憑證：把訂房／票券的雲端連結貼進來就會出現在「準備」頁，空的話整區不顯示 */
+export const VOUCHERS: Voucher[] = [
+  // { name: 'VIA INN 名古屋新幹線口', url: 'https://...', type: 'hotel' },
+  // { name: 'KKday 高山・白川鄉一日遊', url: 'https://...', type: 'tour' },
+  // { name: '新幹線 名古屋→品川', url: 'https://...', type: 'train' },
+];
+
+/* 天氣：行程橫跨三個城市，依當天日期自動切換 */
+export const WEATHER_SPOTS: WeatherSpot[] = [
+  { untilDate: '2026-09-25', label: '名古屋', latitude: 35.1815, longitude: 136.9066 },
+  { untilDate: '2026-09-27', label: '東京', latitude: 35.6785, longitude: 139.6823 },
+  { untilDate: '2026-09-28', label: '橫濱', latitude: 35.4437, longitude: 139.6380 },
+  { untilDate: '2026-12-31', label: '東京', latitude: 35.6785, longitude: 139.6823 },
+];
+
+export const EMERGENCY_CONTACTS: EmergencyContact[] = [
+  { title: '警察', number: '110' },
+  { title: '救護/火警', number: '119' },
+  { title: '訪日外國人急難熱線 (JNTO)', number: '050-3816-2787', note: '24小時多語種對應' },
+  { title: '臺北駐日經濟文化代表處', number: '+81-3-3280-7811' },
+  { title: '臺北駐大阪經濟文化辦事處', number: '+81-6-6227-8623', note: '9/23 關西入境時適用' },
+];
+
+// 音檔放在本專案 audio/，透過 GitHub Raw 讀取（只有文字與錄音一致的才掛 audio）
+const BASE_AUDIO_URL = 'https://raw.githubusercontent.com/Miyu0603/nagoya-2026/main/audio';
+
+export const JAPANESE_PHRASES = [
+  {
+    category: '飯店',
+    vocab: [
+      { jp: '預かり (あずかり)', cn: '寄放', audio: `${BASE_AUDIO_URL}/Hotel/luggage_storage.mp3` },
+      { jp: 'チェックアウト', cn: '退房' },
+      { jp: 'コインロッカー', cn: '投幣置物櫃' },
+      { jp: 'ヴィアイン名古屋新幹線口', cn: 'VIA INN 名古屋新幹線口' },
+      { jp: 'アワーズイン阪急', cn: '阪急 OURS INN（大井町）' },
+    ],
+    sentences: [
+      { jp: '荷物を預かっていただけますか？', cn: '可以幫我寄放行李嗎？', audio: `${BASE_AUDIO_URL}/Hotel/sentence_store_luggage.mp3` },
+      { jp: '空港宅配をお願いしたいのですが。', cn: '我想寄送行李到機場。' },
+      { jp: '今日の17時ごろに荷物を取りに来ます。', cn: '我今天下午 5 點左右會回來拿行李。', audio: `${BASE_AUDIO_URL}/Hotel/sentence_pickup_time.mp3` },
+    ]
+  },
+  {
+    category: '排隊與餐廳',
+    vocab: [
+      { jp: '整理券 (せいりけん)', cn: '號碼牌' },
+      { jp: '待ち時間 (まちじかん)', cn: '等候時間' },
+      { jp: '受付 (うけつけ)', cn: '登記處' },
+      { jp: '店内 (てんない)', cn: '內用' },
+      { jp: '持ち帰り (もちかえり)', cn: '外帶' },
+      { jp: 'ひつまぶし', cn: '鰻魚三吃' },
+      { jp: '深川めし (ふかがわめし)', cn: '深川丼' },
+    ],
+    sentences: [
+      { jp: '整理券をもらえますか？', cn: '可以給我號碼牌嗎？' },
+      { jp: 'どのくらい待ちますか？', cn: '大概要等多久？' },
+      { jp: '二名です。', cn: '兩位。' },
+      { jp: '持ち帰りできますか？', cn: '可以外帶嗎？' },
+      { jp: '何時ごろ戻ればいいですか？', cn: '大概幾點回來比較好？' },
+    ]
+  },
+  {
+    category: '交通',
+    vocab: [
+      { jp: '特急券 (とっきゅうけん)', cn: '特急券' },
+      { jp: '自由席 (じゆうせき)', cn: '自由座' },
+      { jp: '指定席 (していせき)', cn: '對號座' },
+      { jp: '乗り換え (のりかえ)', cn: '轉乘' },
+      { jp: '空港第2ビル', cn: '成田第 2 航廈站（本次不搭到這站）' },
+    ],
+    sentences: [
+      { jp: '名古屋までの特急券をお願いします。', cn: '我要一張到名古屋的特急券。' },
+      { jp: 'この電車は成田空港まで行きますか？', cn: '這班車有到成田機場嗎？' },
+    ]
+  },
+];
+
+export const LOCATION_DETAILS: Record<string, LocationDetail> = {
+  // ===== 住宿 =====
+  'via_inn_nagoya': {
+    id: 'via_inn_nagoya',
+    title: 'VIA INN 名古屋新幹線口',
+    description: '連住三晚（9/23–9/26）。位於名古屋站新幹線口側，走到太閤通口銀時計約 5 分鐘。',
+    address: '愛知県名古屋市中村区椿町6-9',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%83%B4%E3%82%A3%E3%82%A2%E3%82%A4%E3%83%B3%E5%90%8D%E5%8F%A4%E5%B1%8B%E6%96%B0%E5%B9%B9%E7%B7%9A%E5%8F%A3',
+  },
+  'maiya_kunitachi': {
+    id: 'maiya_kunitachi',
+    title: '舞家（国立）',
+    description: '9/26 一晚。JR 中央線国立站。隔天 10:30 就要出發才趕得上豪德寺。',
+    address: '東京都国立市',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%9B%BD%E7%AB%8B%E9%A7%85',
+  },
+  'ours_inn_hankyu': {
+    id: 'ours_inn_hankyu',
+    title: '阪急 OURS INN（大井町）',
+    description: '連住兩晚（9/27–9/29）。JR 大井町站步行約 3 分鐘，京濱東北線直達品川、蒲田、橫濱、上野。',
+    address: '東京都品川区大井1-50-5',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%82%A2%E3%83%AF%E3%83%BC%E3%82%BA%E3%82%A4%E3%83%B3%E9%98%AA%E6%80%A5%E3%80%80%E5%A4%A7%E4%BA%95%E7%94%BA',
+  },
+
+  // ===== 交通 =====
+  'flight_out': {
+    id: 'flight_out',
+    title: '去程航班',
+    description: '兩人分開飛，9/23 下午在名古屋站會合。',
+    address: '桃園國際機場 T1',
+    reservation: {
+      id: 'IT210 / IT206',
+      sections: [
+        {
+          title: '想想 IT210',
+          items: [
+            { label: '桃園 T1', value: '9/23 (三) 06:40', isFullWidth: true },
+            { label: '關西 KIX T1', value: '9/23 (三) 10:35', isFullWidth: true },
+          ]
+        },
+        {
+          title: 'Yian IT206',
+          items: [
+            { label: '桃園 T1', value: '9/23 (三) 09:00', isFullWidth: true },
+            { label: '中部國際 NGO', value: '9/23 (三) 12:55', isFullWidth: true },
+          ]
+        },
+      ]
+    }
+  },
+  'kix_transfer': {
+    id: 'kix_transfer',
+    title: '關西機場 → 名古屋（落地再決定）',
+    description: 'ラピート 每小時 05 分、35 分各一班。近鐵整點 = ひのとり（約 125 分），30 分 = アーバンライナー（約 139 分）。南海難波站走到近鐵大阪難波站要出站步行 8–10 分鐘。',
+    address: '南海関西空港駅',
+    reservation: {
+      id: 'KIX-0923',
+      sections: [
+        {
+          title: '很順（11:00 前出關）',
+          items: [
+            { label: '南海', value: '11:05 ラピート → 難波 11:43' },
+            { label: '近鐵', value: '12:00 ひのとり → 名古屋 14:05' },
+          ]
+        },
+        {
+          title: '正常',
+          items: [
+            { label: '南海', value: '11:35 ラピート → 難波 12:13' },
+            { label: '近鐵', value: '12:30 アーバン → 名古屋 14:49' },
+          ]
+        },
+        {
+          title: '偏慢',
+          items: [
+            { label: '南海', value: '12:05 ラピート → 難波 12:45' },
+            { label: '近鐵', value: '13:00 ひのとり → 名古屋 15:05' },
+          ]
+        },
+        {
+          title: '很慢',
+          items: [
+            { label: '南海', value: '12:35 ラピート → 難波 13:14' },
+            { label: '近鐵', value: '13:30 アーバン → 名古屋 15:49' },
+          ]
+        },
+      ]
+    }
+  },
+  'shinkansen_tokyo': {
+    id: 'shinkansen_tokyo',
+    title: '名古屋 → 品川 新幹線',
+    description: '已訂。9/26 14:12 名古屋發，15:43 抵品川。13:00 前要取回置物櫃行李。',
+    address: 'JR 名古屋駅',
+  },
+  'klook_baggage': {
+    id: 'klook_baggage',
+    title: 'Klook 行李宅配（飯店 → 成田）',
+    description: '已訂。9/29 當天 9:00 前把行李交給飯店櫃台，成田 16:00 後在第 1 航廈 4F 出境大廳南翼櫃台領（開到 20:00），跟長榮報到櫃台同一層同一側。護照、現金、電子產品隨身。',
+    address: '阪急 OURS INN 大井町 櫃台',
+  },
+  'flight_home': {
+    id: 'flight_home',
+    title: '回程 BR195',
+    description: '長榮航空，成田第 1 航廈南翼。Skyliner 坐到終點「成田空港」站，不是「空港第2ビル」。關櫃約起飛前 60 分（19:40）。',
+    address: '成田國際機場 第 1 航廈',
+    reservation: {
+      id: 'BR195',
+      sections: [
+        {
+          title: '航班 FLIGHT',
+          items: [
+            { label: '成田 NRT T1', value: '9/29 (二) 20:40', isFullWidth: true },
+            { label: '桃園 TPE', value: '9/29 (二) 23:20', isFullWidth: true },
+          ]
+        },
+        {
+          title: '接駁 ACCESS',
+          items: [
+            { label: 'Skyliner', value: '京成上野 17:40 → 成田空港 18:27', isFullWidth: true },
+          ]
+        },
+      ]
+    }
+  },
+
+  // ===== 9/23 名古屋 =====
+  'nagoya_castle': {
+    id: 'nagoya_castle',
+    title: '名古屋城 大盆踊り大会',
+    description: '秋まつり 9/19–23，17:30–19:10 於正門附近特設櫓，需入城料。9/23 是最後一天，18:00 有平針木遣り音頭。地鐵名古屋城站 7 號出口步行 5 分。',
+    address: '愛知県名古屋市中区本丸1-1',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%9F%8E',
+  },
+  'art_lights': {
+    id: 'art_lights',
+    title: 'AICHI NAGOYA ART&LIGHTS',
+    description: '9/17–10/24 每晚 18:30–21:00，會場是愛知縣廳與名古屋市役所本廳舍（不在城內）。免費免預約，兩棟各投影 5 分鐘交替。18:30–19:30 最擠，看完盆踊り 19:10 再過去剛好錯開。',
+    address: '愛知県名古屋市中区三の丸3-1-2',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%BA%81%E6%9C%AC%E5%BA%81%E8%88%8E',
+  },
+
+  // ===== 9/24 高山・白川鄉 =====
+  'kkday_tour': {
+    id: 'kkday_tour',
+    title: 'KKday 高山・白川鄉一日遊',
+    description: '已訂。8:10 於 JR 名古屋站西口（太閤通口）銀時計前集合，18:30 名古屋站解散。回程塞車是常態，若明顯延遲先通知うな富士。',
+    address: 'JR 名古屋駅 太閤通口 銀の時計前',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E9%8A%80%E3%81%AE%E6%99%82%E8%A8%88%E3%80%80%E5%90%8D%E5%8F%A4%E5%B1%8B%E9%A7%85',
+  },
+  'unafuji': {
+    id: 'unafuji',
+    title: 'うな富士 名古屋駅太閤口店',
+    description: '已訂位 19:00。離近鐵和飯店都很近，解散後可以先回飯店放東西再出來。',
+    address: '愛知県名古屋市中村区椿町',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%81%86%E3%81%AA%E5%AF%8C%E5%A3%AB%E3%80%80%E5%90%8D%E5%8F%A4%E5%B1%8B%E9%A7%85%E5%A4%AA%E9%96%A4%E5%8F%A3%E5%BA%97',
+  },
+  'oasis21': {
+    id: 'oasis21',
+    title: 'オアシス21 & 中部電力 MIRAI TOWER',
+    description: '只看外觀不上塔。水の宇宙船 21:00 就關，要走上玻璃屋頂得在這之前；燈光本身亮到 23:00，銀河の広場也開到 23:00。20:43 與 21:00 各有 1 分鐘特別燈光演出。',
+    address: '愛知県名古屋市東区東桜1-11-1',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%82%AA%E3%82%A2%E3%82%B7%E3%82%B921',
+  },
+
+  // ===== 9/25 清洲・大須・栄 =====
+  'bucyo_coffee': {
+    id: 'bucyo_coffee',
+    title: 'Bucyo Coffee',
+    description: '早餐。名古屋站太閤通口周邊，飯店步行 5–8 分。',
+    address: '愛知県名古屋市中村区則武',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=Bucyo+Coffee+Nagoya',
+  },
+  'kiyosu_castle': {
+    id: 'kiyosu_castle',
+    title: '清洲城',
+    description: '9:00 開館，週一休，週五正常。JR 到清洲駅約 7–10 分＋徒步 15–17 分；累的話 Uber 直達約 5 分車程。',
+    address: '愛知県清須市朝日城屋敷1-1',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E6%B8%85%E6%B4%B2%E5%9F%8E',
+  },
+  'rockin_robin': {
+    id: 'rockin_robin',
+    title: 'ロッキンロビン 大須店',
+    description: '午餐。鐵板漢堡排，在大須商店街內。',
+    address: '愛知県名古屋市中区大須',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%83%AD%E3%83%83%E3%82%AD%E3%83%B3%E3%83%AD%E3%83%93%E3%83%B3%E3%80%80%E5%A4%A7%E9%A0%88',
+  },
+  'kurin': {
+    id: 'kurin',
+    title: '和栗モンブラン専門店 栗りん',
+    description: '11:00–19:00。店內用要當天 10:30 起現場登記、不收電話預約，只有 10 席，中午前通常就滿。直接走外帶窗口買モンブランソフト邊逛邊吃最實際，外帶一樣看得到現場擠栗子泥。',
+    address: '愛知県名古屋市中区大須3-37-40 カノン大須 1F',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E6%A0%97%E3%82%8A%E3%82%93%E3%80%80%E5%A4%A7%E9%A0%88',
+  },
+  'sakae_parco': {
+    id: 'sakae_parco',
+    title: '栄 / 名古屋 PARCO',
+    description: 'Tower Records（東館 6F）、SABON（東館 B1F）、LACHIC、松坂屋、久屋大通 Hisaya-odori Park。PARCO 約 21:00 打烊。',
+    address: '愛知県名古屋市中区栄3-29-1',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8BPARCO',
+  },
+
+  // ===== 9/26 熱田 =====
+  'horaiken_honten': {
+    id: 'horaiken_honten',
+    title: 'あつた蓬萊軒 本店',
+    description: '不收電話訂位，只能現場登記。整理券約 10:00–10:30 開始發，忙的日子會提前。有人 9:40 到時前面已經好幾組，週六＋亞運再提前一點比較安全。排隊派一人即可。備案：整理券若排到 13:00 以後，改去神宮店或改買外帶。',
+    address: '愛知県名古屋市熱田区神戸町503',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%81%82%E3%81%A4%E3%81%9F%E8%93%AC%E8%8E%B1%E8%BB%92%E6%9C%AC%E5%BA%97',
+  },
+  'atsuta_jingu': {
+    id: 'atsuta_jingu',
+    title: '熱田神宮',
+    description: '本店走到南門約 10 分。不要走太深 —— 有人 10:05 領券、10:50 就被叫回去。留一人在可隨時折返的距離，本宮來回抓 45 分鐘剛好。',
+    address: '愛知県名古屋市熱田区神宮1-1-1',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E7%86%B1%E7%94%B0%E7%A5%9E%E5%AE%AE',
+  },
+
+  // ===== 9/27 東京 =====
+  'gotokuji': {
+    id: 'gotokuji',
+    title: '豪德寺',
+    description: '招財貓。小田急豪徳寺站步行約 10 分，到下北沢只有 2 站。',
+    address: '東京都世田谷区豪徳寺2-24-7',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E8%B1%AA%E5%BE%B3%E5%AF%BA',
+  },
+  'kogakuin_arena': {
+    id: 'kogakuin_arena',
+    title: '日本工学院 蒲田校 片柳アリーナ',
+    description: '入間聲優活動 17:00。JR 蒲田站步行約 10 分。先確認開場時間，若早於 16:30 就別先回大井町入住，行李帶去會場寄物。',
+    address: '東京都大田区西蒲田5-23-22',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E6%97%A5%E6%9C%AC%E5%B7%A5%E5%AD%A6%E9%99%A2%E3%80%80%E7%89%87%E6%9F%B3%E3%82%A2%E3%83%AA%E3%83%BC%E3%83%8A',
+  },
+  'naruto_taiyaki': {
+    id: 'naruto_taiyaki',
+    title: '鳴門鯛焼本舗 蒲田駅前店',
+    description: '活動場地附近，回程順路買。',
+    address: '東京都大田区蒲田',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E9%B3%B4%E9%96%80%E9%AF%9B%E7%84%BC%E6%9C%AC%E8%88%97%E3%80%80%E8%92%B2%E7%94%B0',
+  },
+
+  // ===== 9/28 橫濱 =====
+  'saihoji': {
+    id: 'saihoji',
+    title: '西方寺',
+    description: '彼岸花季末段。地鐵藍線新羽站步行 8 分。離市中心 9 公里、單程 45 分鐘，是全天唯一的遠點。',
+    address: '神奈川県横浜市港北区新羽町2586',
+    mapUrl: 'https://maps.google.com/?cid=5323189156766403328',
+  },
+  'iseyama': {
+    id: 'iseyama',
+    title: '伊勢山皇大神宮 / 成田山橫濱別院 / 掃部山公園',
+    description: '三處在同一個野毛山丘上，彼此步行 3–5 分。從桜木町站走上來約 10 分，有坡。',
+    address: '神奈川県横浜市西区宮崎町64',
+    mapUrl: 'https://maps.google.com/?cid=16541305802646519216',
+  },
+  'center_beef': {
+    id: 'center_beef',
+    title: 'CENTER BEEF 関内',
+    description: '10:30 開店，午市到 14:45。只有約 10 席會等一下。從掃部山走下來約 18 分。',
+    address: '神奈川県横浜市中区末広町2-5-1 呉ビル 1F',
+    mapUrl: 'https://maps.google.com/?cid=4681103572478882018',
+  },
+  'chinatown': {
+    id: 'chinatown',
+    title: '橫濱中華街',
+    description: '只拍照不久留。朝陽門、關帝廟、中華街大通り走一趟約 20 分，往元町・中華街駅再走 5 分。元町商店街已從行程移除。',
+    address: '神奈川県横浜市中区山下町',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E6%A8%AA%E6%B5%9C%E4%B8%AD%E8%8F%AF%E8%A1%97',
+  },
+  'planetaria': {
+    id: 'planetaria',
+    title: 'プラネタリア YOKOHAMA',
+    description: '橫濱Gate Tower 2F，新高島站 1 號出口步行 1 分。場次五天前才開放，行程暫定 13:10–13:50（照 9/25 的場次推）。實際場次若不同，動橫濱站那段，不要動 Sky Garden 的 17:00。',
+    address: '神奈川県横浜市西区高島1-2-5 横濱ゲートタワー 2F',
+    mapUrl: 'https://maps.google.com/?cid=9523900471524728616',
+  },
+  'yokohama_station': {
+    id: 'yokohama_station',
+    title: '橫濱站購物（85 分鐘）',
+    description: '建議切法：西口ビブレ 45 分（8F 安利美特 → 4F 東京古着／古着屋3peace → B1F GU）→ 走東口 10 分 → そごう 7F LOFT ＋ LUMINE 30 分。西口另有橫濱MORE\'S 3F GRAPEFRUIT MOON（歐美復古）。東西口互走約 10 分鐘。',
+    address: '神奈川県横浜市西区南幸2-15-13（ビブレ）',
+    mapUrl: 'https://maps.google.com/?cid=12596751285917875243',
+  },
+  'mark_is': {
+    id: 'mark_is',
+    title: 'MARK IS みなとみらい',
+    description: 'Pokémon Center Yokohama、1F ACTUS（家具與生活雜貨，同館不同層）。平日 10:00–20:00。',
+    address: '神奈川県横浜市西区みなとみらい3-5-1',
+    mapUrl: 'https://maps.google.com/?cid=15123389883336727787',
+  },
+  'world_porters': {
+    id: 'world_porters',
+    title: '橫濱 World Porters',
+    description: 'JUMP SHOP、Snoopy Town、3F 古著區（SPINNS VINTAGE 品項最廣、Mosh Pit 便宜量多、古着屋3peace 約 4,000 件）。10:30–21:00。跟 MARK IS 不同棟，走約 11 分。旁邊就是 AIR CABIN 運河公園站。',
+    address: '神奈川県横浜市中区新港2-2-1',
+    mapUrl: 'https://maps.google.com/?cid=15378299174499544579',
+  },
+  'sky_garden': {
+    id: 'sky_garden',
+    title: 'Sky Garden（地標塔 69F）',
+    description: '當天橫濱日落約 17:28，17:00 這個時間不要動。走到桜木町站約 8 分，AIR CABIN 從那裡發車。',
+    address: '神奈川県横浜市西区みなとみらい2-2-1 69F',
+    mapUrl: 'https://maps.google.com/?cid=6607536174985891965',
+  },
+  'air_cabin': {
+    id: 'air_cabin',
+    title: 'YOKOHAMA AIR CABIN',
+    description: '桜木町 ↔ 運河公園。晚上兩個走法：A 纜車往復（18:45–19:15）再回桜木町吃飯；B 纜車單程過去逛 World Porters 3F 古著（19:00–19:45）並在當地吃，回大井町會晚 35 分鐘。',
+    address: '神奈川県横浜市中区桜木町1-200',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=YOKOHAMA+AIR+CABIN',
+  },
+
+  // ===== 9/29 清澄白河・上野 =====
+  'kiyosumi_garden': {
+    id: 'kiyosumi_garden',
+    title: '清澄庭園',
+    description: '9:00–17:00，¥150。清澄白河站 A3 出口出來就是。池邊飛石路要走一下，鞋子好走一點。',
+    address: '東京都江東区清澄3-3-9',
+    mapUrl: 'https://maps.google.com/?cid=9741550465813907025',
+  },
+  'takahashi': {
+    id: 'takahashi',
+    title: '江戶土產屋高橋（江戸みやげ屋たかはし）',
+    description: '10:00–19:00，資料館通り上。老夫婦經營，昭和零食、玩具、古物都有，會請客人試吃。',
+    address: '東京都江東区三好1-8-6',
+    mapUrl: 'https://maps.google.com/?cid=2952362341513008649',
+  },
+  'fukagawa_kamasho': {
+    id: 'fukagawa_kamasho',
+    title: '深川釜匠',
+    description: '週一公休、週二只做午市 11:00–15:00。開店即到可避開排隊。深川丼湯汁版蛤蜊滿到溢出來。這是 9/29 唯一有硬性關門時間的點。',
+    address: '東京都江東区白河2-1-13',
+    mapUrl: 'https://maps.google.com/?cid=8107653639708109163',
+  },
+  'fukagawa_edo_museum': {
+    id: 'fukagawa_edo_museum',
+    title: '深川江戶資料館',
+    description: '9:30–17:00，¥400。就在深川釜匠附近。可以走進江戶町屋裡摸，燈光會從白天變到傍晚還會下雨，志工導覽講得很好。',
+    address: '東京都江東区白河1-3-28',
+    mapUrl: 'https://maps.google.com/?cid=5532162446945768520',
+  },
+  'cheese_no_koe': {
+    id: 'cheese_no_koe',
+    title: 'Cheese no Koe（チーズのこえ）',
+    description: '11:00–19:00。專賣北海道起司，霜淇淋奶味很濃。店內和店門口都不能吃，要走開一點。',
+    address: '東京都江東区平野1-7-7',
+    mapUrl: 'https://maps.google.com/?cid=617537243635653446',
+  },
+  'babaghuri': {
+    id: 'babaghuri',
+    title: 'Babaghuri 清澄本店',
+    description: '11:00–19:00，週二有營業。ヨーガンレール 本社一樓，陶器選得很好。逛完走回清澄白河站約 5 分。',
+    address: '東京都江東区清澄3-1-7',
+    mapUrl: 'https://maps.google.com/?cid=5987257113677615030',
+  },
+  'usagiya': {
+    id: 'usagiya',
+    title: 'うさぎや（上野）',
+    description: 'どら焼き。上野広小路出口旁，順路先買避免下午賣完。週三公休、週二正常，9:00–18:00。',
+    address: '東京都台東区上野1-10-10',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%81%86%E3%81%95%E3%81%8E%E3%82%84%E3%80%80%E4%B8%8A%E9%87%8E',
+  },
+  'ueno_toshogu': {
+    id: 'ueno_toshogu',
+    title: '上野東照宮 / 花園稲荷神社 / 不忍池',
+    description: '三處都在上野公園內，彼此步行 5–10 分。東照宮社殿拜觀最後入場約 16:00。',
+    address: '東京都台東区上野公園9-88',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E4%B8%8A%E9%87%8E%E6%9D%B1%E7%85%A7%E5%AE%AE',
+  },
+  'yushima_tenmangu': {
+    id: 'yushima_tenmangu',
+    title: '湯島天満宮',
+    description: '不忍池走過去約 12 分，再走到京成上野站約 12 分。',
+    address: '東京都文京区湯島3-30-1',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E6%B9%AF%E5%B3%B6%E5%A4%A9%E6%BA%80%E5%AE%AE',
+  },
+};
+
+export const ITINERARY: DaySchedule[] = [
+  {
+    date: '9/23',
+    weekday: '星期三',
+    title: '抵達名古屋・名古屋城夜祭',
+    accommodation: 'VIA INN 名古屋新幹線口',
+    accommodationMapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%83%B4%E3%82%A3%E3%82%A2%E3%82%A4%E3%83%B3%E5%90%8D%E5%8F%A4%E5%B1%8B%E6%96%B0%E5%B9%B9%E7%B7%9A%E5%8F%A3',
+    mapUrl: 'https://www.google.com/maps/dir/Kansai+International+Airport/Osaka+Namba+Station/Nagoya+Station/Nagoya+Castle',
+    events: [
+      { time: '06:40', description: 'IT210 桃園 T1 起飛', locationId: 'flight_out', isHighlight: true },
+      { time: '10:35', description: '抵達關西機場 T1' },
+      { time: '10:35', description: '入境、提行李', note: '先辦好 Visit Japan Web。KIX 尖峰抓 45 分鐘' },
+      { time: '11:25', description: '走到南海關西空港站', note: '約 5 分' },
+      { time: '11:35', description: '南海ラピート → 難波 12:13', locationId: 'kix_transfer', isHighlight: true, note: '落地看狀況選班次，南海難波走到近鐵大阪難波要 8–10 分' },
+      { time: '12:30', description: '近鐵アーバンライナー → 近鐵名古屋 14:49', isHighlight: true },
+      { time: '15:00', description: '名古屋站與 Yian 會合', note: 'Yian：12:55 中部國際機場 → 14:00 μ-SKY → 14:28 名鐵名古屋' },
+      { time: '15:10', description: '入住 VIA INN 名古屋新幹線口', locationId: 'via_inn_nagoya' },
+      { time: '15:40', description: '車站周邊小逛', note: 'SHIRO 高島屋店、エスカ地下街、名鐵百貨、KITTE 名古屋' },
+      { time: '16:40', description: '名古屋 →東山線→ 栄 →名城線→ 名古屋城站', note: '約 15 分' },
+      { time: '17:30', description: '名古屋城 大盆踊り大会', locationId: 'nagoya_castle', isHighlight: true, note: '17:30–19:10，18:00 平針木遣り音頭，需入城料' },
+      { time: '19:20', description: 'AICHI NAGOYA ART&LIGHTS', locationId: 'art_lights', note: '免費免預約，18:30–19:30 最擠，這時間去剛好錯開' },
+      { time: '20:10', description: '回名古屋站附近晚餐' },
+    ]
+  },
+  {
+    date: '9/24',
+    weekday: '星期四',
+    title: '高山老街・白川鄉一日遊',
+    accommodation: 'VIA INN 名古屋新幹線口',
+    accommodationMapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%83%B4%E3%82%A3%E3%82%A2%E3%82%A4%E3%83%B3%E5%90%8D%E5%8F%A4%E5%B1%8B%E6%96%B0%E5%B9%B9%E7%B7%9A%E5%8F%A3',
+    mapUrl: 'https://www.google.com/maps/dir/Nagoya+Station/Takayama+Old+Town/Shirakawa-go/Nagoya+Station',
+    events: [
+      { time: '07:55', description: '出發，飯店走到銀時計約 5 分' },
+      { time: '08:10', description: '集合：JR 名古屋站西口（太閤通口）銀時計前', locationId: 'kkday_tour', isHighlight: true },
+      { time: '11:00', description: '高山老街', note: '含午餐，約 2.5 小時' },
+      { time: '14:30', description: '白川鄉合掌村', note: '約 2 小時' },
+      { time: '18:30', description: '名古屋站解散' },
+      { time: '18:40', description: '回飯店放東西' },
+      { time: '19:00', description: 'うな富士 名古屋駅太閤口店 晚餐', locationId: 'unafuji', isHighlight: true, note: '已訂位。巴士若明顯延遲先通知店家' },
+      { time: '20:00', description: 'オアシス21 & MIRAI TOWER 外觀夜景', locationId: 'oasis21', note: '不上塔。水の宇宙船 21:00 關，燈光到 23:00' },
+    ]
+  },
+  {
+    date: '9/25',
+    weekday: '星期五',
+    title: '清洲城・大須寺社巡禮・栄',
+    accommodation: 'VIA INN 名古屋新幹線口',
+    accommodationMapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%83%B4%E3%82%A3%E3%82%A2%E3%82%A4%E3%83%B3%E5%90%8D%E5%8F%A4%E5%B1%8B%E6%96%B0%E5%B9%B9%E7%B7%9A%E5%8F%A3',
+    mapUrl: 'https://www.google.com/maps/dir/Nagoya+Station/Kiyosu+Castle/Osu+Kannon/Wakamiya+Hachimansha/Sakae+Nagoya',
+    events: [
+      { time: '08:25', description: 'Bucyo Coffee 早餐', locationId: 'bucyo_coffee', note: '08:25–09:10' },
+      { time: '09:10', description: '前往清洲城', note: 'JR 到清洲駅約 7–10 分＋徒步 15–17 分，抓 30 分；或 Uber' },
+      { time: '10:00', description: '清洲城', locationId: 'kiyosu_castle', note: '10:00–11:30' },
+      { time: '11:30', description: '回市中心', note: '清洲→名古屋→鶴舞線大須観音，抓 40 分' },
+      { time: '12:15', description: '大須観音', note: '12:15–12:35' },
+      { time: '12:40', description: '七寺', note: '徒步 3–5 分，12:40–12:55' },
+      { time: '13:00', description: 'ロッキンロビン 大須店 午餐', locationId: 'rockin_robin', note: '13:00–13:50' },
+      { time: '13:55', description: '万松寺', note: '13:55–14:15' },
+      { time: '14:20', description: '和栗モンブラン専門店 栗りん', locationId: 'kurin', isHighlight: true, note: '店內位子中午前多半滿了，走外帶窗口比較實際' },
+      { time: '14:50', description: '三輪神社', note: '14:50–15:05' },
+      { time: '15:15', description: '若宮八幡社', note: '徒步 12 分，15:15–15:35' },
+      { time: '15:45', description: '栄商圈、PARCO', locationId: 'sakae_parco', note: 'Tower Records 東館 6F、SABON 東館 B1F' },
+      { time: '18:30', description: '栄晚餐' },
+      { time: '21:20', description: '回飯店，今晚先把行李整理好', note: '明天一早要排蓬萊軒' },
+    ]
+  },
+  {
+    date: '9/26',
+    weekday: '星期六',
+    title: '熱田神宮・蓬萊軒 → 東京',
+    accommodation: '舞家（国立）',
+    accommodationMapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%9B%BD%E7%AB%8B%E9%A7%85',
+    mapUrl: 'https://www.google.com/maps/dir/Nagoya+Station/Atsuta+Jingu/Nagoya+Station/Shinagawa+Station/Kunitachi+Station',
+    events: [
+      { time: '08:00', description: '退房' },
+      { time: '08:05', description: '名古屋站寄行李＋超商買早餐', note: '週六＋亞運置物櫃會滿，早點卡位。早餐帶上車吃' },
+      { time: '08:30', description: '名鉄名古屋 → 神宮前 08:36', note: '約 6 分，班次密集' },
+      { time: '08:50', description: '蓬萊軒本店 開始排隊', locationId: 'horaiken_honten', isHighlight: true, note: '從神宮前走過來實際約 10–12 分。排隊派一人即可' },
+      { time: '10:00', description: '領整理券、指定入座時段', note: '發券約 10:00–10:30，忙的日子會提前' },
+      { time: '10:20', description: '熱田神宮 參拜', locationId: 'atsuta_jingu', note: '不要走太深，留一人可隨時折返' },
+      { time: '11:30', description: 'ひつまぶし', note: '實際時間依整理券而定，抓 1 小時' },
+      { time: '12:35', description: '神宮前 → 名鉄名古屋', note: '約 9 分＋走路，抓 20 分' },
+      { time: '13:00', description: '取回行李，緩衝時間', note: '離發車還有 70 分鐘' },
+      { time: '14:12', description: '名古屋 → 新幹線 → 品川 15:43', locationId: 'shinkansen_tokyo', isHighlight: true },
+      { time: '15:50', description: '品川站寄行李、買 Suica', note: '放到 9/27 傍晚，確認是 3 天制不是當日制' },
+      { time: '16:10', description: '品川 →山手線→ 新宿 →中央線快速→ 国立 17:10' },
+      { time: '17:20', description: '抵達舞家', locationId: 'maiya_kunitachi' },
+    ]
+  },
+  {
+    date: '9/27',
+    weekday: '星期日',
+    title: '豪德寺・下北澤・蒲田聲優活動',
+    accommodation: '阪急 OURS INN（大井町）',
+    accommodationMapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%82%A2%E3%83%AF%E3%83%BC%E3%82%BA%E3%82%A4%E3%83%B3%E9%98%AA%E6%80%A5%E3%80%80%E5%A4%A7%E4%BA%95%E7%94%BA',
+    mapUrl: 'https://www.google.com/maps/dir/Kunitachi+Station/Gotokuji+Temple/Shimokitazawa/Shinagawa+Station/Oimachi+Station/Kamata+Station',
+    events: [
+      { time: '10:30', description: '離開舞家', note: '要趕 11:30 到豪德寺就得 10:30 出門，路上 50 分鐘' },
+      { time: '10:40', description: '国立 →中央線快速→ 新宿 11:10 →小田急→ 豪徳寺 11:30' },
+      { time: '11:35', description: '豪德寺（招財貓）', locationId: 'gotokuji', note: '11:35–12:10' },
+      { time: '12:15', description: '豪徳寺 →小田急→ 下北沢 12:20', note: '2 站' },
+      { time: '12:30', description: '下北澤 午餐＋逛街', note: '12:30–15:00' },
+      { time: '15:00', description: '下北沢 →井の頭線→ 渋谷 →山手線→ 品川 15:30' },
+      { time: '15:35', description: '品川取行李' },
+      { time: '15:55', description: '阪急 OURS INN 入住、放行李', locationId: 'ours_inn_hankyu', note: '順路先丟行李，晚上不用再繞回品川' },
+      { time: '16:15', description: '大井町 →京浜東北線→ 蒲田 16:23 → 步行 10 分' },
+      { time: '17:00', description: '入間聲優活動', locationId: 'kogakuin_arena', isHighlight: true, note: '先確認開場時間' },
+      { time: '19:30', description: '鳴門鯛焼本舗 蒲田駅前店', locationId: 'naruto_taiyaki', note: '活動結束後順路，時間依散場而定' },
+    ]
+  },
+  {
+    date: '9/28',
+    weekday: '星期一',
+    title: '橫濱一日',
+    accommodation: '阪急 OURS INN（大井町）',
+    accommodationMapUrl: 'https://www.google.com/maps/search/?api=1&query=%E3%82%A2%E3%83%AF%E3%83%BC%E3%82%BA%E3%82%A4%E3%83%B3%E9%98%AA%E6%80%A5%E3%80%80%E5%A4%A7%E4%BA%95%E7%94%BA',
+    mapUrl: 'https://www.google.com/maps/dir/Oimachi+Station/Saihoji+Nippa/Iseyama+Kotaijingu/Center+Beef+Kannai/Yokohama+Chinatown/Planetaria+Yokohama/Yokohama+Station/MARK+IS+Minatomirai/Yokohama+Landmark+Tower',
+    events: [
+      { time: '08:05', description: '大井町 →京浜東北線→ 横浜 08:28 →ブルーライン→ 新羽 08:53' },
+      { time: '09:00', description: '西方寺', locationId: 'saihoji', note: '彼岸花季末段，09:00–09:25' },
+      { time: '09:33', description: '新羽 →ブルーライン→ 桜木町 09:55' },
+      { time: '10:00', description: '伊勢山皇大神宮 → 成田山橫濱別院 → 掃部山公園', locationId: 'iseyama', note: '同一個丘上，互距 3–5 分，10:00–10:45' },
+      { time: '10:50', description: '步行下坡至関内', note: '約 18 分' },
+      { time: '11:10', description: 'CENTER BEEF 関内 午餐', locationId: 'center_beef', note: '11:10–12:00，現場排隊' },
+      { time: '12:05', description: '走路往中華街', note: '約 12 分' },
+      { time: '12:15', description: '橫濱中華街 拍照', locationId: 'chinatown', note: '12:15–12:35，不久留' },
+      { time: '12:40', description: '走到元町・中華街駅 →みなとみらい線→ 新高島 12:52' },
+      { time: '13:10', description: 'プラネタリア YOKOHAMA', locationId: 'planetaria', isHighlight: true, note: '暫定場次，五天前開放後再確認' },
+      { time: '13:55', description: '新高島 → 横浜 13:58', note: '1 站，或走路 9 分' },
+      { time: '14:05', description: '橫濱站購物', locationId: 'yokohama_station', note: '85 分鐘，東西口都排得進去' },
+      { time: '15:35', description: '横浜 →みなとみらい線→ みなとみらい 15:39' },
+      { time: '15:45', description: 'MARK IS みなとみらい', locationId: 'mark_is', note: '15:45–16:15' },
+      { time: '16:20', description: 'World Porters：JUMP SHOP、Snoopy Town', locationId: 'world_porters', note: '16:20–16:50' },
+      { time: '17:00', description: 'Sky Garden 69F', locationId: 'sky_garden', isHighlight: true, note: '日落約 17:28，這個時間不要動' },
+      { time: '18:15', description: 'コレットマーレ(.st)、CIAL 桜木町(Pensta)', note: '18:15–18:40' },
+      { time: '18:45', description: 'YOKOHAMA AIR CABIN', locationId: 'air_cabin', note: 'A 往復後回桜木町吃飯 / B 單程過去逛古著並在當地吃' },
+      { time: '20:30', description: '桜木町 →京浜東北線直達→ 大井町 21:05' },
+    ]
+  },
+  {
+    date: '9/29',
+    weekday: '星期二',
+    title: '清澄白河散策・上野 → 成田',
+    mapUrl: 'https://www.google.com/maps/dir/Oimachi+Station/Keisei+Ueno+Station/Kiyosumi+Gardens/Fukagawa+Edo+Museum/Ueno+Toshogu/Yushima+Tenmangu/Narita+Airport+Terminal+1',
+    events: [
+      { time: '08:40', description: '退房，行李交櫃檯', locationId: 'klook_baggage', isHighlight: true, note: 'Klook 宅配收件截止 9:00，不要拖' },
+      { time: '08:50', description: '大井町 →京浜東北線→ 浜松町 →大江戸線（大門）→ 清澄白河 09:25' },
+      { time: '09:30', description: '清澄庭園', locationId: 'kiyosumi_garden', note: '09:30–10:25' },
+      { time: '10:35', description: '江戶土產屋高橋', locationId: 'takahashi', note: '10:35–11:00' },
+      { time: '11:00', description: '深川釜匠 午餐', locationId: 'fukagawa_kamasho', isHighlight: true, note: '週二只做午市到 15:00，開店即到避開排隊' },
+      { time: '12:10', description: '深川江戶資料館', locationId: 'fukagawa_edo_museum', note: '12:10–13:00' },
+      { time: '13:05', description: 'Cheese no Koe', locationId: 'cheese_no_koe', note: '13:05–13:30' },
+      { time: '13:40', description: 'Babaghuri 清澄本店', locationId: 'babaghuri', note: '13:40–14:05，走回清澄白河站約 5 分' },
+      { time: '14:15', description: '清澄白河 →半蔵門線→ 三越前 →銀座線→ 上野広小路 14:35' },
+      { time: '14:40', description: 'うさぎや 買どら焼き', locationId: 'usagiya', note: '順路先買，避免下午賣完' },
+      { time: '15:00', description: '上野東照宮 → 花園稲荷神社 → 不忍池', locationId: 'ueno_toshogu', note: '15:00–15:55' },
+      { time: '16:05', description: '湯島天満宮', locationId: 'yushima_tenmangu', note: '16:05–16:30' },
+      { time: '16:40', description: '阿美橫町、晚餐' },
+      { time: '17:40', description: 'Skyliner 京成上野發', isHighlight: true },
+      { time: '18:27', description: '「成田空港」站下車', locationId: 'flight_home', note: '終點站＝第 1 航廈。不要在空港第2ビル下車' },
+      { time: '18:35', description: '4F 南翼領回行李 → 報到、託運', note: '長榮關櫃約起飛前 60 分（19:40）' },
+      { time: '20:40', description: 'BR195 起飛 → 桃園 23:20', isHighlight: true },
+    ]
+  }
+];
