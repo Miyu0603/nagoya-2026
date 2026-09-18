@@ -67,6 +67,8 @@ export interface DaySchedule {
   accommodation?: string;
   accommodationMapUrl?: string; // New: Link for accommodation
   mapUrl?: string;
+  /** 當日專用的外部連結，顯示在日期標題下方 */
+  links?: { label: string; url: string }[];
   events: ItineraryEvent[];
 }
 

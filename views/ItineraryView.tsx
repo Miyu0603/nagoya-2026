@@ -512,6 +512,22 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({
         <h2 className="font-noto text-[20px] font-bold leading-[1.5] tracking-[0.02em] text-ink">
           {currentDay.title}
         </h2>
+        {currentDay.links && currentDay.links.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-2.5">
+            {currentDay.links.map((link) => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 bg-white border border-rule-300 rounded-tk px-3 py-1.5 text-[12px] font-medium tracking-[0.02em] text-wood-900 shadow-tk-chip active:bg-washi-tint"
+              >
+                <MapIcon className="w-[13px] h-[13px] text-wood-600" />
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="px-[18px] pb-[30px]">

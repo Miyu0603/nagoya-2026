@@ -411,7 +411,7 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
               <label className="text-[13px] font-semibold text-ios-label-2 mb-1.5 block">日期</label>
               <input type="date" value={date} onChange={e => setDate(e.target.value)}
                 style={{ minWidth: 0, WebkitAppearance: 'none', appearance: 'none' }}
-                className="w-full max-w-full block h-[46px] bg-ios-fill-4 px-2.5 rounded-ios text-[16px] font-medium text-ios-label outline-none" />
+                className="w-full max-w-full block bg-ios-fill-4 px-2.5 py-[11px] leading-[24px] rounded-ios text-[16px] font-medium text-ios-label outline-none" />
             </div>
             <div className="flex flex-col min-w-0">
               <label className="text-[13px] font-semibold text-ios-label-2 mb-1.5 block">支付者</label>
