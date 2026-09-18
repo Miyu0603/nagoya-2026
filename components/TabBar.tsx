@@ -71,7 +71,9 @@ export const TabBar: React.FC<TabBarProps> = ({ activeTab, onChange }) => {
   return (
     <nav
       className="shrink-0 bg-white border-t border-rule-300 px-1.5 pt-[7px]"
-      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 13px)' }}
+      /* iPhone 的 safe-area-inset-bottom 是 34px，整個加上去下方會空 47px。
+         只留剛好避開 home indicator 的高度，沒有 indicator 的裝置退回 10px。 */
+      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 10px), 10px)' }}
     >
       <div className="flex">
         {Object.values(Tab).map((tab) => {

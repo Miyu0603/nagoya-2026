@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ITINERARY, LOCATION_DETAILS } from '../constants';
 import { ItineraryEvent, EventCategory } from '../types';
 import { BedIcon, MapIcon, ClockIcon, PinIcon, TicketIcon } from '../components/Icons';
@@ -149,11 +149,63 @@ const EventSheet: React.FC<{
   const event = day.events[eventIdx];
   const location = event.locationId ? LOCATION_DETAILS[event.locationId] : undefined;
   const [entered, setEntered] = useState(false);
+  const [dragY, setDragY] = useState(0);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef({ startY: 0, active: false });
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setEntered(true));
     return () => cancelAnimationFrame(raf);
   }, []);
+
+  /**
+   * 下滑關閉。內容很長時捲到底才看得到「關閉」，背景又只剩一小條不好點，
+   * 所以補這個手勢。只有在內容已經捲到最上面時才接手，否則交給正常捲動。
+   * touchmove 要 preventDefault，必須用 passive: false 自己掛，不能走 React 的 onTouchMove。
+   */
+  useEffect(() => {
+    const el = sheetRef.current;
+    if (!el) return;
+
+    const onStart = (e: TouchEvent) => {
+      if (el.scrollTop > 0) { dragRef.current.active = false; return; }
+      dragRef.current = { startY: e.touches[0].clientY, active: true };
+    };
+
+    const onMove = (e: TouchEvent) => {
+      if (!dragRef.current.active) return;
+      const dy = e.touches[0].clientY - dragRef.current.startY;
+      if (dy <= 0) {
+        // 往上拉就還給捲動
+        dragRef.current.active = false;
+        setDragY(0);
+        return;
+      }
+      e.preventDefault();
+      // 拉越遠阻力越大，避免整張被拖離畫面
+      setDragY(dy > 120 ? 120 + (dy - 120) * 0.35 : dy);
+    };
+
+    const onEnd = () => {
+      if (!dragRef.current.active) return;
+      dragRef.current.active = false;
+      setDragY(current => {
+        if (current > 110) onClose();
+        return 0;
+      });
+    };
+
+    el.addEventListener('touchstart', onStart, { passive: true });
+    el.addEventListener('touchmove', onMove, { passive: false });
+    el.addEventListener('touchend', onEnd);
+    el.addEventListener('touchcancel', onEnd);
+    return () => {
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+      el.removeEventListener('touchcancel', onEnd);
+    };
+  }, [onClose]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -188,15 +240,21 @@ const EventSheet: React.FC<{
       style={{ opacity: entered ? 1 : 0 }}
     >
       <div
+        ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-h-[92%] overflow-y-auto bg-washi-white shadow-tk-sheet transition-transform duration-300 ease-in-out"
+        className="w-full max-h-[92%] overflow-y-auto overscroll-contain bg-washi-white shadow-tk-sheet"
         style={{
           borderRadius: '8px 8px 26px 26px',
-          transform: entered ? 'translateY(0)' : 'translateY(16px)',
+          transform: `translateY(${entered ? dragY : 16}px)`,
+          transition: dragRef.current.active ? 'none' : 'transform 300ms ease-in-out',
         }}
       >
         {/* 票根頭 */}
-        <div className="bg-white border-b border-dashed border-rule-500 px-5 pt-4 pb-3.5">
+        <div className="bg-white border-b border-dashed border-rule-500 px-5 pt-2 pb-3.5">
+          {/* 抓握條：下滑關閉的提示 */}
+          <div className="flex justify-center pb-2.5">
+            <span className="w-9 h-[5px] rounded-full bg-rule-500" />
+          </div>
           <div className="flex items-center justify-between gap-2.5 mb-3">
             <span className="font-num text-[9px] font-medium tracking-[0.22em] text-wood-500">
               DAY {dayIdx + 1} ・ {day.date}（{day.weekday[2]}）
