@@ -254,6 +254,29 @@ const EventSheet: React.FC<{
             </div>
           )}
 
+          {event.alternatives && event.alternatives.length > 0 && (
+            <div>
+              <div className="text-[9px] font-medium tracking-[0.24em] text-wood-600 mb-[7px]">他の便 ・ 其他班次</div>
+              <div className="bg-white border border-rule-200 rounded-tk-sm divide-y divide-rule-200">
+                {event.alternatives.map((alt, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3 px-[13px] py-2.5 ${alt.isPlan ? 'bg-washi-tint' : ''}`}
+                  >
+                    <span
+                      className={`flex-none w-9 text-[10px] tracking-[0.06em] ${
+                        alt.isPlan ? 'text-vermillion font-medium' : 'text-ink-400'
+                      }`}
+                    >
+                      {alt.when}
+                    </span>
+                    <span className="font-num text-[12px] leading-[1.6] text-ink-700">{alt.detail}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {location?.description && (
             <div>
               <div className="text-[9px] font-medium tracking-[0.24em] text-wood-600 mb-[7px]">案内 ・ 說明</div>

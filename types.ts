@@ -21,6 +21,16 @@ export interface ReservationSection {
   items: { label: string; value: string; isFullWidth?: boolean }[];
 }
 
+/** 同一段路的替代班次：落地快慢不同就搭不同班 */
+export interface TransitAlternative {
+  /** 什麼狀況下選這班：很順／正常／偏慢／很慢 */
+  when: string;
+  /** 班次內容 */
+  detail: string;
+  /** 目前行程採用的那班 */
+  isPlan?: boolean;
+}
+
 /** 轉乘的其中一段。卡片只顯示頭尾，這些中間段只在詳情彈窗展開。 */
 export interface TransitLeg {
   /** 搭什麼：中央線快速、小田急、新幹線、步行 10 分… */
@@ -46,6 +56,8 @@ export interface ItineraryEvent {
   origin?: string;
   /** 中間各段轉乘，只在詳情彈窗顯示 */
   legs?: TransitLeg[];
+  /** 同一段的其他可選班次，只在詳情彈窗顯示 */
+  alternatives?: TransitAlternative[];
 }
 
 export interface DaySchedule {

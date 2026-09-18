@@ -215,41 +215,9 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
   'kix_transfer': {
     id: 'kix_transfer',
     title: '關西機場 → 名古屋（落地再決定）',
-    description: 'ラピート 每小時 05 分、35 分各一班。近鐵整點 = ひのとり（約 125 分），30 分 = アーバンライナー（約 139 分）。南海難波站走到近鐵大阪難波站要出站步行 8–10 分鐘。',
+    description: '近鐵整點 = ひのとり（約 125 分），30 分 = アーバンライナー（約 139 分），特急券在月台黃色售票機現買即可。\n空港急行比ラピート慢 7 分鐘，但不用特急券。\n南海難波站走到近鐵大阪難波站要出站步行 8–10 分鐘，每個方案只剩 15 分緩衝，不要在難波逛。',
     address: '南海関西空港駅',
-    reservation: {
-      id: 'KIX-0923',
-      sections: [
-        {
-          title: '很順（11:00 前出關）',
-          items: [
-            { label: '南海', value: '11:05 ラピート → 難波 11:43' },
-            { label: '近鐵', value: '12:00 ひのとり → 名古屋 14:05' },
-          ]
-        },
-        {
-          title: '正常',
-          items: [
-            { label: '南海', value: '11:35 ラピート → 難波 12:13' },
-            { label: '近鐵', value: '12:30 アーバン → 名古屋 14:49' },
-          ]
-        },
-        {
-          title: '偏慢',
-          items: [
-            { label: '南海', value: '12:05 ラピート → 難波 12:45' },
-            { label: '近鐵', value: '13:00 ひのとり → 名古屋 15:05' },
-          ]
-        },
-        {
-          title: '很慢',
-          items: [
-            { label: '南海', value: '12:35 ラピート → 難波 13:14' },
-            { label: '近鐵', value: '13:30 アーバン → 名古屋 15:49' },
-          ]
-        },
-      ]
-    }
+    openingHours: 'ラピート 每小時 05・35 分／空港急行 約每 15 分',
   },
   'shinkansen_tokyo': {
     id: 'shinkansen_tokyo',
@@ -587,8 +555,22 @@ export const ITINERARY: DaySchedule[] = [
       { time: '10:35', description: '抵達關西機場 T1' },
       { time: '10:35', description: '入境、提行李', note: '先辦好 Visit Japan Web。KIX 尖峰抓 45 分鐘' },
       { time: '11:25', description: '走到南海關西空港站', note: '約 5 分' },
-      { time: '11:35', description: '南海ラピート → 難波 12:13', locationId: 'kix_transfer', isHighlight: true, note: '落地看狀況選班次，南海難波走到近鐵大阪難波要 8–10 分' },
-      { time: '12:30', description: '近鐵アーバンライナー → 近鐵名古屋 14:49', isHighlight: true },
+      { time: '11:35', description: '関西空港 → 難波 12:13', locationId: 'kix_transfer', isHighlight: true, note: '落地看狀況選班次，南海難波走到近鐵大阪難波要 8–10 分',
+        origin: '関西空港', legs: [{ via: '南海ラピート', to: '難波', arrive: '12:13' }],
+        alternatives: [
+          { when: '很順', detail: '11:05 ラピート → 難波 11:43' },
+          { when: '正常', detail: '11:35 ラピート → 難波 12:13', isPlan: true },
+          { when: '偏慢', detail: '12:05 ラピート → 難波 12:45' },
+          { when: '很慢', detail: '12:35 ラピート → 難波 13:14' },
+        ] },
+      { time: '12:30', description: '大阪難波 → 近鐵名古屋 14:49', locationId: 'kix_transfer', isHighlight: true,
+        origin: '大阪難波', legs: [{ via: '近鐵アーバンライナー', to: '近鐵名古屋', arrive: '14:49' }],
+        alternatives: [
+          { when: '很順', detail: '12:00 ひのとり → 名古屋 14:05' },
+          { when: '正常', detail: '12:30 アーバン → 名古屋 14:49', isPlan: true },
+          { when: '偏慢', detail: '13:00 ひのとり → 名古屋 15:05' },
+          { when: '很慢', detail: '13:30 アーバン → 名古屋 15:49' },
+        ] },
       { time: '15:00', description: '名古屋站與 Yian 會合', note: 'Yian：12:55 中部國際機場 → 14:00 μ-SKY → 14:28 名鐵名古屋' },
       { time: '15:10', description: '入住 VIA INN 名古屋新幹線口', locationId: 'via_inn_nagoya' },
       { time: '15:40', description: '車站周邊小逛', note: 'SHIRO 高島屋店、エスカ地下街、名鐵百貨、KITTE 名古屋' },
