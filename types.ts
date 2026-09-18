@@ -10,7 +10,6 @@ export interface LocationDetail {
   carNaviPhone?: string; // For Japanese Car GPS
   mapCode?: string;      // Japanese car navi map code (マップコード)
   imageUrl?: string;
-  transitLegs?: TransitLeg[];
   reservation?: {
     id: string;
     sections: ReservationSection[];
@@ -22,14 +21,14 @@ export interface ReservationSection {
   items: { label: string; value: string; isFullWidth?: boolean }[];
 }
 
+/** 轉乘的其中一段。卡片只顯示頭尾，這些中間段只在詳情彈窗展開。 */
 export interface TransitLeg {
-  type: 'bus' | 'walk' | 'train' | 'wait';
-  transport: string;
-  depTime: string;
-  depStop: string;
-  arrTime: string;
-  arrStop: string;
-  details: string[];
+  /** 搭什麼：中央線快速、小田急、新幹線、步行 10 分… */
+  via: string;
+  /** 這一段到哪 */
+  to: string;
+  /** 抵達時間，原始行程沒寫就留空 */
+  arrive?: string;
 }
 
 /** 詳情彈窗左上角的分類標籤 */
@@ -43,6 +42,10 @@ export interface ItineraryEvent {
   locationId?: string; // Link to LocationDetail
   /** 省略時由 ItineraryView 依關鍵字推斷 */
   category?: EventCategory;
+  /** 轉乘起點；有 legs 時必填 */
+  origin?: string;
+  /** 中間各段轉乘，只在詳情彈窗顯示 */
+  legs?: TransitLeg[];
 }
 
 export interface DaySchedule {

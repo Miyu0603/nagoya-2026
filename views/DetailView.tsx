@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LocationDetail } from '../types';
-import { CopyIcon, BusIcon, WalkIcon, XIcon } from '../components/Icons';
+import { CopyIcon, XIcon } from '../components/Icons';
 
 interface DetailViewProps {
   location: LocationDetail;
@@ -45,19 +45,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ location, onBack }) => {
         </div>
 
         <div className="overflow-y-auto px-5 pt-5 pb-8 no-scrollbar">
-          {/* Standard Description */}
-          {!location.transitLegs && location.description && (
+          {location.description && (
             <p className="text-ios-label leading-relaxed text-[15px] font-medium whitespace-pre-line mb-7">{location.description}</p>
-          )}
-
-          {/* Transit Overview */}
-          {location.transitLegs && location.description && (
-            <div className="mb-6 bg-mag-gold-light border border-mag-gold/20 p-4 rounded-ios">
-              <div className="text-[11px] font-semibold text-mag-gold tracking-wide mb-2">交通概覽</div>
-              <p className="text-ios-label font-medium text-[14px] leading-relaxed whitespace-pre-line">
-                {location.description}
-              </p>
-            </div>
           )}
 
           {/* Reservation Voucher */}
@@ -158,63 +147,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ location, onBack }) => {
             </div>
           )}
 
-          {/* Transit Details */}
-          {location.transitLegs && (
-            <div className="mb-7">
-              <div className="flex items-center gap-2 mb-5">
-                <div className="w-1 h-4 bg-mag-gold rounded-full" />
-                <h3 className="text-[15px] font-semibold text-ios-label">路線細節</h3>
-              </div>
-
-              <div className="space-y-7">
-                {location.transitLegs.map((leg, idx) => (
-                  <div key={idx} className="relative pl-12 last:pb-0">
-                    {location.transitLegs && idx < location.transitLegs.length - 1 && (
-                      <div className="absolute left-[15px] top-8 bottom-[-28px] w-[3px] bg-ios-separator" />
-                    )}
-
-                    <div className={`absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 flex items-center justify-center z-10 shadow-soft ${leg.type === 'bus' ? 'border-ios-blue' : 'border-ios-separator-strong'}`}>
-                      {leg.type === 'bus' && <BusIcon className="w-4 h-4 text-ios-blue" />}
-                      {leg.type === 'walk' && <WalkIcon className="w-4 h-4 text-ios-label-2" />}
-                      {leg.type === 'train' && <div className="text-[10px] font-black">JR</div>}
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center gap-2">
-                        <span className="text-[15px] font-semibold text-ios-label leading-tight">{leg.transport}</span>
-                        <span className="text-[11px] font-mono font-semibold text-white bg-ios-label rounded-md px-2 py-1 shrink-0">
-                          {leg.depTime} → {leg.arrTime}
-                        </span>
-                      </div>
-
-                      <div className="bg-white border border-ios-separator p-3 rounded-ios shadow-soft flex flex-col gap-1.5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full bg-ios-label-3" />
-                          <span className="text-[11px] font-semibold text-ios-label-2 w-10">From</span>
-                          <span className="text-[14px] font-semibold text-ios-label">{leg.depStop}</span>
-                        </div>
-                        <div className="ml-0.5 w-[1px] h-2 border-l border-dashed border-ios-separator-strong" />
-                        <div className="flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full bg-mag-gold" />
-                          <span className="text-[11px] font-semibold text-ios-label-2 w-10">To</span>
-                          <span className="text-[14px] font-semibold text-ios-label">{leg.arrStop}</span>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1 pl-1">
-                        {leg.details.map((d, di) => (
-                          <div key={di} className="text-[12px] text-ios-label-2 font-medium flex items-center gap-2">
-                            <span className="w-1 h-1 bg-mag-gold/40 rounded-full" />
-                            {d}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-2.5 mt-3">

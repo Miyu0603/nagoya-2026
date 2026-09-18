@@ -103,6 +103,41 @@ const TimelineRow: React.FC<{ event: ItineraryEvent; onOpen: () => void }> = ({ 
   </div>
 );
 
+/* ── 轉乘時間軸：沿用主時間軸的虛線格柵語彙 ── */
+const TransitStop: React.FC<{ time?: string; name: string; tone: 'start' | 'mid' | 'end' }> = ({
+  time,
+  name,
+  tone,
+}) => (
+  <div className="flex items-center gap-2.5">
+    <span
+      className={`font-num text-[12px] w-[42px] text-right leading-none ${
+        tone === 'mid' ? 'text-ink-400' : 'text-vermillion font-medium'
+      }`}
+    >
+      {time ?? ''}
+    </span>
+    <span className="w-[9px] flex justify-center">
+      <span
+        className={`w-[9px] h-[9px] rounded-[2px] rotate-45 box-border ${
+          tone === 'mid' ? 'bg-white border border-rule-node' : 'bg-vermillion'
+        }`}
+      />
+    </span>
+    <span className="text-[12.5px] leading-[1.6] text-ink-700">{name}</span>
+  </div>
+);
+
+const TransitLink: React.FC<{ via: string }> = ({ via }) => (
+  <div className="flex items-stretch gap-2.5">
+    <span className="w-[42px]" />
+    <span className="w-[9px] flex justify-center">
+      <span className="w-0 h-6 border-l border-dashed border-rule-rail" />
+    </span>
+    <span className="self-center text-[11px] tracking-[0.02em] text-ink-500">{via}</span>
+  </div>
+);
+
 /* ── 事件詳情：底部彈出的車票式彈窗 ── */
 const EventSheet: React.FC<{
   dayIdx: number;
@@ -196,6 +231,25 @@ const EventSheet: React.FC<{
               <div className="text-[9px] font-medium tracking-[0.24em] text-wood-600 mb-[7px]">メモ ・ 備註</div>
               <div className="bg-white border border-rule-200 border-l-[3px] border-l-vermillion rounded-tk-sm px-[13px] py-3">
                 <p className="text-[12.5px] leading-[1.85] tracking-[0.01em] text-ink-700">{event.note}</p>
+              </div>
+            </div>
+          )}
+
+          {event.legs && event.legs.length > 0 && (
+            <div>
+              <div className="text-[9px] font-medium tracking-[0.24em] text-wood-600 mb-[7px]">乗換 ・ 路線</div>
+              <div className="bg-white border border-rule-200 rounded-tk-sm px-[13px] py-3">
+                <TransitStop time={event.time} name={event.origin ?? ''} tone="start" />
+                {event.legs.map((leg, i) => (
+                  <React.Fragment key={i}>
+                    <TransitLink via={leg.via} />
+                    <TransitStop
+                      time={leg.arrive}
+                      name={leg.to}
+                      tone={i === event.legs!.length - 1 ? 'end' : 'mid'}
+                    />
+                  </React.Fragment>
+                ))}
               </div>
             </div>
           )}
