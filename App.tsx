@@ -152,7 +152,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col overflow-hidden font-sans text-ios-label bg-white selection:bg-mag-gold selection:text-white" style={{ height: 'var(--app-height, 100dvh)' }}>
+    <div className="flex flex-col overflow-hidden font-sans text-ink bg-washi-white" style={{ height: 'var(--app-height, 100dvh)' }}>
       {selectedLocationId && LOCATION_DETAILS[selectedLocationId] && (
         <div className="absolute inset-0 z-50">
           <DetailView location={LOCATION_DETAILS[selectedLocationId]} onBack={() => setSelectedLocationId(null)} />
@@ -162,7 +162,7 @@ const App: React.FC = () => {
       <Header weather={weather} />
 
       <main
-        className="flex-1 min-h-0 px-4 overflow-y-auto overscroll-contain bg-ios-bg"
+        className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-washi-white"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {activeTab === Tab.ITINERARY && (
@@ -172,27 +172,31 @@ const App: React.FC = () => {
             setSelectedDateIdx={setSelectedDateIdx}
           />
         )}
-        {activeTab === Tab.PREP && (
-          <PrepView checkedItems={checkedItems} toggleItem={toggleItem} list={todoList} setList={setTodoList} />
-        )}
-        {activeTab === Tab.PACKING && (
-          <PackingView
-            checkedItems={checkedItems}
-            toggleItem={toggleItem}
-            carryOnList={carryOnList}
-            setCarryOnList={setCarryOnList}
-            checkedBagList={checkedBagList}
-            setCheckedBagList={setCheckedBagList}
-          />
-        )}
-        {activeTab === Tab.SHOPPING && (
-          <ShoppingView items={shoppingList} setItems={setShoppingList} />
-        )}
-        {activeTab === Tab.COST && (
-          <CostView expenses={expenses} isLoading={isExpensesLoading} fetchError={expensesError} onRefresh={fetchExpenses} onAddSuccess={fetchExpenses} />
-        )}
-        {activeTab === Tab.INFO && (
-          <InfoView />
+        {activeTab !== Tab.ITINERARY && (
+          <div className="px-4">
+            {activeTab === Tab.PREP && (
+              <PrepView checkedItems={checkedItems} toggleItem={toggleItem} list={todoList} setList={setTodoList} />
+            )}
+            {activeTab === Tab.PACKING && (
+              <PackingView
+                checkedItems={checkedItems}
+                toggleItem={toggleItem}
+                carryOnList={carryOnList}
+                setCarryOnList={setCarryOnList}
+                checkedBagList={checkedBagList}
+                setCheckedBagList={setCheckedBagList}
+              />
+            )}
+            {activeTab === Tab.SHOPPING && (
+              <ShoppingView items={shoppingList} setItems={setShoppingList} />
+            )}
+            {activeTab === Tab.COST && (
+              <CostView expenses={expenses} isLoading={isExpensesLoading} fetchError={expensesError} onRefresh={fetchExpenses} onAddSuccess={fetchExpenses} />
+            )}
+            {activeTab === Tab.INFO && (
+              <InfoView />
+            )}
+          </div>
         )}
       </main>
 

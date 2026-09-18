@@ -1,167 +1,325 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ITINERARY } from '../constants';
-import { ItineraryEvent } from '../types';
-import { BedIcon, MapIcon } from '../components/Icons';
+import React, { useEffect, useState } from 'react';
+import { ITINERARY, LOCATION_DETAILS } from '../constants';
+import { ItineraryEvent, EventCategory } from '../types';
+import { BedIcon, MapIcon, ClockIcon, PinIcon, TicketIcon } from '../components/Icons';
 
 interface ItineraryViewProps {
+  /** 只有「訂位詳情」會用到——推到舊的全螢幕 DetailView 看訂位卡 */
   onNavigateToDetail: (id: string) => void;
   selectedDateIdx: number;
   setSelectedDateIdx: (idx: number) => void;
 }
 
-const TimelineEvent: React.FC<{
-  event: ItineraryEvent;
-  isLast: boolean;
-  onLocationClick: (id: string) => void;
-}> = ({ event, isLast, onLocationClick }) => {
-  return (
-    <div className="flex items-start relative pb-5">
-      {/* Time column */}
-      <div className="w-[52px] shrink-0 pt-3.5 text-right pr-3.5">
-        <span className="text-[12px] font-mono font-medium text-ios-label-3 leading-none tracking-wider">{event.time}</span>
-      </div>
+const CATEGORY_LABEL: Record<EventCategory, string> = {
+  transit: '交通',
+  food: '美食',
+  event: '活動',
+  spot: '景點',
+  stay: '住宿',
+};
 
-      {/* Card */}
-      <div className="flex-1 min-w-0">
-        <div
-          onClick={() => event.locationId && onLocationClick(event.locationId)}
-          className={`relative bg-ios-card rounded-ios border border-ios-separator shadow-ios-card px-4 py-3.5 transition-transform ${event.locationId ? 'cursor-pointer active:scale-[0.98]' : ''}`}
-        >
-          <p className="text-[15px] font-semibold text-ios-label leading-relaxed tracking-tight">{event.description}</p>
-          {event.note && (
-            <p className="text-[13px] text-ios-label-2 mt-1.5 leading-relaxed tracking-tight">{event.note}</p>
-          )}
-          {event.locationId && (
-            <p className="text-[12px] text-mag-gold font-semibold mt-2.5 tracking-wide">查看詳情 ›</p>
-          )}
-        </div>
+/**
+ * 沒有在 constants.ts 標 category 的事件，用關鍵字推一個。
+ * 規則沿用設計原型的 categorize()，日後把 category 補進資料就會蓋過這裡。
+ */
+function inferCategory(description: string): EventCategory {
+  const d = description;
+  if (/入住|退房|飯店|抵達舞家|放行李|寄行李|取回行李|取行李|行李交櫃檯|宅配/.test(d)) return 'stay';
+  if (/→|線|新幹線|特急|ラピート|Skyliner|起飛|下車|集合|解散|步行|走到|走路|前往|回市中心|出發|離開|回飯店|買 Suica/.test(d)) return 'transit';
+  if (/早餐|午餐|晚餐|Coffee|蓬萊軒|うな富士|ひつまぶし|釜匠|BEEF|鯛焼|どら焼き|モンブラン|栗りん|ロッキンロビン|Cheese|うさぎや|超商/.test(d)) return 'food';
+  if (/盆踊り|ART&LIGHTS|活動|プラネタリア|Sky Garden|夜景|AIR CABIN|整理券|排隊/.test(d)) return 'event';
+  return 'spot';
+}
+
+const categoryOf = (event: ItineraryEvent): EventCategory =>
+  event.category ?? inferCategory(event.description);
+
+/* ── 日期格柵 ── 七天一列排滿，不橫向捲動 ── */
+const DayStrip: React.FC<{ selectedIdx: number; onSelect: (idx: number) => void }> = ({
+  selectedIdx,
+  onSelect,
+}) => (
+  <div className="sticky top-0 z-[5] bg-washi-white/[0.97] backdrop-blur-tk px-[18px] pt-[13px] pb-3">
+    <div className="flex gap-[5px]">
+      {ITINERARY.map((day, idx) => {
+        const active = idx === selectedIdx;
+        return (
+          <button
+            key={day.date}
+            onClick={() => onSelect(idx)}
+            aria-current={active ? 'true' : undefined}
+            className={`flex-1 min-w-0 h-14 rounded-tk border flex flex-col items-center justify-center gap-[5px] transition-colors duration-[240ms] ease-in-out ${
+              active
+                ? 'bg-wood-900 border-wood-900 text-white shadow-tk-chip-on'
+                : 'bg-white border-rule-300 text-ink-500 shadow-tk-chip'
+            }`}
+          >
+            <span className="text-[10px] font-medium tracking-[0.06em] leading-none">{day.weekday[2]}</span>
+            <span className="font-num text-[19px] font-medium leading-none">{day.date.split('/')[1]}</span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+);
+
+/* ── 時間軸單列 ── */
+const TimelineRow: React.FC<{ event: ItineraryEvent; onOpen: () => void }> = ({ event, onOpen }) => (
+  <div className="flex gap-3">
+    {/* 格柵導軌 */}
+    <div className="flex-none w-11 flex flex-col items-center">
+      <span
+        className={`font-num text-[12px] font-medium tracking-[0.01em] pt-[15px] ${
+          event.isHighlight ? 'text-vermillion' : 'text-ink-600'
+        }`}
+      >
+        {event.time}
+      </span>
+      <span className="w-0 h-[9px] border-l border-dashed border-rule-rail" />
+      <span
+        className={`w-[11px] h-[11px] rounded-tk-xs border-[1.5px] box-border rotate-45 ${
+          event.isHighlight ? 'bg-vermillion border-vermillion' : 'bg-white border-rule-node'
+        }`}
+      />
+      <span className="flex-1 w-0 border-l border-dashed border-rule-rail" />
+    </div>
+
+    {/* 卡片 */}
+    <div className="flex-1 min-w-0 pt-2 pb-3.5">
+      <button
+        onClick={onOpen}
+        className="block w-full text-left bg-white border border-rule-200 rounded-tk-md shadow-tk-card px-[15px] py-3.5 transition-shadow duration-[240ms] ease-in-out hover:shadow-tk-card-hover"
+      >
+        <p className="text-[14.5px] font-medium leading-[1.68] tracking-[0.01em] text-ink">
+          {event.description}
+        </p>
+        {event.note && (
+          <p className="text-[12px] leading-[1.78] tracking-[0.01em] text-ink-500 mt-[7px] line-clamp-1">
+            {event.note}
+          </p>
+        )}
+      </button>
+    </div>
+  </div>
+);
+
+/* ── 事件詳情：底部彈出的車票式彈窗 ── */
+const EventSheet: React.FC<{
+  dayIdx: number;
+  eventIdx: number;
+  onClose: () => void;
+  onOpenReservation: (locationId: string) => void;
+}> = ({ dayIdx, eventIdx, onClose, onOpenReservation }) => {
+  const day = ITINERARY[dayIdx];
+  const event = day.events[eventIdx];
+  const location = event.locationId ? LOCATION_DETAILS[event.locationId] : undefined;
+  const [entered, setEntered] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  const metaRow = (icon: React.ReactNode, label: string, value: string) => (
+    <div className="flex items-start gap-2.5">
+      <span className="flex-none mt-px text-bamboo">{icon}</span>
+      <div>
+        <div className="text-[9px] tracking-[0.2em] text-ink-400 mb-[3px]">{label}</div>
+        <div className="text-[12.5px] leading-[1.6] text-ink-700">{value}</div>
       </div>
     </div>
   );
-};
-
-/* ── Sticky Date Chip Strip ── */
-const DateChipStrip: React.FC<{
-  selectedIdx: number;
-  onSelect: (idx: number) => void;
-}> = ({ selectedIdx, onSelect }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = containerRef.current?.querySelector<HTMLElement>(`[data-idx="${selectedIdx}"]`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }, [selectedIdx]);
 
   return (
     <div
-      className="sticky top-0 z-20 -mx-4 px-4 bg-ios-bg/95 backdrop-blur-ios border-b border-ios-separator"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={event.description}
+      className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(43,43,43,0.34)] transition-opacity duration-[260ms] ease-in-out"
+      style={{ opacity: entered ? 1 : 0 }}
     >
-      <div ref={containerRef} className="flex gap-3 overflow-x-auto py-3.5 no-scrollbar">
-        {ITINERARY.map((day, idx) => {
-          const active = idx === selectedIdx;
-          return (
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-h-[92%] overflow-y-auto bg-washi-white shadow-tk-sheet transition-transform duration-300 ease-in-out"
+        style={{
+          borderRadius: '8px 8px 26px 26px',
+          transform: entered ? 'translateY(0)' : 'translateY(16px)',
+        }}
+      >
+        {/* 票根頭 */}
+        <div className="bg-white border-b border-dashed border-rule-500 px-5 pt-4 pb-3.5">
+          <div className="flex items-center justify-between gap-2.5 mb-3">
+            <span className="font-num text-[9px] font-medium tracking-[0.22em] text-wood-500">
+              DAY {dayIdx + 1} ・ {day.date}（{day.weekday[2]}）
+            </span>
+            <span className="font-num text-[9px] tracking-[0.14em] text-ink-400">
+              {pad(eventIdx + 1)} / {pad(day.events.length)}
+            </span>
+          </div>
+          <div className="flex items-start gap-[13px]">
+            <div className="flex-none flex flex-col items-center gap-[5px] min-w-[56px]">
+              <span className="font-num text-[20px] font-medium tracking-[-0.01em] leading-none text-vermillion">
+                {event.time}
+              </span>
+              <span className="text-[9px] font-medium tracking-[0.12em] text-wood-900 border border-rule-400 rounded-tk-xs px-1.5 py-0.5">
+                {CATEGORY_LABEL[categoryOf(event)]}
+              </span>
+            </div>
+            <span className="flex-none w-px self-stretch bg-rule-200" />
+            <h3 className="flex-1 font-noto text-[17px] font-bold leading-[1.56] tracking-[0.02em] text-ink">
+              {event.description}
+            </h3>
+          </div>
+        </div>
+
+        {/* 內容 */}
+        <div
+          className="px-5 pt-4 flex flex-col gap-3.5"
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 22px)' }}
+        >
+          {event.note && (
+            <div>
+              <div className="text-[9px] font-medium tracking-[0.24em] text-wood-600 mb-[7px]">メモ ・ 備註</div>
+              <div className="bg-white border border-rule-200 border-l-[3px] border-l-vermillion rounded-tk-sm px-[13px] py-3">
+                <p className="text-[12.5px] leading-[1.85] tracking-[0.01em] text-ink-700">{event.note}</p>
+              </div>
+            </div>
+          )}
+
+          {location?.description && (
+            <div>
+              <div className="text-[9px] font-medium tracking-[0.24em] text-wood-600 mb-[7px]">案内 ・ 說明</div>
+              <p className="text-[12.5px] leading-[1.9] tracking-[0.01em] text-ink-700 whitespace-pre-line">
+                {location.description}
+              </p>
+            </div>
+          )}
+
+          {location?.openingHours && (
+            <div className="pt-[13px] border-t border-dashed border-rule-400">
+              {metaRow(<ClockIcon className="w-[15px] h-[15px]" />, '時間', location.openingHours)}
+            </div>
+          )}
+
+          {location?.address && metaRow(<PinIcon className="w-[15px] h-[15px]" />, '住所', location.address)}
+
+          <div className="flex gap-[9px] mt-0.5">
+            {location?.mapUrl && (
+              <a
+                href={location.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-h-[46px] flex items-center justify-center gap-[7px] rounded-tk bg-wood-900 text-washi-white text-[13px] font-medium tracking-[0.06em] active:opacity-80"
+              >
+                <MapIcon className="w-[15px] h-[15px]" />
+                開啟地圖
+              </a>
+            )}
+            {location?.reservation && event.locationId && (
+              <button
+                onClick={() => onOpenReservation(event.locationId!)}
+                className="flex-1 min-h-[46px] flex items-center justify-center gap-[7px] rounded-tk bg-white border border-rule-500 text-ink-600 text-[13px] font-medium tracking-[0.06em] active:bg-washi-tint"
+              >
+                <TicketIcon className="w-[15px] h-[15px]" />
+                訂位詳情
+              </button>
+            )}
             <button
-              key={idx}
-              data-idx={idx}
-              onClick={() => onSelect(idx)}
-              className={`shrink-0 flex flex-col items-center justify-center w-[52px] h-[52px] rounded-full transition-all active:scale-95 ${active ? 'bg-mag-gold text-white shadow-soft' : 'bg-ios-fill-3 text-ios-label'}`}
+              onClick={onClose}
+              className="flex-1 min-h-[46px] rounded-tk bg-white border border-rule-500 text-ink-600 text-[13px] font-medium tracking-[0.06em] active:bg-washi-tint"
             >
-              <span className={`text-[10px] font-medium leading-none tracking-wider ${active ? 'text-white/90' : 'text-ios-label-2'}`}>
-                {day.weekday[2]}
-              </span>
-              <span className={`text-[19px] font-light font-mono leading-none mt-1.5 tracking-tight ${active ? 'text-white' : 'text-ios-label'}`}>
-                {day.date.split('/')[1]}
-              </span>
+              關閉
             </button>
-          );
-        })}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export const ItineraryView: React.FC<ItineraryViewProps> = ({ onNavigateToDetail, selectedDateIdx, setSelectedDateIdx }) => {
+export const ItineraryView: React.FC<ItineraryViewProps> = ({
+  onNavigateToDetail,
+  selectedDateIdx,
+  setSelectedDateIdx,
+}) => {
   const currentDay = ITINERARY[selectedDateIdx];
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [openEventIdx, setOpenEventIdx] = useState<number | null>(null);
 
-  useEffect(() => {
-    const mainEl = document.querySelector('main');
-    if (!mainEl) return;
-    const handleScroll = () => setShowScrollTop(mainEl.scrollTop > 300);
-    mainEl.addEventListener('scroll', handleScroll);
-    return () => mainEl.removeEventListener('scroll', handleScroll);
-  }, []);
+  const selectDay = (idx: number) => {
+    setSelectedDateIdx(idx);
+    setOpenEventIdx(null);
+    const main = document.querySelector('main');
+    if (main) main.scrollTop = 0;
+  };
 
   return (
-    <div className="animate-fade-in-soft">
-      <DateChipStrip selectedIdx={selectedDateIdx} onSelect={setSelectedDateIdx} />
+    <>
+      <DayStrip selectedIdx={selectedDateIdx} onSelect={selectDay} />
 
-      <div>
-        {/* Day Header */}
-        <div className="mb-7 relative pt-6">
-          <div className="pr-14">
-            <h2 className="text-ios-title2 font-semibold text-[#1c1c1e]/90 leading-tight tracking-normal">
-              {currentDay.title}
-            </h2>
-            {currentDay.accommodation && (
-              <div className="flex items-center gap-2 mt-3">
-                <BedIcon className="w-4 h-4 text-mag-gold" />
-                {currentDay.accommodationMapUrl ? (
-                  <a
-                    href={currentDay.accommodationMapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[14px] font-medium text-ios-label-2 active:text-mag-gold tracking-tight"
-                  >
-                    {currentDay.accommodation}
-                  </a>
-                ) : (
-                  <span className="text-[14px] font-medium text-ios-label-2 tracking-tight">
-                    {currentDay.accommodation}
-                  </span>
-                )}
-              </div>
+      <div className="px-[18px] pt-2.5 pb-3.5">
+        <div className="flex items-center gap-[9px] mb-[11px]">
+          <span className="flex-none font-num text-[10px] font-medium tracking-[0.14em] text-vermillion">
+            DAY {selectedDateIdx + 1}
+          </span>
+          <span className="flex-none w-px h-[11px] bg-rule-400" />
+          <span className="flex-none font-num text-[10px] tracking-[0.1em] text-ink-400">
+            {currentDay.date}　{currentDay.weekday}
+          </span>
+          <span className="flex-1" />
+          <span className="flex-none flex items-center gap-1.5 max-w-[186px]">
+            <BedIcon className="flex-none w-[15px] h-[15px] text-wood-600" />
+            {currentDay.accommodation && currentDay.accommodationMapUrl ? (
+              <a
+                href={currentDay.accommodationMapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] leading-[1.35] tracking-[0.02em] text-ink-600"
+              >
+                {currentDay.accommodation}
+              </a>
+            ) : (
+              <span className="text-[11px] leading-[1.35] tracking-[0.02em] text-ink-600">
+                {currentDay.accommodation ?? '當日返台・無住宿'}
+              </span>
             )}
-          </div>
-          {currentDay.mapUrl && (
-            <a
-              href={currentDay.mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute right-0 top-6 w-11 h-11 flex items-center justify-center bg-mag-gold text-white rounded-ios shadow-float active:scale-90 transition-transform"
-              aria-label="開啟地圖"
-            >
-              <MapIcon className="w-5 h-5" />
-            </a>
-          )}
+          </span>
         </div>
-
-        {/* Timeline */}
-        <div className="relative">
-          {currentDay.events.map((event, idx) => (
-            <TimelineEvent
-              key={idx}
-              event={event}
-              isLast={idx === currentDay.events.length - 1}
-              onLocationClick={onNavigateToDetail}
-            />
-          ))}
-        </div>
+        <h2 className="font-noto text-[20px] font-bold leading-[1.5] tracking-[0.02em] text-ink">
+          {currentDay.title}
+        </h2>
       </div>
 
-      <button
-        onClick={() => {
-          const mainEl = document.querySelector('main');
-          if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        aria-label="回到頂部"
-        className={`fixed right-5 z-40 w-11 h-11 flex items-center justify-center bg-mag-gold text-white rounded-full shadow-float transition-all duration-300 active:scale-90 ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'}`}
-        style={{ bottom: 'calc(env(safe-area-inset-bottom) + 96px)' }}
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="18 15 12 9 6 15" />
-        </svg>
-      </button>
-    </div>
+      <div className="px-[18px] pb-[30px]">
+        {currentDay.events.map((event, idx) => (
+          <TimelineRow key={idx} event={event} onOpen={() => setOpenEventIdx(idx)} />
+        ))}
+      </div>
+
+      {openEventIdx !== null && (
+        <EventSheet
+          dayIdx={selectedDateIdx}
+          eventIdx={openEventIdx}
+          onClose={() => setOpenEventIdx(null)}
+          onOpenReservation={(id) => {
+            setOpenEventIdx(null);
+            onNavigateToDetail(id);
+          }}
+        />
+      )}
+    </>
   );
 };

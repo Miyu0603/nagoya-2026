@@ -32,12 +32,17 @@ export interface TransitLeg {
   details: string[];
 }
 
+/** 詳情彈窗左上角的分類標籤 */
+export type EventCategory = 'transit' | 'food' | 'event' | 'spot' | 'stay';
+
 export interface ItineraryEvent {
   time: string;
   description: string;
-  isHighlight?: boolean; // For Red accent #C63D0F
+  isHighlight?: boolean; // 朱砂紅：時間與菱形節點
   note?: string;
   locationId?: string; // Link to LocationDetail
+  /** 省略時由 ItineraryView 依關鍵字推斷 */
+  category?: EventCategory;
 }
 
 export interface DaySchedule {

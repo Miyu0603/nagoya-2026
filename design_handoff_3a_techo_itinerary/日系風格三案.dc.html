@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Serif+JP:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&family=DM+Sans:wght@400;500;700&family=Kaisei+Decol:wght@400;500;700&family=Shippori+Mincho:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+body { margin:0; background:#E7E5E0; }
+a { color:inherit; text-decoration:none; }
+a:hover { opacity:0.7; }
+.no-sb::-webkit-scrollbar { display:none; }
+.no-sb { scrollbar-width:none; -ms-overflow-style:none; }
+</style>
+</helmet>
+
+<section style="padding:40px; font-family:'Noto Sans TC','PingFang TC',sans-serif;">
+  <div style="display:flex; align-items:baseline; gap:16px; margin-bottom:8px;">
+    <h2 style="margin:0; font-size:26px; font-weight:700; color:#2B2B2B; letter-spacing:0.02em;">第三輪 — 2c 延伸：手帳・格柵版</h2>
+    <span style="font-size:13px; color:#5A5249;">Earth &amp; Washi 調色盤／格柵時間軸</span>
+  </div>
+  <div style="font-size:13px; color:#5A5249; margin-bottom:28px;">點任一行程卡片，詳情由下方升起彈窗。</div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:36px; align-items:flex-start;">
+    <div id="3a" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#5C4033; color:#F9F8F4; font-size:12px; font-weight:700; border-radius:3px; font-family:'DM Sans',sans-serif;">3a</span>
+        <span style="font-size:15px; font-weight:700; color:#5C4033;">手帳・格柵（延伸自 <a href="#2c" style="color:#A84836;">2c</a>）</span>
+      </div>
+      <div data-screen-label="3a 手帳格柵" style="position:relative; width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#F9F8F4; box-shadow:0 14px 40px rgba(92,64,51,0.16); color:#2B2B2B; font-family:'Noto Sans TC','PingFang TC',sans-serif;">
+
+        <header style="flex:none; padding:19px 20px 15px; background:#FFFFFF; border-bottom:1px solid #E4DBCB;">
+          <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:14px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:9px;">
+                <span style="font-size:10px; font-weight:500; letter-spacing:0.24em; color:#F9F8F4; background:#A84836; border-radius:3px; padding:4px 9px; font-family:'DM Sans',sans-serif;">2026</span>
+              </div>
+              <h1 style="margin:0; font-size:18px; font-weight:700; line-height:1.4; letter-spacing:0.03em; color:#2B2B2B; font-family:'Noto Serif JP','PingFang TC',serif;">秋の名古屋 · 東京 · 橫濱</h1>
+            </div>
+            <div style="flex:none; display:flex; align-items:center; gap:9px; background:#F9F8F4; border:1px solid #EFE9DC; border-radius:6px; padding:6px 12px 6px 9px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8C6239" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.6"></circle><line x1="12" y1="1.6" x2="12" y2="3.8"></line><line x1="12" y1="20.2" x2="12" y2="22.4"></line><line x1="1.6" y1="12" x2="3.8" y2="12"></line><line x1="20.2" y1="12" x2="22.4" y2="12"></line><line x1="4.7" y1="4.7" x2="6.3" y2="6.3"></line><line x1="17.7" y1="17.7" x2="19.3" y2="19.3"></line><line x1="4.7" y1="19.3" x2="6.3" y2="17.7"></line><line x1="17.7" y1="6.3" x2="19.3" y2="4.7"></line></svg>
+              <div style="display:flex; flex-direction:column; align-items:flex-start; line-height:1;">
+                <div style="font-size:16px; font-weight:500; letter-spacing:-0.01em; font-family:'DM Sans',sans-serif;">26°</div>
+                <div style="font-size:9px; color:#6E675E; margin-top:4px; letter-spacing:0.14em;">名古屋</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="no-sb" style="flex:1; min-height:0; overflow-y:auto;">
+          <div style="position:sticky; top:0; z-index:5; background:rgba(249,248,244,0.97); backdrop-filter:blur(12px); padding:13px 18px 12px;">
+            <div class="no-sb" style="display:flex; gap:5px;">
+              <sc-for list="{{ daysG }}" as="d" hint-placeholder-count="7">
+                <button onClick="{{ d.select }}" style="flex:1; min-width:0; height:56px; border:1px solid {{ d.bd }}; border-radius:6px; cursor:pointer; background:{{ d.bg }}; color:{{ d.fg }}; box-shadow:{{ d.shadow }}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; transition:background 240ms ease-in-out, color 240ms ease-in-out;">
+                  <span style="font-size:10px; font-weight:500; letter-spacing:0.06em;">{{ d.wd }}</span>
+                  <span style="font-size:19px; font-weight:500; line-height:1; font-family:'DM Sans',sans-serif;">{{ d.dd }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:10px 18px 14px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:9px; margin-bottom:11px;">
+                <span style="flex:none; font-size:10px; font-weight:500; letter-spacing:0.14em; color:#A84836; font-family:'DM Sans',sans-serif;">DAY {{ dayNoG }}</span>
+                <span style="flex:none; width:1px; height:11px; background:#E0D8C8;"></span>
+                <span style="flex:none; font-size:10px; letter-spacing:0.1em; color:#6E675E; font-family:'DM Sans',sans-serif;">{{ dateG }}　{{ wdG }}</span>
+                <span style="flex:1;"></span>
+                <span style="flex:none; display:flex; align-items:center; gap:6px; max-width:186px;">
+                  <svg style="flex:none;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8C6239" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+                  <span style="font-size:11px; color:#4A443C; letter-spacing:0.02em; line-height:1.35;">{{ accomG }}</span>
+                </span>
+              </div>
+              <h2 style="margin:0; font-size:20px; font-weight:700; line-height:1.5; letter-spacing:0.02em; font-family:'Noto Serif JP','PingFang TC',serif;">{{ titleG }}</h2>
+            </div>
+          </div>
+
+          <div style="padding:0 18px 30px;">
+            <sc-for list="{{ eventsG }}" as="ev" hint-placeholder-count="8">
+              <div style="display:flex; gap:12px;">
+                <!-- 格柵時間軸 -->
+                <div style="flex:none; width:44px; display:flex; flex-direction:column; align-items:center;">
+                  <span style="font-size:12px; font-weight:500; letter-spacing:0.01em; color:{{ ev.timeColor }}; font-family:'DM Sans',sans-serif; padding-top:15px;">{{ ev.time }}</span>
+                  <span style="width:0; height:9px; border-left:1px dashed #D3C7B2;"></span>
+                  <span style="width:11px; height:11px; border-radius:3px; background:{{ ev.nodeBg }}; border:1.5px solid {{ ev.nodeBd }}; box-sizing:border-box; transform:rotate(45deg);"></span>
+                  <span style="flex:1; width:0; border-left:1px dashed #D3C7B2;"></span>
+                </div>
+
+                <div style="flex:1; min-width:0; padding:8px 0 14px;">
+                  <button onClick="{{ ev.openModal }}" style="display:block; width:100%; text-align:left; font-family:inherit; color:inherit; background:#FFFFFF; border:1px solid #EFE9DC; border-radius:7px; box-shadow:0 2px 8px rgba(43,43,43,0.05); padding:14px 15px; cursor:pointer; transition:box-shadow 240ms ease-in-out;" style-hover="box-shadow:0 4px 14px rgba(43,43,43,0.1);">
+                    <p style="margin:0; font-size:14.5px; font-weight:500; line-height:1.68; letter-spacing:0.01em;">{{ ev.description }}</p>
+                    <sc-if value="{{ ev.note }}" hint-placeholder-val="{{ true }}">
+                      <p style="margin:7px 0 0; font-size:12px; line-height:1.78; color:#5A5249; letter-spacing:0.01em; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">{{ ev.note }}</p>
+                    </sc-if>
+                  </button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+
+        <!-- 行程卡片彈窗 -->
+        <div onClick="{{ closeModalG }}" style="position:absolute; inset:0; z-index:40; display:{{ modalDisplayG }}; align-items:flex-end; justify-content:center; background:rgba(43,43,43,0.34); opacity:{{ modalOpacityG }}; transition:opacity 260ms ease-in-out;">
+          <div onClick="{{ stopSheetClickG }}" style="width:100%; max-height:92%; overflow-y:auto; background:#F9F8F4; border-radius:8px 8px 26px 26px; box-shadow:0 -6px 28px rgba(43,43,43,0.18); transform:{{ modalLiftG }}; transition:transform 300ms ease-in-out;" class="no-sb">
+
+            <!-- 券面表頭 -->
+            <div style="background:#FFFFFF; border-bottom:1px dashed #DCD3C3; padding:16px 20px 14px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+                <span style="font-size:9px; font-weight:500; letter-spacing:0.22em; color:#6E5A46; font-family:'DM Sans',sans-serif;">{{ modalDayG }}</span>
+                <span style="font-size:9px; letter-spacing:0.14em; color:#6E675E; font-family:'DM Sans',sans-serif;">{{ modalSeqG }}</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:13px;">
+                <div style="flex:none; display:flex; flex-direction:column; align-items:center; gap:5px; min-width:56px;">
+                  <span style="font-size:20px; font-weight:500; letter-spacing:-0.01em; color:#A84836; font-family:'DM Sans',sans-serif; line-height:1;">{{ modalTimeG }}</span>
+                  <span style="font-size:9px; font-weight:500; letter-spacing:0.12em; color:#5C4033; border:1px solid #E0D8C8; border-radius:3px; padding:2px 6px;">{{ modalCatG }}</span>
+                </div>
+                <span style="flex:none; width:1px; align-self:stretch; background:#EFE9DC;"></span>
+                <h3 style="flex:1; margin:0; font-size:17px; font-weight:700; line-height:1.56; letter-spacing:0.02em; font-family:'Noto Serif JP','PingFang TC',serif;">{{ modalTitleG }}</h3>
+              </div>
+            </div>
+
+            <div style="padding:16px 20px 22px; display:flex; flex-direction:column; gap:14px;">
+              <sc-if value="{{ modalNoteG }}" hint-placeholder-val="{{ true }}">
+                <div>
+                  <div style="font-size:9px; font-weight:500; letter-spacing:0.24em; color:#8C6239; margin-bottom:7px;">メモ ・ 備註</div>
+                  <div style="background:#FFFFFF; border:1px solid #EFE9DC; border-left:3px solid #A84836; border-radius:4px; padding:12px 13px;">
+                    <p style="margin:0; font-size:12.5px; line-height:1.85; color:#3E3A33; letter-spacing:0.01em;">{{ modalNoteG }}</p>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ modalDescG }}" hint-placeholder-val="{{ true }}">
+                <div>
+                  <div style="font-size:9px; font-weight:500; letter-spacing:0.24em; color:#8C6239; margin-bottom:7px;">案内 ・ 說明</div>
+                  <p style="margin:0; font-size:12.5px; line-height:1.9; color:#3E3A33; letter-spacing:0.01em;">{{ modalDescG }}</p>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ modalHoursG }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; align-items:flex-start; gap:10px; padding-top:13px; border-top:1px dashed #E0D8C8;">
+                  <svg style="flex:none; margin-top:1px;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A8B7B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7.5 12 12 15.5 14"></polyline></svg>
+                  <div>
+                    <div style="font-size:9px; letter-spacing:0.2em; color:#6E675E; margin-bottom:3px;">時間</div>
+                    <div style="font-size:12.5px; color:#3E3A33; line-height:1.6;">{{ modalHoursG }}</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ modalAddrG }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; align-items:flex-start; gap:10px;">
+                  <svg style="flex:none; margin-top:1px;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A8B7B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+                  <div>
+                    <div style="font-size:9px; letter-spacing:0.2em; color:#6E675E; margin-bottom:3px;">住所</div>
+                    <div style="font-size:12.5px; color:#3E3A33; line-height:1.6;">{{ modalAddrG }}</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="display:flex; gap:9px; margin-top:2px;">
+                <sc-if value="{{ modalMapG }}" hint-placeholder-val="{{ true }}">
+                  <a href="{{ modalMapG }}" target="_blank" rel="noopener noreferrer" style="flex:1; min-height:46px; display:flex; align-items:center; justify-content:center; gap:7px; border-radius:6px; background:#5C4033; color:#F9F8F4; font-size:13px; font-weight:500; letter-spacing:0.06em; font-family:inherit;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                    開啟地圖
+                  </a>
+                </sc-if>
+                <button onClick="{{ closeModalG }}" style="flex:1; min-height:46px; border:1px solid #DCD3C3; border-radius:6px; background:#FFFFFF; color:#4A443C; font-size:13px; font-weight:500; letter-spacing:0.06em; cursor:pointer; font-family:inherit;">關閉</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav style="flex:none; background:#FFFFFF; border-top:1px solid #E4DBCB; padding:7px 6px 13px;">
+          <div style="display:flex;">
+            <sc-for list="{{ tabsG }}" as="t" hint-placeholder-count="6">
+              <button onClick="{{ t.select }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:6px 0; border:none; background:none; cursor:pointer; color:{{ t.color }};">
+                <span style="width:38px; height:26px; border-radius:4px; background:{{ t.pill }}; display:flex; align-items:center; justify-content:center; transition:background 240ms ease-in-out;">{{ t.icon }}</span>
+                <span style="font-size:10.5px; font-weight:500; letter-spacing:0.04em;">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div style="width:340px; background:#FFFFFF; border:1px solid #EFE9DC; border-radius:8px; padding:22px; box-shadow:0 2px 10px rgba(43,43,43,0.05);">
+      <div style="font-size:13px; font-weight:700; color:#5C4033; letter-spacing:0.06em; margin-bottom:16px;">Earth &amp; Washi Palette</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#F2ECE1; border:1px solid #E4DBCB;"></span><span style="font-size:12px; color:#2B2B2B;">鳥之子色 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#F2ECE1</span> 底</span></div>
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#F9F8F4; border:1px solid #E4DBCB;"></span><span style="font-size:12px; color:#2B2B2B;">和紙白 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#F9F8F4</span> 頁面／底板</span></div>
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#FFFFFF; border:1px solid #E4DBCB;"></span><span style="font-size:12px; color:#2B2B2B;">純白棉紙 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#FFFFFF</span> 卡片</span></div>
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#5C4033;"></span><span style="font-size:12px; color:#2B2B2B;">町家木棕 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#5C4033</span> 主色</span></div>
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#8C6239;"></span><span style="font-size:12px; color:#2B2B2B;">淺木色 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#8C6239</span> 次要</span></div>
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#A84836;"></span><span style="font-size:12px; color:#2B2B2B;">朱砂紅 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#A84836</span> 御朱印／重點</span></div>
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#7A8B7B;"></span><span style="font-size:12px; color:#2B2B2B;">竹青綠 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#7A8B7B</span> 完成／自然</span></div>
+        <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px; height:34px; border-radius:8px; background:#2B2B2B;"></span><span style="font-size:12px; color:#2B2B2B;">墨黑 <span style="color:#6E675E; font-family:'DM Sans',sans-serif;">#2B2B2B</span> 長文字</span></div>
+      </div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px dashed #E0D8C8; font-size:11.5px; line-height:1.85; color:#5A5249;">
+        字體：標題 Noto Serif JP／正文 Noto Sans TC／時間與數字 DM Sans。<br>
+        次要文字用 <span style="font-family:'DM Sans',sans-serif;">#5A5249</span> 取代規格中的 #8E8E93，以維持 4.5:1 可讀對比。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:40px; font-family:'Zen Kaku Gothic New','PingFang TC','Microsoft JhengHei',sans-serif;">
+  <div style="display:flex; align-items:baseline; gap:16px; margin-bottom:8px;">
+    <h2 style="margin:0; font-size:26px; font-weight:700; color:#1F1B17; letter-spacing:0.02em;">第二輪 — 指定三種風格</h2>
+    <span style="font-size:13px; color:#5E5648;">同一份行程資料</span>
+  </div>
+  <div style="font-size:13px; color:#5E5648; margin-bottom:28px;"><a href="#2a" style="color:#B33B2B; font-weight:600;">2a</a> 喫茶昭和復古 ／ <a href="#2b" style="color:#B33B2B; font-weight:600;">2b</a> 金鯱と深宵祭典 ／ <a href="#2c" style="color:#B33B2B; font-weight:600;">2c</a> 白川町家和紙簡約</div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:36px; align-items:flex-start;">
+
+    <!-- ══════════ 2a 喫茶昭和復古 ══════════ -->
+    <div id="2a" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#B33B2B; color:#FFF3D8; font-size:12px; font-weight:700; border-radius:3px; font-family:'JetBrains Mono',monospace;">2a</span>
+        <span style="font-size:15px; font-weight:700; color:#3A2A1E; font-family:'Kaisei Decol',serif;">喫茶昭和復古</span>
+        <span style="font-size:12px; color:#5E5648;">奶油底＋焦棕朱紅・菜單式雙框與導引點線</span>
+      </div>
+      <div data-screen-label="2a 喫茶昭和復古" style="width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#F0E3C6; box-shadow:0 14px 40px rgba(58,42,30,0.22); color:#3A2A1E; font-family:'Kaisei Decol','Zen Old Mincho','PingFang TC',serif;">
+
+        <header style="flex:none; background:#3A2A1E; color:#FFF3D8; padding:16px 20px 13px; border-bottom:3px double #C3A985;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <div>
+              <div style="display:inline-block; border:1px solid #C3A985; padding:2px 8px; font-size:10px; letter-spacing:0.3em; color:#E8C98F; margin-bottom:9px;">純喫茶 1926</div>
+              <h1 style="margin:0; font-size:20px; font-weight:700; line-height:1.3; letter-spacing:0.04em;">秋の名古屋と最高イルマ</h1>
+            </div>
+            <div style="flex:none; text-align:center; border:1px solid #C3A985; border-radius:50%; width:52px; height:52px; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;">
+              <div style="font-size:16px; font-weight:700; color:#FFF3D8;">26°</div>
+              <div style="font-size:8px; color:#E8C98F; margin-top:4px; letter-spacing:0.1em;">名古屋</div>
+            </div>
+          </div>
+        </header>
+
+        <main class="no-sb" style="flex:1; min-height:0; overflow-y:auto;">
+          <div style="position:sticky; top:0; z-index:5; background:#F0E3C6; padding:13px 18px 12px; border-bottom:1px solid #C9B58C;">
+            <div class="no-sb" style="display:flex; gap:8px; overflow-x:auto;">
+              <sc-for list="{{ daysD }}" as="d" hint-placeholder-count="7">
+                <button onClick="{{ d.select }}" style="flex-shrink:0; width:50px; padding:7px 0 6px; border:1.5px solid {{ d.bd }}; border-radius:6px; cursor:pointer; background:{{ d.bg }}; color:{{ d.fg }}; display:flex; flex-direction:column; align-items:center; gap:4px; font-family:'Kaisei Decol',serif;">
+                  <span style="font-size:10px; letter-spacing:0.08em;">{{ d.wd }}</span>
+                  <span style="font-size:19px; font-weight:700; line-height:1;">{{ d.dd }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:22px 20px 16px;">
+            <div style="background:#FFF9EA; border:1.5px solid #3A2A1E; box-shadow:0 0 0 3px #FFF9EA, 0 0 0 4.5px #3A2A1E; border-radius:3px; padding:18px 18px 16px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <span style="font-size:10px; letter-spacing:0.24em; color:#9E2E20;">第 {{ dayNoD }} 日</span>
+                <span style="flex:1; height:1px; background:#D8C6A0;"></span>
+                <span style="font-size:11px; letter-spacing:0.14em; color:#5C4630; font-family:'JetBrains Mono',monospace;">{{ dateD }}</span>
+              </div>
+              <h2 style="margin:0; font-size:21px; font-weight:700; line-height:1.44; letter-spacing:0.02em;">{{ titleD }}</h2>
+              <div style="display:flex; align-items:center; gap:9px; margin-top:15px; padding-top:12px; border-top:1px dashed #C9B58C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9E2E20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+                <span style="font-size:13px; color:#4A3423; letter-spacing:0.02em;">{{ accomD }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:0 20px 26px; display:flex; flex-direction:column; gap:11px;">
+            <sc-for list="{{ eventsD }}" as="ev" hint-placeholder-count="8">
+              <div style="background:{{ ev.cardBg }}; border:1.5px solid {{ ev.cardBd }}; border-radius:4px; padding:12px 14px;">
+                <div style="display:flex; align-items:center; gap:9px; margin-bottom:8px;">
+                  <span style="font-size:14px; font-weight:700; letter-spacing:0.04em; color:{{ ev.timeColor }}; font-family:'JetBrains Mono',monospace;">{{ ev.time }}</span>
+                  <span style="flex:1; height:0; border-bottom:1.5px dotted #C9B58C;"></span>
+                  <sc-if value="{{ ev.isHighlight }}" hint-placeholder-val="{{ true }}">
+                    <span style="font-size:9px; letter-spacing:0.18em; color:#FFF3D8; background:#9E2E20; padding:2px 6px;">重要</span>
+                  </sc-if>
+                </div>
+                <p style="margin:0; font-size:15px; font-weight:500; line-height:1.6; letter-spacing:0.02em;">{{ ev.description }}</p>
+                <sc-if value="{{ ev.note }}" hint-placeholder-val="{{ true }}">
+                  <p style="margin:7px 0 0; font-size:12px; line-height:1.72; color:#5C4630; font-family:'Zen Kaku Gothic New','PingFang TC',sans-serif;">{{ ev.note }}</p>
+                </sc-if>
+                <sc-if value="{{ ev.locationId }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top:9px; font-size:11px; letter-spacing:0.16em; color:#9E2E20;">・くわしく</div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+
+        <nav style="flex:none; background:#3A2A1E; border-top:3px double #C3A985; padding:8px 6px 14px;">
+          <div style="display:flex;">
+            <sc-for list="{{ tabsD }}" as="t" hint-placeholder-count="6">
+              <button onClick="{{ t.select }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:6px 0; border:none; background:none; cursor:pointer; color:{{ t.color }};">
+                <span style="width:36px; height:26px; border-radius:4px; background:{{ t.pill }}; display:flex; align-items:center; justify-content:center;">{{ t.icon }}</span>
+                <span style="font-size:11px; font-weight:500; letter-spacing:0.1em;">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ══════════ 2b 金鯱と深宵祭典 ══════════ -->
+    <div id="2b" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#0C1018; color:#D9AE4B; font-size:12px; font-weight:700; border-radius:3px; font-family:'JetBrains Mono',monospace;">2b</span>
+        <span style="font-size:15px; font-weight:700; color:#1F1B17; font-family:'Noto Serif JP',serif;">金鯱と深宵祭典</span>
+        <span style="font-size:12px; color:#5E5648;">深夜藍＋金箔・提燈光點與明朝重體</span>
+      </div>
+      <div data-screen-label="2b 金鯱と深宵祭典" style="width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#0C1018; box-shadow:0 14px 40px rgba(12,16,24,0.42); color:#F2E9D6; font-family:'Noto Serif JP','Zen Old Mincho','PingFang TC',serif;">
+
+        <header style="flex:none; padding:17px 20px 14px; background:#0C1018; border-bottom:1px solid rgba(217,174,75,0.34);">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="flex:none; width:42px; height:42px; background:linear-gradient(145deg,#E6C877,#B78A2E); color:#0C1018; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:900; border-radius:3px; box-shadow:0 0 16px rgba(217,174,75,0.34);">鯱</div>
+              <div>
+                <div style="font-size:9px; letter-spacing:0.34em; color:#D9AE4B; margin-bottom:5px;">深宵祭典 ・ 2026 秋</div>
+                <h1 style="margin:0; font-size:18px; font-weight:900; line-height:1.3; letter-spacing:0.04em;">秋の名古屋と最高イルマ</h1>
+              </div>
+            </div>
+            <div style="flex:none; text-align:right; line-height:1;">
+              <div style="font-size:18px; font-weight:700; color:#F0D188;">26°</div>
+              <div style="font-size:9px; color:#B8BFCC; margin-top:5px; letter-spacing:0.12em;">名古屋</div>
+            </div>
+          </div>
+        </header>
+
+        <main class="no-sb" style="flex:1; min-height:0; overflow-y:auto; background:#0C1018;">
+          <div style="position:sticky; top:0; z-index:5; background:#0C1018; padding:13px 18px; border-bottom:1px solid rgba(217,174,75,0.18);">
+            <div class="no-sb" style="display:flex; gap:9px; overflow-x:auto;">
+              <sc-for list="{{ daysE }}" as="d" hint-placeholder-count="7">
+                <button onClick="{{ d.select }}" style="flex-shrink:0; width:50px; height:50px; border:1px solid {{ d.bd }}; border-radius:50%; cursor:pointer; background:{{ d.bg }}; color:{{ d.fg }}; box-shadow:{{ d.glow }}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-family:'Noto Serif JP',serif;">
+                  <span style="font-size:9px; letter-spacing:0.1em;">{{ d.wd }}</span>
+                  <span style="font-size:18px; font-weight:700; line-height:1;">{{ d.dd }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:24px 20px 18px;">
+            <div style="height:1px; background:linear-gradient(90deg,#D9AE4B,rgba(217,174,75,0));"></div>
+            <div style="display:flex; align-items:center; gap:10px; margin:14px 0 11px;">
+              <span style="font-size:10px; letter-spacing:0.26em; color:#D9AE4B;">第 {{ dayNoE }} 日</span>
+              <span style="font-size:10px; letter-spacing:0.16em; color:#9AA4B4; font-family:'JetBrains Mono',monospace;">{{ dateE }}　{{ wdE }}</span>
+            </div>
+            <h2 style="margin:0; font-size:23px; font-weight:900; line-height:1.42; letter-spacing:0.03em; color:#F7EFDD;">{{ titleE }}</h2>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:16px; border:1px solid rgba(217,174,75,0.3); border-radius:2px; padding:10px 13px;">
+              <span style="font-size:9px; letter-spacing:0.2em; color:#D9AE4B;">宿</span>
+              <span style="width:1px; height:14px; background:rgba(217,174,75,0.34);"></span>
+              <span style="font-size:13px; color:#DED5C2; letter-spacing:0.02em;">{{ accomE }}</span>
+            </div>
+          </div>
+
+          <div style="padding:0 20px 28px;">
+            <sc-for list="{{ eventsE }}" as="ev" hint-placeholder-count="8">
+              <div style="display:flex; gap:11px;">
+                <div style="width:44px; flex:none; text-align:right; padding-top:14px;">
+                  <span style="font-size:13px; font-weight:700; letter-spacing:0.02em; color:{{ ev.timeColor }}; font-family:'JetBrains Mono',monospace;">{{ ev.time }}</span>
+                </div>
+                <div style="flex:none; width:14px; display:flex; flex-direction:column; align-items:center;">
+                  <span style="width:1px; height:14px; background:rgba(217,174,75,0.26);"></span>
+                  <span style="width:11px; height:11px; border-radius:50%; background:{{ ev.dotBg }}; border:1.5px solid {{ ev.dotRing }}; box-sizing:border-box;"></span>
+                  <span style="flex:1; width:1px; background:rgba(217,174,75,0.26);"></span>
+                </div>
+                <div style="flex:1; min-width:0; padding:9px 0 14px;">
+                  <div style="background:{{ ev.cardBg }}; border:1px solid {{ ev.cardBd }}; border-radius:2px; padding:12px 14px;">
+                    <p style="margin:0; font-size:14.5px; font-weight:700; line-height:1.58; letter-spacing:0.02em; color:#F7EFDD;">{{ ev.description }}</p>
+                    <sc-if value="{{ ev.note }}" hint-placeholder-val="{{ true }}">
+                      <p style="margin:7px 0 0; font-size:12px; line-height:1.7; color:#AEB6C4; font-family:'Zen Kaku Gothic New','PingFang TC',sans-serif;">{{ ev.note }}</p>
+                    </sc-if>
+                    <sc-if value="{{ ev.locationId }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:10px; font-size:10px; letter-spacing:0.2em; color:#D9AE4B;">詳細 ——</div>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+
+        <nav style="flex:none; background:#0C1018; border-top:1px solid rgba(217,174,75,0.34);">
+          <div style="display:flex;">
+            <sc-for list="{{ tabsE }}" as="t" hint-placeholder-count="6">
+              <button onClick="{{ t.select }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:9px 0 14px; border:none; background:none; cursor:pointer; color:{{ t.color }};">
+                <span style="width:4px; height:4px; border-radius:50%; background:{{ t.dot }};"></span>
+                <span style="display:block;">{{ t.icon }}</span>
+                <span style="font-size:10.5px; font-weight:700; letter-spacing:0.1em;">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ══════════ 2c 白川町家和紙簡約 ══════════ -->
+    <div id="2c" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#2A2622; color:#FAF7F0; font-size:12px; font-weight:700; border-radius:3px; font-family:'JetBrains Mono',monospace;">2c</span>
+        <span style="font-size:15px; font-weight:700; color:#2A2622; font-family:'Shippori Mincho',serif;">白川町家和紙簡約</span>
+        <span style="font-size:12px; color:#5E5648;">木色與墨・極簡細線、無卡片、大量留白</span>
+      </div>
+      <div data-screen-label="2c 白川町家和紙簡約" style="width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#FAF7F0; box-shadow:0 14px 40px rgba(42,38,34,0.14); color:#2A2622; font-family:'Shippori Mincho','Zen Old Mincho','PingFang TC',serif;">
+
+        <header style="flex:none; padding:24px 26px 18px; background:#FAF7F0;">
+          <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:14px;">
+            <div>
+              <div style="font-size:9px; letter-spacing:0.4em; color:#6F5B42; margin-bottom:11px;">2026 AUTUMN</div>
+              <h1 style="margin:0; font-size:20px; font-weight:400; line-height:1.42; letter-spacing:0.08em;">秋の名古屋と<br>最高イルマ</h1>
+            </div>
+            <div style="flex:none; text-align:right; line-height:1;">
+              <div style="font-size:22px; font-weight:400; letter-spacing:0.02em;">26°</div>
+              <div style="font-size:9px; color:#5A544B; margin-top:6px; letter-spacing:0.2em;">名古屋</div>
+            </div>
+          </div>
+        </header>
+
+        <main class="no-sb" style="flex:1; min-height:0; overflow-y:auto;">
+          <div style="position:sticky; top:0; z-index:5; background:#FAF7F0; padding:0 26px; border-bottom:1px solid #E2DCCF;">
+            <div class="no-sb" style="display:flex; gap:0; overflow-x:auto;">
+              <sc-for list="{{ daysF }}" as="d" hint-placeholder-count="7">
+                <button onClick="{{ d.select }}" style="flex-shrink:0; width:44px; padding:13px 0 11px; border:none; background:none; cursor:pointer; color:{{ d.fg }}; display:flex; flex-direction:column; align-items:center; gap:7px; font-family:'Shippori Mincho',serif;">
+                  <span style="font-size:9px; letter-spacing:0.18em;">{{ d.wd }}</span>
+                  <span style="font-size:18px; font-weight:{{ d.weight }}; line-height:1; letter-spacing:0.02em;">{{ d.dd }}</span>
+                  <span style="width:18px; height:1px; background:{{ d.rule }};"></span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:34px 26px 4px;">
+            <div style="font-size:9px; letter-spacing:0.36em; color:#6F5B42; margin-bottom:14px;">DAY {{ dayNoF }} ・ {{ dateF }}</div>
+            <h2 style="margin:0; font-size:25px; font-weight:400; line-height:1.56; letter-spacing:0.06em;">{{ titleF }}</h2>
+            <div style="margin-top:22px; padding-top:13px; border-top:1px solid #E2DCCF; display:flex; gap:14px; align-items:baseline;">
+              <span style="flex:none; font-size:9px; letter-spacing:0.28em; color:#6F5B42;">宿</span>
+              <span style="font-size:13px; color:#4A453D; letter-spacing:0.04em;">{{ accomF }}</span>
+            </div>
+          </div>
+
+          <div style="padding:16px 26px 32px;">
+            <sc-for list="{{ eventsF }}" as="ev" hint-placeholder-count="8">
+              <div style="display:flex; gap:18px; padding:19px 0; border-bottom:1px solid #EDE8DD;">
+                <div style="width:40px; flex:none;">
+                  <div style="font-size:12px; font-weight:400; letter-spacing:0.06em; color:{{ ev.timeColor }};">{{ ev.time }}</div>
+                  <sc-if value="{{ ev.isHighlight }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:8px; width:14px; height:2px; background:#8A7355;"></div>
+                  </sc-if>
+                </div>
+                <div style="flex:1; min-width:0;">
+                  <p style="margin:0; font-size:15px; font-weight:400; line-height:1.78; letter-spacing:0.04em;">{{ ev.description }}</p>
+                  <sc-if value="{{ ev.note }}" hint-placeholder-val="{{ true }}">
+                    <p style="margin:9px 0 0; font-size:12px; line-height:1.82; color:#5A544B; letter-spacing:0.02em; font-family:'Zen Kaku Gothic New','PingFang TC',sans-serif;">{{ ev.note }}</p>
+                  </sc-if>
+                  <sc-if value="{{ ev.locationId }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:11px; font-size:10px; letter-spacing:0.24em; color:#6F5B42;">詳細</div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+
+        <nav style="flex:none; background:#FAF7F0; border-top:1px solid #E2DCCF;">
+          <div style="display:flex;">
+            <sc-for list="{{ tabsF }}" as="t" hint-placeholder-count="6">
+              <button onClick="{{ t.select }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; padding:15px 0 17px; border:none; background:none; cursor:pointer; color:{{ t.color }};">
+                <span style="font-size:12.5px; font-weight:{{ t.weight }}; letter-spacing:0.12em;">{{ t.label }}</span>
+                <span style="width:16px; height:1px; background:{{ t.rule }};"></span>
+              </button>
+            </sc-for>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="padding:40px; font-family:'Zen Kaku Gothic New','PingFang TC','Microsoft JhengHei',sans-serif;">
+  <div style="display:flex; align-items:baseline; gap:16px; margin-bottom:8px;">
+    <h2 style="margin:0; font-size:26px; font-weight:700; color:#1F1B17; letter-spacing:0.02em;">第一輪 — 日系風格三案</h2>
+    <span style="font-size:13px; color:#6B6257;">同一份 9/23 行程資料，三種日本設計語彙</span>
+  </div>
+  <div style="font-size:13px; color:#6B6257; margin-bottom:28px;">可點日期圓／方塊切換天數。<a href="#1a" style="color:#B23A2E; font-weight:600;">1a</a> 和紙・墨 ／ <a href="#1b" style="color:#B23A2E; font-weight:600;">1b</a> 駅サイン ／ <a href="#1c" style="color:#B23A2E; font-weight:600;">1c</a> 雑貨かわいい</div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:36px; align-items:flex-start;">
+
+    <!-- ══════════ 1a 和紙・墨 ══════════ -->
+    <div id="1a" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#1F1B17; color:#F4F1EA; font-size:12px; font-weight:700; border-radius:3px; font-family:'JetBrains Mono',monospace;">1a</span>
+        <span style="font-size:15px; font-weight:700; color:#1F1B17; font-family:'Zen Old Mincho',serif;">和紙・墨</span>
+        <span style="font-size:12px; color:#6B6257;">明朝體／朱印／無卡片、以界線分段</span>
+      </div>
+      <div data-screen-label="1a 和紙・墨" style="width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#F4F1EA; box-shadow:0 14px 40px rgba(31,27,23,0.18); color:#1F1B17; font-family:'Zen Old Mincho','Noto Serif JP','PingFang TC',serif;">
+
+        <header style="flex:none; padding:20px 22px 14px; background:#F4F1EA; border-bottom:1px solid #D9D1BF; background-image:radial-gradient(#E4DCCA 0.6px, transparent 0.6px); background-size:9px 9px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <span style="font-size:10px; letter-spacing:0.34em; color:#5E5648; font-family:'JetBrains Mono',monospace;">2026.09.23</span>
+                <span style="width:22px; height:1px; background:#C9BFA9;"></span>
+                <span style="font-size:10px; letter-spacing:0.26em; color:#5E5648;">WED</span>
+              </div>
+              <h1 style="margin:0; font-size:23px; font-weight:700; line-height:1.28; letter-spacing:0.02em;">秋の名古屋と<br>最高イルマ</h1>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+              <div style="width:40px; height:40px; background:#B23A2E; color:#F4F1EA; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; border-radius:2px;">秋</div>
+              <div style="text-align:center; line-height:1;">
+                <div style="font-size:17px; font-weight:500; font-family:'JetBrains Mono',monospace;">26°</div>
+                <div style="font-size:9px; color:#5E5648; margin-top:4px; letter-spacing:0.14em;">名古屋</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="no-sb" style="flex:1; min-height:0; overflow-y:auto;">
+          <div style="position:sticky; top:0; z-index:5; background:#F4F1EA; border-bottom:1px solid #D9D1BF;">
+            <div class="no-sb" style="display:flex; gap:0; overflow-x:auto;">
+              <sc-for list="{{ daysA }}" as="d" hint-placeholder-count="7">
+                <button onClick="{{ d.select }}" style="flex-shrink:0; width:54px; padding:11px 0 9px; border:none; border-right:1px solid #E3DCCC; cursor:pointer; background:{{ d.bg }}; color:{{ d.fg }}; font-family:'Zen Old Mincho',serif; display:flex; flex-direction:column; align-items:center; gap:5px;">
+                  <span style="font-size:9px; letter-spacing:0.16em; opacity:0.72;">{{ d.wd }}</span>
+                  <span style="font-size:20px; font-weight:500; line-height:1; font-family:'JetBrains Mono',monospace;">{{ d.dd }}</span>
+                  <span style="width:14px; height:2px; background:{{ d.rule }};"></span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:26px 22px 8px;">
+            <div style="font-size:10px; letter-spacing:0.3em; color:#B23A2E; margin-bottom:10px;">第 {{ dayNoA }} 日 ／ DAY {{ dayNoA }}</div>
+            <h2 style="margin:0; font-size:26px; font-weight:700; line-height:1.38; letter-spacing:0.01em;">{{ titleA }}</h2>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid #1F1B17;">
+              <span style="flex:none; font-size:9px; letter-spacing:0.2em; color:#F4F1EA; background:#6B6257; padding:3px 6px;">宿</span>
+              <span style="font-size:14px; color:#4A4238; letter-spacing:0.02em;">{{ accomA }}</span>
+            </div>
+            <div style="height:1px; background:#D9D1BF; margin-top:3px;"></div>
+          </div>
+
+          <div style="padding:14px 22px 24px;">
+            <sc-for list="{{ eventsA }}" as="ev" hint-placeholder-count="8">
+              <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid #E3DCCC;">
+                <div style="width:44px; flex:none; text-align:right;">
+                  <div style="font-size:14px; font-weight:500; font-family:'JetBrains Mono',monospace; color:{{ ev.timeColor }}; letter-spacing:0.01em;">{{ ev.time }}</div>
+                  <sc-if value="{{ ev.isHighlight }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:6px; margin-left:auto; width:6px; height:6px; background:#B23A2E; border-radius:50%;"></div>
+                  </sc-if>
+                </div>
+                <div style="flex:1; min-width:0;">
+                  <p style="margin:0; font-size:16px; font-weight:500; line-height:1.55; letter-spacing:0.01em;">{{ ev.description }}</p>
+                  <sc-if value="{{ ev.note }}" hint-placeholder-val="{{ true }}">
+                    <p style="margin:7px 0 0; font-size:12.5px; line-height:1.72; color:#5E5648; font-family:'Zen Kaku Gothic New','PingFang TC',sans-serif;">{{ ev.note }}</p>
+                  </sc-if>
+                  <sc-if value="{{ ev.locationId }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:9px; font-size:11px; letter-spacing:0.16em; color:#B23A2E;">詳細をみる ——</div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+
+        <nav style="flex:none; background:#F4F1EA; border-top:1px solid #1F1B17;">
+          <div style="display:flex;">
+            <sc-for list="{{ tabsA }}" as="t" hint-placeholder-count="6">
+              <button onClick="{{ t.select }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:11px 0 14px; border:none; background:none; cursor:pointer; color:{{ t.color }};">
+                <span style="width:5px; height:5px; border-radius:50%; background:{{ t.dot }};"></span>
+                <span style="font-size:13px; font-weight:{{ t.weight }}; letter-spacing:0.1em;">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ══════════ 1b 駅サイン ══════════ -->
+    <div id="1b" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#0B2233; color:#fff; font-size:12px; font-weight:700; border-radius:3px; font-family:'JetBrains Mono',monospace;">1b</span>
+        <span style="font-size:15px; font-weight:700; color:#0B2233;">駅サイン</span>
+        <span style="font-size:12px; color:#6B6257;">時刻表／路線圖・深藍板面＋等寬數字</span>
+      </div>
+      <div data-screen-label="1b 駅サイン" style="width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#0B2233; box-shadow:0 14px 40px rgba(11,34,51,0.34); color:#fff; font-family:'Zen Kaku Gothic New','PingFang TC',sans-serif;">
+
+        <header style="flex:none; padding:16px 18px 14px; background:#0B2233; border-bottom:3px solid #EE7B00;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <div style="display:flex; align-items:center; gap:11px;">
+              <div style="flex:none; width:38px; height:38px; border:2.5px solid #EE7B00; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:900; font-family:'JetBrains Mono',monospace; color:#EE7B00;">23</div>
+              <div>
+                <div style="font-size:9px; letter-spacing:0.3em; color:#8FA8BD; margin-bottom:4px; font-family:'JetBrains Mono',monospace;">NAGOYA · TOKYO · YOKOHAMA</div>
+                <h1 style="margin:0; font-size:17px; font-weight:900; letter-spacing:0.03em;">秋の名古屋と最高イルマ</h1>
+              </div>
+            </div>
+            <div style="flex:none; text-align:right; line-height:1;">
+              <div style="font-size:19px; font-weight:700; font-family:'JetBrains Mono',monospace; color:#FFD23F;">26°</div>
+              <div style="font-size:9px; color:#8FA8BD; margin-top:5px; letter-spacing:0.12em;">名古屋</div>
+            </div>
+          </div>
+        </header>
+
+        <main class="no-sb" style="flex:1; min-height:0; overflow-y:auto; background:#0E293C;">
+          <div style="position:sticky; top:0; z-index:5; background:#0B2233; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div class="no-sb" style="display:flex; gap:7px; overflow-x:auto;">
+              <sc-for list="{{ daysB }}" as="d" hint-placeholder-count="7">
+                <button onClick="{{ d.select }}" style="flex-shrink:0; width:50px; padding:8px 0 7px; border:1px solid {{ d.border }}; border-radius:3px; cursor:pointer; background:{{ d.bg }}; color:{{ d.fg }}; display:flex; flex-direction:column; align-items:center; gap:4px; font-family:'JetBrains Mono',monospace;">
+                  <span style="font-size:9px; letter-spacing:0.08em; opacity:0.8;">{{ d.wdEn }}</span>
+                  <span style="font-size:19px; font-weight:700; line-height:1;">{{ d.dd }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:20px 18px 16px;">
+            <div style="display:flex; align-items:center; gap:9px; margin-bottom:11px;">
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.14em; background:#EE7B00; color:#0B2233; padding:3px 7px; border-radius:2px;">DAY {{ dayNoB }}</span>
+              <span style="font-size:10px; letter-spacing:0.18em; color:#8FA8BD; font-family:'JetBrains Mono',monospace;">{{ dateB }}　{{ wdB }}</span>
+            </div>
+            <h2 style="margin:0; font-size:22px; font-weight:900; line-height:1.36; letter-spacing:0.02em;">{{ titleB }}</h2>
+            <div style="display:flex; align-items:center; gap:9px; margin-top:14px; background:#0B2233; border-left:3px solid #00A0AF; padding:9px 12px; border-radius:2px;">
+              <span style="font-size:9px; font-weight:700; letter-spacing:0.16em; color:#00A0AF;">HOTEL</span>
+              <span style="font-size:13px; color:#DDE7EE; font-weight:500;">{{ accomB }}</span>
+            </div>
+          </div>
+
+          <div style="padding:0 18px 26px;">
+            <sc-for list="{{ eventsB }}" as="ev" hint-placeholder-count="8">
+              <div style="display:flex; gap:12px;">
+                <div style="width:46px; flex:none; text-align:right; padding-top:13px;">
+                  <span style="font-size:13px; font-weight:700; font-family:'JetBrains Mono',monospace; color:{{ ev.timeColor }};">{{ ev.time }}</span>
+                </div>
+                <div style="flex:none; width:16px; display:flex; flex-direction:column; align-items:center;">
+                  <span style="width:2px; height:13px; background:rgba(255,255,255,0.16);"></span>
+                  <span style="width:{{ ev.dotSize }}; height:{{ ev.dotSize }}; border-radius:50%; background:{{ ev.dotBg }}; border:2px solid {{ ev.dotRing }}; box-sizing:border-box;"></span>
+                  <span style="flex:1; width:2px; background:rgba(255,255,255,0.16);"></span>
+                </div>
+                <div style="flex:1; min-width:0; padding:9px 0 14px;">
+                  <div style="background:{{ ev.cardBg }}; border-left:3px solid {{ ev.cardBar }}; border-radius:2px; padding:11px 13px;">
+                    <p style="margin:0; font-size:14.5px; font-weight:700; line-height:1.5; letter-spacing:0.01em; color:#fff;">{{ ev.description }}</p>
+                    <sc-if value="{{ ev.note }}" hint-placeholder-val="{{ true }}">
+                      <p style="margin:6px 0 0; font-size:12px; line-height:1.62; color:#92AABC;">{{ ev.note }}</p>
+                    </sc-if>
+                    <sc-if value="{{ ev.locationId }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:9px; font-size:10px; font-weight:700; letter-spacing:0.14em; color:#EE7B00; font-family:'JetBrains Mono',monospace;">DETAIL ▸</div>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+
+        <nav style="flex:none; background:#0B2233; border-top:1px solid rgba(255,255,255,0.12);">
+          <div style="display:flex;">
+            <sc-for list="{{ tabsB }}" as="t" hint-placeholder-count="6">
+              <button onClick="{{ t.select }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:10px 0 14px; border:none; border-top:3px solid {{ t.bar }}; background:none; cursor:pointer; color:{{ t.color }}; margin-top:-1px;">
+                <span style="font-size:10px; font-weight:700; letter-spacing:0.06em; font-family:'JetBrains Mono',monospace; opacity:0.75;">{{ t.en }}</span>
+                <span style="font-size:11.5px; font-weight:700; letter-spacing:0.08em;">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ══════════ 1c 雑貨かわいい ══════════ -->
+    <div id="1c" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:#A65563; color:#fff; font-size:12px; font-weight:700; border-radius:8px; font-family:'JetBrains Mono',monospace;">1c</span>
+        <span style="font-size:15px; font-weight:700; color:#5A4A42; font-family:'Zen Maru Gothic',sans-serif;">雑貨かわいい</span>
+        <span style="font-size:12px; color:#6B6257;">丸ゴシック／櫻粉＋抹茶・圓潤留白</span>
+      </div>
+      <div data-screen-label="1c 雑貨かわいい" style="width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#FDF6F0; box-shadow:0 14px 40px rgba(90,74,66,0.16); color:#5A4A42; font-family:'Zen Maru Gothic','PingFang TC',sans-serif;">
+
+          <header style="flex:none; padding:18px 20px 15px; background:#fff; border-bottom:2px dotted #EFDCD2;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <div>
+                <div style="display:inline-flex; align-items:center; gap:6px; background:#FBEAE6; padding:4px 10px; border-radius:999px; margin-bottom:8px;">
+                  <span style="width:6px; height:6px; border-radius:50%; background:#D98A94;"></span>
+                  <span style="font-size:10px; font-weight:700; letter-spacing:0.14em; color:#9C4653;">2026.09</span>
+                </div>
+                <h1 style="margin:0; font-size:19px; font-weight:700; line-height:1.34; letter-spacing:0.02em;">秋の名古屋と<br>最高イルマ</h1>
+              </div>
+              <div style="flex:none; display:flex; flex-direction:column; align-items:center; gap:4px; background:#FFF6E4; padding:10px 13px; border-radius:20px;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8A93F" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5" fill="#FFD98A" stroke="#E8A93F"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line><line x1="5" y1="5" x2="6.5" y2="6.5"></line><line x1="17.5" y1="17.5" x2="19" y2="19"></line><line x1="5" y1="19" x2="6.5" y2="17.5"></line><line x1="17.5" y1="6.5" x2="19" y2="5"></line></svg>
+                <div style="font-size:14px; font-weight:700; line-height:1;">26°</div>
+                <div style="font-size:9px; color:#7B6A60; letter-spacing:0.1em;">名古屋</div>
+              </div>
+            </div>
+          </header>
+
+          <main class="no-sb" style="flex:1; min-height:0; overflow-y:auto;">
+            <div style="position:sticky; top:0; z-index:5; background:rgba(253,246,240,0.96); backdrop-filter:blur(12px); padding:14px 20px 12px;">
+              <div class="no-sb" style="display:flex; gap:10px; overflow-x:auto;">
+                <sc-for list="{{ daysC }}" as="d" hint-placeholder-count="7">
+                  <button onClick="{{ d.select }}" style="flex-shrink:0; width:50px; height:58px; border:none; border-radius:18px; cursor:pointer; background:{{ d.bg }}; color:{{ d.fg }}; box-shadow:{{ d.shadow }}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font-family:'Zen Maru Gothic',sans-serif;">
+                    <span style="font-size:10px; font-weight:700; opacity:0.8;">{{ d.wd }}</span>
+                    <span style="font-size:20px; font-weight:700; line-height:1;">{{ d.dd }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding:10px 20px 18px;">
+              <div style="background:linear-gradient(135deg,#FBEAE6 0%,#F4EEE2 100%); border-radius:22px; padding:18px 18px 16px;">
+                <div style="font-size:10px; font-weight:700; letter-spacing:0.18em; color:#9C4653; margin-bottom:8px;">DAY {{ dayNoC }} ・ {{ dateC }}（{{ wdShortC }}）</div>
+                <h2 style="margin:0; font-size:21px; font-weight:700; line-height:1.42;">{{ titleC }}</h2>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:14px; background:#fff; border-radius:14px; padding:9px 12px;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C07680" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+                  <span style="font-size:12.5px; font-weight:700; color:#6B5A50;">{{ accomC }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="padding:0 20px 28px; display:flex; flex-direction:column; gap:14px;">
+              <sc-for list="{{ eventsC }}" as="ev" hint-placeholder-count="8">
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                  <div style="flex:none; width:52px; padding-top:16px; display:flex; flex-direction:column; align-items:center; gap:7px;">
+                    <span style="font-size:12px; font-weight:700; color:{{ ev.timeColor }}; letter-spacing:0.02em;">{{ ev.time }}</span>
+                    <span style="width:9px; height:9px; border-radius:50%; background:{{ ev.dotBg }}; box-shadow:0 0 0 4px {{ ev.dotRing }};"></span>
+                  </div>
+                  <div style="flex:1; min-width:0; background:{{ ev.cardBg }}; border-radius:20px; padding:15px 17px; box-shadow:0 2px 10px rgba(90,74,66,0.06);">
+                    <p style="margin:0; font-size:14.5px; font-weight:700; line-height:1.62;">{{ ev.description }}</p>
+                    <sc-if value="{{ ev.note }}" hint-placeholder-val="{{ true }}">
+                      <p style="margin:8px 0 0; font-size:12px; line-height:1.7; color:#6B5A50; background:#FAF4EE; border-radius:12px; padding:8px 10px;">{{ ev.note }}</p>
+                    </sc-if>
+                    <sc-if value="{{ ev.locationId }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:11px; display:inline-flex; align-items:center; gap:5px; background:#FBEAE6; color:#9C4653; font-size:11px; font-weight:700; padding:5px 11px; border-radius:999px;">くわしく ›</div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </main>
+
+          <nav style="flex:none; background:#fff; border-top:2px dotted #EFDCD2; padding:8px 8px 14px;">
+            <div style="display:flex;">
+              <sc-for list="{{ tabsC }}" as="t" hint-placeholder-count="6">
+                <button onClick="{{ t.select }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:7px 0; border:none; background:none; cursor:pointer;">
+                  <span style="width:38px; height:26px; border-radius:999px; background:{{ t.pill }}; display:flex; align-items:center; justify-content:center; color:{{ t.color }};">{{ t.icon }}</span>
+                  <span style="font-size:10px; font-weight:700; letter-spacing:0.04em; color:{{ t.color }};">{{ t.label }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </nav>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1340,&quot;height&quot;:3180}}">
+const ITINERARY = [
+  { date:'9/23', weekday:'星期三', wdEn:'WED', title:'抵達名古屋・名古屋城夜祭', accommodation:'VIA INN 名古屋新幹線口', events:[
+    { time:'06:40', description:'IT210 桃園 T1 起飛', locationId:'flight_out', isHighlight:true },
+    { time:'10:35', description:'抵達關西機場 T1' },
+    { time:'10:35', description:'入境、提行李', note:'先辦好 Visit Japan Web。KIX 尖峰抓 45 分鐘' },
+    { time:'11:25', description:'走到南海關西空港站', note:'約 5 分' },
+    { time:'11:35', description:'南海ラピート → 難波 12:13', locationId:'kix_transfer', isHighlight:true, note:'落地看狀況選班次，南海難波走到近鐵大阪難波要 8–10 分' },
+    { time:'12:30', description:'近鐵アーバンライナー → 近鐵名古屋 14:49', isHighlight:true },
+    { time:'15:00', description:'名古屋站與 Yian 會合', note:'Yian：12:55 中部國際機場 → 14:00 μ-SKY → 14:28 名鐵名古屋' },
+    { time:'15:10', description:'入住 VIA INN 名古屋新幹線口', locationId:'via_inn_nagoya' },
+    { time:'15:40', description:'車站周邊小逛', note:'SHIRO 高島屋店、エスカ地下街、名鐵百貨、KITTE 名古屋' },
+    { time:'16:40', description:'名古屋 →東山線→ 栄 →名城線→ 名古屋城站', note:'約 15 分' },
+    { time:'17:30', description:'名古屋城 大盆踊り大会', locationId:'nagoya_castle', isHighlight:true, note:'17:30–19:10，18:00 平針木遣り音頭，需入城料' },
+    { time:'19:20', description:'AICHI NAGOYA ART&LIGHTS', locationId:'art_lights', note:'免費免預約，18:30–19:30 最擠，這時間去剛好錯開' },
+    { time:'20:10', description:'回名古屋站附近晚餐' },
+  ]},
+  { date:'9/24', weekday:'星期四', wdEn:'THU', title:'高山老街・白川鄉一日遊', accommodation:'VIA INN 名古屋新幹線口', events:[
+    { time:'07:55', description:'出發，飯店走到銀時計約 5 分' },
+    { time:'08:10', description:'集合：JR 名古屋站西口（太閤通口）銀時計前', locationId:'kkday_tour', isHighlight:true },
+    { time:'11:00', description:'高山老街', note:'含午餐，約 2.5 小時' },
+    { time:'14:30', description:'白川鄉合掌村', note:'約 2 小時' },
+    { time:'18:30', description:'名古屋站解散' },
+    { time:'18:40', description:'回飯店放東西' },
+    { time:'19:00', description:'うな富士 名古屋駅太閤口店 晚餐', locationId:'unafuji', isHighlight:true, note:'已訂位。巴士若明顯延遲先通知店家' },
+    { time:'20:00', description:'オアシス21 & MIRAI TOWER 外觀夜景', locationId:'oasis21', note:'不上塔。水の宇宙船 21:00 關，燈光到 23:00' },
+  ]},
+  { date:'9/25', weekday:'星期五', wdEn:'FRI', title:'清洲城・大須寺社巡禮・栄', accommodation:'VIA INN 名古屋新幹線口', events:[
+    { time:'08:25', description:'Bucyo Coffee 早餐', locationId:'bucyo_coffee', note:'08:25–09:10' },
+    { time:'09:10', description:'前往清洲城', note:'JR 到清洲駅約 7–10 分＋徒步 15–17 分，抓 30 分；或 Uber' },
+    { time:'10:00', description:'清洲城', locationId:'kiyosu_castle', note:'10:00–11:30' },
+    { time:'11:30', description:'回市中心', note:'清洲→名古屋→鶴舞線大須観音，抓 40 分' },
+    { time:'12:15', description:'大須観音', note:'12:15–12:35' },
+    { time:'12:40', description:'七寺', note:'徒步 3–5 分，12:40–12:55' },
+    { time:'13:00', description:'ロッキンロビン 大須店 午餐', locationId:'rockin_robin', note:'13:00–13:50' },
+    { time:'13:55', description:'万松寺', note:'13:55–14:15' },
+    { time:'14:20', description:'和栗モンブラン専門店 栗りん', locationId:'kurin', isHighlight:true, note:'店內位子中午前多半滿了，走外帶窗口比較實際' },
+    { time:'14:50', description:'三輪神社', note:'14:50–15:05' },
+    { time:'15:15', description:'若宮八幡社', note:'徒步 12 分，15:15–15:35' },
+    { time:'15:45', description:'栄商圈、PARCO', locationId:'sakae_parco', note:'Tower Records 東館 6F、SABON 東館 B1F' },
+    { time:'18:30', description:'栄晚餐' },
+    { time:'21:20', description:'回飯店，今晚先把行李整理好', note:'明天一早要排蓬萊軒' },
+  ]},
+  { date:'9/26', weekday:'星期六', wdEn:'SAT', title:'熱田神宮・蓬萊軒 → 東京', accommodation:'舞家（国立）', events:[
+    { time:'08:00', description:'退房' },
+    { time:'08:05', description:'名古屋站寄行李＋超商買早餐', note:'週六＋亞運置物櫃會滿，早點卡位。早餐帶上車吃' },
+    { time:'08:30', description:'名鉄名古屋 → 神宮前 08:36', note:'約 6 分，班次密集' },
+    { time:'08:50', description:'蓬萊軒本店 開始排隊', locationId:'horaiken_honten', isHighlight:true, note:'從神宮前走過來實際約 10–12 分。排隊派一人即可' },
+    { time:'10:00', description:'領整理券、指定入座時段', note:'發券約 10:00–10:30，忙的日子會提前' },
+    { time:'10:20', description:'熱田神宮 參拜', locationId:'atsuta_jingu', note:'不要走太深，留一人可隨時折返' },
+    { time:'11:30', description:'ひつまぶし', note:'實際時間依整理券而定，抓 1 小時' },
+    { time:'12:35', description:'神宮前 → 名鉄名古屋', note:'約 9 分＋走路，抓 20 分' },
+    { time:'13:00', description:'取回行李，緩衝時間', note:'離發車還有 70 分鐘' },
+    { time:'14:12', description:'名古屋 → 新幹線 → 品川 15:43', locationId:'shinkansen_tokyo', isHighlight:true },
+    { time:'15:50', description:'品川站寄行李、買 Suica', note:'放到 9/27 傍晚，確認是 3 天制不是當日制' },
+    { time:'16:10', description:'品川 →山手線→ 新宿 →中央線快速→ 国立 17:10' },
+    { time:'17:20', description:'抵達舞家', locationId:'maiya_kunitachi' },
+  ]},
+  { date:'9/27', weekday:'星期日', wdEn:'SUN', title:'豪德寺・下北澤・蒲田聲優活動', accommodation:'阪急 OURS INN（大井町）', events:[
+    { time:'10:30', description:'離開舞家', note:'要趕 11:30 到豪德寺就得 10:30 出門，路上 50 分鐘' },
+    { time:'10:40', description:'国立 →中央線快速→ 新宿 11:10 →小田急→ 豪徳寺 11:30' },
+    { time:'11:35', description:'豪德寺（招財貓）', locationId:'gotokuji', note:'11:35–12:10' },
+    { time:'12:15', description:'豪徳寺 →小田急→ 下北沢 12:20', note:'2 站' },
+    { time:'12:30', description:'下北澤 午餐＋逛街', note:'12:30–15:00' },
+    { time:'15:00', description:'下北沢 →井の頭線→ 渋谷 →山手線→ 品川 15:30' },
+    { time:'15:35', description:'品川取行李' },
+    { time:'15:55', description:'阪急 OURS INN 入住、放行李', locationId:'ours_inn_hankyu', note:'順路先丟行李，晚上不用再繞回品川' },
+    { time:'16:15', description:'大井町 →京浜東北線→ 蒲田 16:23 → 步行 10 分' },
+    { time:'17:00', description:'入間聲優活動', locationId:'kogakuin_arena', isHighlight:true, note:'先確認開場時間' },
+    { time:'19:30', description:'鳴門鯛焼本舗 蒲田駅前店', locationId:'naruto_taiyaki', note:'活動結束後順路，時間依散場而定' },
+  ]},
+  { date:'9/28', weekday:'星期一', wdEn:'MON', title:'橫濱一日', accommodation:'阪急 OURS INN（大井町）', events:[
+    { time:'08:05', description:'大井町 →京浜東北線→ 横浜 08:28 →ブルーライン→ 新羽 08:53' },
+    { time:'09:00', description:'西方寺', locationId:'saihoji', note:'彼岸花季末段，09:00–09:25' },
+    { time:'09:33', description:'新羽 →ブルーライン→ 桜木町 09:55' },
+    { time:'10:00', description:'伊勢山皇大神宮 → 成田山橫濱別院 → 掃部山公園', locationId:'iseyama', note:'同一個丘上，互距 3–5 分，10:00–10:45' },
+    { time:'10:50', description:'步行下坡至関内', note:'約 18 分' },
+    { time:'11:10', description:'CENTER BEEF 関内 午餐', locationId:'center_beef', note:'11:10–12:00，現場排隊' },
+    { time:'12:05', description:'走路往中華街', note:'約 12 分' },
+    { time:'12:15', description:'橫濱中華街 拍照', locationId:'chinatown', note:'12:15–12:35，不久留' },
+    { time:'12:40', description:'走到元町・中華街駅 →みなとみらい線→ 新高島 12:52' },
+    { time:'13:10', description:'プラネタリア YOKOHAMA', locationId:'planetaria', isHighlight:true, note:'暫定場次，五天前開放後再確認' },
+    { time:'13:55', description:'新高島 → 横浜 13:58', note:'1 站，或走路 9 分' },
+    { time:'14:05', description:'橫濱站購物', locationId:'yokohama_station', note:'85 分鐘，東西口都排得進去' },
+    { time:'15:35', description:'横浜 →みなとみらい線→ みなとみらい 15:39' },
+    { time:'15:45', description:'MARK IS みなとみらい', locationId:'mark_is', note:'15:45–16:15' },
+    { time:'16:20', description:'World Porters：JUMP SHOP、Snoopy Town', locationId:'world_porters', note:'16:20–16:50' },
+    { time:'17:00', description:'Sky Garden 69F', locationId:'sky_garden', isHighlight:true, note:'日落約 17:28，這個時間不要動' },
+    { time:'18:15', description:'コレットマーレ(.st)、CIAL 桜木町(Pensta)', note:'18:15–18:40' },
+    { time:'18:45', description:'YOKOHAMA AIR CABIN', locationId:'air_cabin', note:'A 往復後回桜木町吃飯 / B 單程過去逛古著並在當地吃' },
+    { time:'20:30', description:'桜木町 →京浜東北線直達→ 大井町 21:05' },
+  ]},
+  { date:'9/29', weekday:'星期二', wdEn:'TUE', title:'清澄白河散策・上野 → 成田', accommodation:'', events:[
+    { time:'08:40', description:'退房，行李交櫃檯', locationId:'klook_baggage', isHighlight:true, note:'Klook 宅配收件截止 9:00，不要拖' },
+    { time:'08:50', description:'大井町 →京浜東北線→ 浜松町 →大江戸線（大門）→ 清澄白河 09:25' },
+    { time:'09:30', description:'清澄庭園', locationId:'kiyosumi_garden', note:'09:30–10:25' },
+    { time:'10:35', description:'江戶土產屋高橋', locationId:'takahashi', note:'10:35–11:00' },
+    { time:'11:00', description:'深川釜匠 午餐', locationId:'fukagawa_kamasho', isHighlight:true, note:'週二只做午市到 15:00，開店即到避開排隊' },
+    { time:'12:10', description:'深川江戶資料館', locationId:'fukagawa_edo_museum', note:'12:10–13:00' },
+    { time:'13:05', description:'Cheese no Koe', locationId:'cheese_no_koe', note:'13:05–13:30' },
+    { time:'13:40', description:'Babaghuri 清澄本店', locationId:'babaghuri', note:'13:40–14:05，走回清澄白河站約 5 分' },
+    { time:'14:15', description:'清澄白河 →半蔵門線→ 三越前 →銀座線→ 上野広小路 14:35' },
+    { time:'14:40', description:'うさぎや 買どら焼き', locationId:'usagiya', note:'順路先買，避免下午賣完' },
+    { time:'15:00', description:'上野東照宮 → 花園稲荷神社 → 不忍池', locationId:'ueno_toshogu', note:'15:00–15:55' },
+    { time:'16:05', description:'湯島天満宮', locationId:'yushima_tenmangu', note:'16:05–16:30' },
+    { time:'16:40', description:'阿美橫町、晚餐' },
+    { time:'17:40', description:'Skyliner 京成上野發', isHighlight:true },
+    { time:'18:27', description:'「成田空港」站下車', locationId:'flight_home', note:'終點站＝第 1 航廈。不要在空港第2ビル下車' },
+    { time:'18:35', description:'4F 南翼領回行李 → 報到、託運', note:'長榮關櫃約起飛前 60 分（19:40）' },
+    { time:'20:40', description:'BR195 起飛 → 桃園 23:20', isHighlight:true },
+  ]},
+];
+
+const TABS = [
+  { id:'Itinerary', label:'行程', en:'PLAN' },
+  { id:'Prep', label:'準備', en:'PREP' },
+  { id:'Cost', label:'記帳', en:'COST' },
+  { id:'Packing', label:'行李', en:'BAG' },
+  { id:'Shopping', label:'購物', en:'SHOP' },
+  { id:'Info', label:'資訊', en:'INFO' },
+];
+
+// 1c tab icons — 取自 components/TabBar.tsx 的 TAB_META SVG 路徑，改成圓潤筆畫
+const svg = (children, w) => React.createElement('svg', { viewBox:'0 0 24 24', width:21, height:21,
+  fill:'none', stroke:'currentColor', strokeWidth:w, strokeLinecap:'round', strokeLinejoin:'round' }, children);
+const ROUND_ICONS = {
+  Itinerary: (a) => svg([
+    React.createElement('rect', { x:3, y:5, width:18, height:16, rx:5, key:'r' }),
+    React.createElement('path', { d:'M3 10h18', key:'p' }),
+    React.createElement('path', { d:'M8 3v4M16 3v4', key:'p2' }),
+    a ? React.createElement('circle', { cx:12, cy:15, r:1.6, fill:'currentColor', stroke:'none', key:'c' }) : null,
+  ], a ? 2.4 : 1.9),
+  Prep: (a) => svg([
+    React.createElement('rect', { x:4, y:4, width:16, height:17, rx:5, key:'r' }),
+    React.createElement('path', { d:'M8.5 12.5l2.5 2.5 4.5-4.5', key:'p' }),
+  ], a ? 2.4 : 1.9),
+  Cost: (a) => svg([
+    React.createElement('circle', { cx:12, cy:12, r:9, key:'c' }),
+    React.createElement('text', { x:12, y:16.5, textAnchor:'middle', fontSize:13, fontWeight:'bold',
+      stroke:'none', fill:'currentColor', fontFamily:'inherit', key:'t' }, '¥'),
+  ], a ? 2.4 : 1.9),
+  Packing: (a) => svg([
+    React.createElement('rect', { x:4, y:7, width:16, height:14, rx:5, key:'r' }),
+    React.createElement('path', { d:'M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2', key:'p' }),
+    React.createElement('path', { d:'M4 13h16', key:'p2' }),
+  ], a ? 2.4 : 1.9),
+  Shopping: (a) => svg([
+    React.createElement('circle', { cx:9, cy:20.5, r:1.3, key:'c1' }),
+    React.createElement('circle', { cx:19, cy:20.5, r:1.3, key:'c2' }),
+    React.createElement('path', { d:'M2.5 3h3l2.6 11.4a2 2 0 0 0 2 1.6h9.2a2 2 0 0 0 2-1.6L22.5 7H7', key:'p' }),
+  ], a ? 2.4 : 1.9),
+  Info: (a) => svg([
+    React.createElement('circle', { cx:12, cy:12, r:9, key:'c' }),
+    React.createElement('path', { d:'M12 11v5M12 8v.01', key:'p' }),
+  ], a ? 2.4 : 1.9),
+};
+
+// 共用線稿圖示 — 路徑取自 components/TabBar.tsx 的 TAB_META
+const lineSvg = (children, w, size) => React.createElement('svg', { viewBox:'0 0 24 24', width:size, height:size,
+  fill:'none', stroke:'currentColor', strokeWidth:w, strokeLinecap:'round', strokeLinejoin:'round' }, children);
+const LINE_ICONS = {
+  Itinerary: (a, s) => lineSvg([
+    React.createElement('rect', { x:3, y:5, width:18, height:16, rx:3, key:'r' }),
+    React.createElement('path', { d:'M3 10h18', key:'p' }),
+    React.createElement('path', { d:'M8 3v4M16 3v4', key:'p2' }),
+    a ? React.createElement('circle', { cx:12, cy:15, r:1.4, fill:'currentColor', stroke:'none', key:'c' }) : null,
+  ], a ? 2.1 : 1.7, s),
+  Prep: (a, s) => lineSvg([
+    React.createElement('rect', { x:4, y:4, width:16, height:17, rx:3, key:'r' }),
+    React.createElement('path', { d:'M8.5 12.5l2.5 2.5 4.5-4.5', key:'p' }),
+  ], a ? 2.1 : 1.7, s),
+  Cost: (a, s) => lineSvg([
+    React.createElement('circle', { cx:12, cy:12, r:9, key:'c' }),
+    React.createElement('text', { x:12, y:16.5, textAnchor:'middle', fontSize:13, fontWeight:'bold',
+      stroke:'none', fill:'currentColor', fontFamily:'inherit', key:'t' }, '¥'),
+  ], a ? 2.1 : 1.7, s),
+  Packing: (a, s) => lineSvg([
+    React.createElement('rect', { x:4, y:7, width:16, height:14, rx:3, key:'r' }),
+    React.createElement('path', { d:'M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2', key:'p' }),
+    React.createElement('path', { d:'M4 13h16', key:'p2' }),
+  ], a ? 2.1 : 1.7, s),
+  Shopping: (a, s) => lineSvg([
+    React.createElement('circle', { cx:9, cy:21, r:1, key:'c1' }),
+    React.createElement('circle', { cx:20, cy:21, r:1, key:'c2' }),
+    React.createElement('path', { d:'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6', key:'p' }),
+  ], a ? 2.1 : 1.7, s),
+  Info: (a, s) => lineSvg([
+    React.createElement('circle', { cx:12, cy:12, r:9, key:'c' }),
+    React.createElement('path', { d:'M12 11v5M12 8v.01', key:'p' }),
+  ], a ? 2.1 : 1.7, s),
+};
+
+// 景點詳情（取自 constants.ts 的 LOCATION_DETAILS，僅收錄本檔用到的項目）
+const LOC = {
+  nagoya_castle: { title:'名古屋城 大盆踊り大会', address:'愛知県名古屋市中区本丸1-1', hours:'17:30–19:10（9/19–23 秋まつり）',
+    description:'秋まつり 9/19–23，於正門附近特設櫓，需入城料。9/23 是最後一天，18:00 有平針木遣り音頭。地鐵名古屋城站 7 號出口步行 5 分。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%9F%8E' },
+  art_lights: { title:'AICHI NAGOYA ART&LIGHTS', address:'愛知県名古屋市中区三の丸3-1-2', hours:'9/17–10/24 每晚 18:30–21:00',
+    description:'會場是愛知縣廳與名古屋市役所本廳舍（不在城內）。免費免預約，兩棟各投影 5 分鐘交替。18:30–19:30 最擠，看完盆踊り 19:10 再過去剛好錯開。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%BA%81%E6%9C%AC%E5%BA%81%E8%88%8E' },
+  kkday_tour: { title:'KKday 高山・白川鄉一日遊', address:'JR 名古屋駅 太閤通口 銀の時計前', hours:'8:10 集合／18:30 解散',
+    description:'已訂。8:10 於 JR 名古屋站西口（太閤通口）銀時計前集合，18:30 名古屋站解散。回程塞車是常態，若明顯延遲先通知うな富士。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E9%8A%80%E3%81%AE%E6%99%82%E8%A8%88%E3%80%80%E5%90%8D%E5%8F%A4%E5%B1%8B%E9%A7%85' },
+  unafuji: { title:'うな富士 名古屋駅太閤口店', address:'愛知県名古屋市中村区椿町', hours:'已訂位 19:00',
+    description:'離近鐵和飯店都很近，解散後可以先回飯店放東西再出來。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%81%86%E3%81%AA%E5%AF%8C%E5%A3%AB' },
+  oasis21: { title:'オアシス21 & 中部電力 MIRAI TOWER', address:'愛知県名古屋市東区東桜1-11-1', hours:'水の宇宙船 –21:00／燈光 –23:00',
+    description:'只看外觀不上塔。水の宇宙船 21:00 就關，要走上玻璃屋頂得在這之前。20:43 與 21:00 各有 1 分鐘特別燈光演出。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%82%AA%E3%82%A2%E3%82%B7%E3%82%B921' },
+  bucyo_coffee: { title:'Bucyo Coffee', address:'愛知県名古屋市中村区則武', hours:'早餐 08:25–09:10',
+    description:'名古屋站太閤通口周邊，飯店步行 5–8 分。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=Bucyo+Coffee+Nagoya' },
+  kiyosu_castle: { title:'清洲城', address:'愛知県清須市朝日城屋敷1-1', hours:'9:00 開館，週一休',
+    description:'JR 到清洲駅約 7–10 分＋徒步 15–17 分；累的話 Uber 直達約 5 分車程。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%B8%85%E6%B4%B2%E5%9F%8E' },
+  rockin_robin: { title:'ロッキンロビン 大須店', address:'愛知県名古屋市中区大須', hours:'午餐 13:00–13:50',
+    description:'鐵板漢堡排，在大須商店街內。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%83%AD%E3%83%83%E3%82%AD%E3%83%B3%E3%83%AD%E3%83%93%E3%83%B3%E3%80%80%E5%A4%A7%E9%A0%88' },
+  kurin: { title:'和栗モンブラン専門店 栗りん', address:'愛知県名古屋市中区大須3-37-40 カノン大須 1F', hours:'11:00–19:00',
+    description:'店內用要當天 10:30 起現場登記、不收電話預約，只有 10 席，中午前通常就滿。直接走外帶窗口買モンブランソフト邊逛邊吃最實際。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%A0%97%E3%82%8A%E3%82%93%E3%80%80%E5%A4%A7%E9%A0%88' },
+  sakae_parco: { title:'栄 / 名古屋 PARCO', address:'愛知県名古屋市中区栄3-29-1', hours:'約 21:00 打烊',
+    description:'Tower Records（東館 6F）、SABON（東館 B1F）、LACHIC、松坂屋、久屋大通 Hisaya-odori Park。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8BPARCO' },
+  horaiken_honten: { title:'あつた蓬萊軒 本店', address:'愛知県名古屋市熱田区神戸町503', hours:'整理券約 10:00–10:30 開始發',
+    description:'不收電話訂位，只能現場登記。忙的日子會提前發券，週六＋亞運再提前一點比較安全。排隊派一人即可。備案：整理券若排到 13:00 以後，改去神宮店或改買外帶。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%81%82%E3%81%A4%E3%81%9F%E8%93%AC%E8%8E%B1%E8%BB%92%E6%9C%AC%E5%BA%97' },
+  atsuta_jingu: { title:'熱田神宮', address:'愛知県名古屋市熱田区神宮1-1-1', hours:'本宮來回抓 45 分鐘',
+    description:'本店走到南門約 10 分。不要走太深 —— 有人 10:05 領券、10:50 就被叫回去。留一人在可隨時折返的距離。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E7%86%B1%E7%94%B0%E7%A5%9E%E5%AE%AE' },
+  gotokuji: { title:'豪德寺', address:'東京都世田谷区豪徳寺2-24-7', hours:'11:35–12:10',
+    description:'招財貓。小田急豪徳寺站步行約 10 分，到下北沢只有 2 站。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E8%B1%AA%E5%BE%B3%E5%AF%BA' },
+  kogakuin_arena: { title:'日本工学院 蒲田校 片柳アリーナ', address:'東京都大田区西蒲田5-23-22', hours:'活動 17:00',
+    description:'入間聲優活動。JR 蒲田站步行約 10 分。先確認開場時間，若早於 16:30 就別先回大井町入住，行李帶去會場寄物。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%97%A5%E6%9C%AC%E5%B7%A5%E5%AD%A6%E9%99%A2%E3%80%80%E7%89%87%E6%9F%B3%E3%82%A2%E3%83%AA%E3%83%BC%E3%83%8A' },
+  naruto_taiyaki: { title:'鳴門鯛焼本舗 蒲田駅前店', address:'東京都大田区蒲田', hours:'散場後順路',
+    description:'活動場地附近，回程順路買。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E9%B3%B4%E9%96%80%E9%AF%9B%E7%84%BC%E6%9C%AC%E8%88%97%E3%80%80%E8%92%B2%E7%94%B0' },
+  saihoji: { title:'西方寺', address:'横浜市港北区新羽町', hours:'09:00–09:25',
+    description:'彼岸花季末段。地鐵藍線新羽站步行 8 分。離市中心 9 公里、單程 45 分鐘，是全天唯一的遠點。',
+    mapUrl:'https://www.google.com/maps/search/?api=1&query=%E8%A5%BF%E6%96%B9%E5%AF%BA%E3%80%80%E6%96%B0%E7%BE%BD' },
+  shinkansen_tokyo: { title:'名古屋 → 品川 新幹線', address:'JR 名古屋駅', hours:'9/26 14:12 發 → 15:43 抵',
+    description:'已訂。13:00 前要取回置物櫃行李。', mapUrl:'' },
+  klook_baggage: { title:'Klook 行李宅配（飯店 → 成田）', address:'阪急 OURS INN 大井町 櫃台', hours:'9:00 前交件',
+    description:'成田 16:00 後在第 1 航廈 4F 出境大廳南翼櫃台領（開到 20:00），跟長榮報到櫃台同一層同一側。護照、現金、電子產品隨身。', mapUrl:'' },
+  flight_home: { title:'回程 BR195', address:'成田國際機場 第 1 航廈', hours:'20:40 起飛／關櫃 19:40',
+    description:'長榮航空，成田第 1 航廈南翼。Skyliner 坐到終點「成田空港」站，不是「空港第2ビル」。', mapUrl:'' },
+};
+
+// 3a 手帳版：以關鍵字歸類成紙膠帶標籤
+const TAPE = {
+  transit: { label:'交通', tape:'#D5DDE4', ink:'#36434E' },
+  food:    { label:'美食', tape:'#F0DFB4', ink:'#65491C' },
+  event:   { label:'活動', tape:'#EFCBC4', ink:'#8F3728' },
+  spot:    { label:'景點', tape:'#CBD6C9', ink:'#3A473B' },
+  stay:    { label:'住宿', tape:'#E0D3C3', ink:'#5C4033' },
+};
+function categorize(e) {
+  const t = e.description;
+  if (/入住|退房|飯店|抵達舞家|放行李|寄行李|取回行李|取行李|行李交櫃檯|宅配/.test(t)) return 'stay';
+  if (/→|線|新幹線|特急|ラピート|Skyliner|起飛|下車|集合|解散|步行|走到|走路|前往|回市中心|出發|離開|回飯店|買 Suica/.test(t)) return 'transit';
+  if (/早餐|午餐|晚餐|Coffee|蓬萊軒|うな富士|ひつまぶし|釜匠|BEEF|鯛焼|どら焼き|モンブラン|栗りん|ロッキンロビン|Cheese|うさぎや|超商/.test(t)) return 'food';
+  if (/盆踊り|ART&LIGHTS|活動|プラネタリア|Sky Garden|夜景|AIR CABIN|整理券|排隊/.test(t)) return 'event';
+  return 'spot';
+}
+
+class Component extends DCLogic {
+  state = { iA:0, iB:0, iC:0, tA:'Itinerary', tB:'Itinerary', tC:'Itinerary',
+            iD:0, iE:0, iF:0, tD:'Itinerary', tE:'Itinerary', tF:'Itinerary',
+            iG:0, tG:'Itinerary', modalG:null };
+
+  renderVals() {
+    const s = this.state;
+    const dA = ITINERARY[s.iA], dB = ITINERARY[s.iB], dC = ITINERARY[s.iC];
+    const dD = ITINERARY[s.iD], dE = ITINERARY[s.iE], dF = ITINERARY[s.iF];
+
+    const dG = ITINERARY[s.iG];
+
+    return {
+      // ── 3a 手帳・格柵（2c 延伸）
+      daysG: ITINERARY.map((d, i) => {
+        const on = i === s.iG;
+        return { wd:d.weekday[2], dd:d.date.split('/')[1], bg:on ? '#5C4033' : '#FFFFFF',
+          fg:on ? '#FFFFFF' : '#5A5249', bd:on ? '#5C4033' : '#E4DBCB',
+          shadow:on ? '0 3px 10px rgba(92,64,51,0.26)' : '0 1px 3px rgba(43,43,43,0.05)',
+          select:()=>this.setState({iG:i}) };
+      }),
+      dayNoG: s.iG + 1, dateG: dG.date, wdG: dG.weekday, titleG: dG.title,
+      accomG: dG.accommodation || '當日返台・無住宿',
+      eventsG: dG.events.map((e, i) => ({
+        time: e.time, description: e.description, note: e.note || '',
+        locationId: e.locationId || '', isHighlight: !!e.isHighlight,
+        catLabel: TAPE[categorize(e)].label,
+        nodeBg: e.isHighlight ? '#A84836' : '#FFFFFF',
+        nodeBd: e.isHighlight ? '#A84836' : '#C9BEA9',
+        timeColor: e.isHighlight ? '#A84836' : '#4A443C',
+        openModal: () => this.setState({ modalG: i }),
+      })),
+      modalOpenG: s.modalG !== null,
+      modalDisplayG: s.modalG === null ? 'none' : 'flex',
+      modalOpacityG: s.modalG === null ? 0 : 1,
+      modalLiftG: s.modalG === null ? 'translateY(16px)' : 'translateY(0)',
+      modalTimeG: s.modalG === null ? '' : dG.events[s.modalG].time,
+      modalTitleG: s.modalG === null ? '' : dG.events[s.modalG].description,
+      modalNoteG: s.modalG === null ? '' : (dG.events[s.modalG].note || ''),
+      modalCatG: s.modalG === null ? '' : TAPE[categorize(dG.events[s.modalG])].label,
+      modalDayG: s.modalG === null ? '' : 'DAY ' + (s.iG + 1) + ' ・ ' + dG.date + '（' + dG.weekday[2] + '）',
+      modalSeqG: s.modalG === null ? '' : String(s.modalG + 1).padStart(2, '0') + ' / ' + String(dG.events.length).padStart(2, '0'),
+      modalLocG: (() => {
+        if (s.modalG === null) return null;
+        const id = dG.events[s.modalG].locationId;
+        return (id && LOC[id]) ? LOC[id] : null;
+      })(),
+      modalHoursG: (() => { const id = s.modalG === null ? '' : dG.events[s.modalG].locationId;
+        return (id && LOC[id] && LOC[id].hours) ? LOC[id].hours : ''; })(),
+      modalAddrG: (() => { const id = s.modalG === null ? '' : dG.events[s.modalG].locationId;
+        return (id && LOC[id] && LOC[id].address) ? LOC[id].address : ''; })(),
+      modalDescG: (() => { const id = s.modalG === null ? '' : dG.events[s.modalG].locationId;
+        return (id && LOC[id] && LOC[id].description) ? LOC[id].description : ''; })(),
+      modalMapG: (() => { const id = s.modalG === null ? '' : dG.events[s.modalG].locationId;
+        return (id && LOC[id] && LOC[id].mapUrl) ? LOC[id].mapUrl : ''; })(),
+      closeModalG: () => this.setState({ modalG: null }),
+      stopSheetClickG: (e) => e.stopPropagation(),
+      tabsG: TABS.map(t => { const on = s.tG === t.id;
+        return { label:t.label, icon:LINE_ICONS[t.id](on, 22), color:on ? '#5C4033' : '#6E675E',
+          pill:on ? '#F2ECE1' : 'transparent', select:()=>this.setState({tG:t.id}) }; }),
+
+      // ── 2a 喫茶昭和復古
+      daysD: ITINERARY.map((d, i) => {
+        const on = i === s.iD;
+        return { wd:d.weekday[2], dd:d.date.split('/')[1], bg:on ? '#B33B2B' : '#FFF9EA',
+          fg:on ? '#FFF9EA' : '#4A3423', bd:on ? '#8E2C1F' : '#B9A57E',
+          select:()=>this.setState({iD:i}) };
+      }),
+      dayNoD: s.iD + 1, dateD: dD.date, titleD: dD.title, accomD: dD.accommodation || '當日返台・無住宿',
+      eventsD: dD.events.map(e => ({ time:e.time, description:e.description, note:e.note || '',
+        locationId:e.locationId || '', isHighlight:!!e.isHighlight,
+        timeColor: e.isHighlight ? '#9E2E20' : '#5C4630',
+        cardBd: e.isHighlight ? '#9E2E20' : '#3A2A1E',
+        cardBg: e.isHighlight ? '#FDF2DF' : '#FFF9EA' })),
+      tabsD: TABS.map(t => { const on = s.tD === t.id;
+        return { label:t.label, icon:LINE_ICONS[t.id](on, 22), color:on ? '#FFF3D8' : '#C3A985',
+          pill:on ? '#B33B2B' : 'transparent', select:()=>this.setState({tD:t.id}) }; }),
+
+      // ── 2b 金鯱と深宵祭典
+      daysE: ITINERARY.map((d, i) => {
+        const on = i === s.iE;
+        return { wd:d.weekday[2], dd:d.date.split('/')[1], bg:on ? '#D9AE4B' : 'transparent',
+          fg:on ? '#12161F' : '#C6CBD6', bd:on ? '#F0D188' : 'rgba(217,174,75,0.34)',
+          glow:on ? '0 0 18px rgba(217,174,75,0.5)' : 'none',
+          select:()=>this.setState({iE:i}) };
+      }),
+      dayNoE: s.iE + 1, dateE: '2026.' + dE.date.replace('/', '.'), wdE: dE.weekday,
+      titleE: dE.title, accomE: dE.accommodation || '當日返台・無住宿',
+      eventsE: dE.events.map(e => ({ time:e.time, description:e.description, note:e.note || '',
+        locationId:e.locationId || '',
+        timeColor: e.isHighlight ? '#F0D188' : '#A8B0C0',
+        dotBg: e.isHighlight ? '#E2603C' : '#1B2331',
+        dotRing: e.isHighlight ? '#F0D188' : '#6D6752',
+        cardBg: e.isHighlight ? '#1A2130' : '#141B28',
+        cardBd: e.isHighlight ? 'rgba(217,174,75,0.55)' : 'rgba(217,174,75,0.16)' })),
+      tabsE: TABS.map(t => { const on = s.tE === t.id;
+        return { label:t.label, icon:LINE_ICONS[t.id](on, 23), color:on ? '#F0D188' : '#9AA4B4',
+          dot:on ? '#E2603C' : 'transparent', select:()=>this.setState({tE:t.id}) }; }),
+
+      // ── 2c 白川町家和紙簡約
+      daysF: ITINERARY.map((d, i) => {
+        const on = i === s.iF;
+        return { wd:d.weekday[2], dd:d.date.split('/')[1], fg:on ? '#2A2622' : '#6B6357',
+          weight:on ? 500 : 400, rule:on ? '#2A2622' : 'transparent',
+          select:()=>this.setState({iF:i}) };
+      }),
+      dayNoF: s.iF + 1, dateF: dF.date, titleF: dF.title, accomF: dF.accommodation || '當日返台・無住宿',
+      eventsF: dF.events.map(e => ({ time:e.time, description:e.description, note:e.note || '',
+        locationId:e.locationId || '', isHighlight:!!e.isHighlight,
+        timeColor: e.isHighlight ? '#2A2622' : '#6B6357' })),
+      tabsF: TABS.map(t => { const on = s.tF === t.id;
+        return { label:t.label, color:on ? '#2A2622' : '#6B6357', weight:on ? 500 : 400,
+          rule:on ? '#2A2622' : 'transparent', select:()=>this.setState({tF:t.id}) }; }),
+
+      // ── 1a 和紙・墨
+      daysA: ITINERARY.map((d, i) => {
+        const on = i === s.iA;
+        return { wd:d.weekday[2], dd:d.date.split('/')[1], bg:on ? '#1F1B17' : 'transparent',
+          fg:on ? '#F4F1EA' : '#6B6257', rule:on ? '#B23A2E' : 'transparent', select:()=>this.setState({iA:i}) };
+      }),
+      dayNoA: s.iA + 1, titleA: dA.title, accomA: dA.accommodation || '當日返台・無住宿',
+      eventsA: dA.events.map(e => ({ time:e.time, description:e.description, note:e.note || '',
+        locationId:e.locationId || '', isHighlight:!!e.isHighlight,
+        timeColor: e.isHighlight ? '#A5301F' : '#5E5648' })),
+      tabsA: TABS.map(t => { const on = s.tA === t.id;
+        return { label:t.label, color:on ? '#1F1B17' : '#5E5648', dot:on ? '#A5301F' : 'transparent',
+          weight:on ? 700 : 400, select:()=>this.setState({tA:t.id}) }; }),
+
+      // ── 1b 駅サイン
+      daysB: ITINERARY.map((d, i) => {
+        const on = i === s.iB;
+        return { wdEn:d.wdEn, dd:d.date.split('/')[1], bg:on ? '#EE7B00' : 'transparent',
+          fg:on ? '#0B2233' : '#8FA8BD', border:on ? '#EE7B00' : 'rgba(255,255,255,0.22)',
+          select:()=>this.setState({iB:i}) };
+      }),
+      dayNoB: s.iB + 1, dateB: '2026.' + dB.date.replace('/', '.'), wdB: dB.weekday,
+      titleB: dB.title, accomB: dB.accommodation || '當日返台・無住宿',
+      eventsB: dB.events.map(e => ({ time:e.time, description:e.description, note:e.note || '',
+        locationId:e.locationId || '',
+        timeColor: e.isHighlight ? '#FFD23F' : '#8FA8BD',
+        dotSize: e.isHighlight ? '13px' : '10px',
+        dotBg: e.isHighlight ? '#EE7B00' : '#0E293C',
+        dotRing: e.isHighlight ? '#EE7B00' : '#5C7A91',
+        cardBg: e.isHighlight ? '#13334A' : '#0B2233',
+        cardBar: e.isHighlight ? '#EE7B00' : '#33556E' })),
+      tabsB: TABS.map(t => { const on = s.tB === t.id;
+        return { label:t.label, en:t.en, color:on ? '#EE7B00' : '#7E99AE',
+          bar:on ? '#EE7B00' : 'transparent', select:()=>this.setState({tB:t.id}) }; }),
+
+      // ── 1c 雑貨かわいい
+      daysC: ITINERARY.map((d, i) => {
+        const on = i === s.iC;
+        return { wd:d.weekday[2], dd:d.date.split('/')[1], bg:on ? '#A65563' : '#fff',
+          fg:on ? '#fff' : '#6B5A50', shadow:on ? '0 4px 14px rgba(166,85,99,0.34)' : '0 1px 4px rgba(90,74,66,0.08)',
+          select:()=>this.setState({iC:i}) };
+      }),
+      dayNoC: s.iC + 1, dateC: dC.date, wdShortC: dC.weekday[2],
+      titleC: dC.title, accomC: dC.accommodation || '當日返台・無住宿',
+      eventsC: dC.events.map(e => ({ time:e.time, description:e.description, note:e.note || '',
+        locationId:e.locationId || '',
+        timeColor: e.isHighlight ? '#9C4653' : '#7B6A60',
+        dotBg: e.isHighlight ? '#D98A94' : '#C9D3B8',
+        dotRing: e.isHighlight ? 'rgba(217,138,148,0.24)' : 'rgba(201,211,184,0.3)',
+        cardBg: e.isHighlight ? '#FFF9F3' : '#fff' })),
+      tabsC: TABS.map(t => { const on = s.tC === t.id;
+        return { label:t.label, icon:ROUND_ICONS[t.id](on), color:on ? '#A04E5D' : '#7B6A60',
+          pill:on ? '#FBEAE6' : 'transparent', select:()=>this.setState({tC:t.id}) }; }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

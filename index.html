@@ -12,8 +12,10 @@
 
   <title>秋の名古屋と最高イルマ 2026</title>
 
-  <!-- Google Fonts: Noto Serif JP -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Noto Serif JP（標題）／Noto Sans TC（內文）／DM Sans（數字與拉丁 meta） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Favicon (Browser Tab) -->
   <link rel="icon" type="image/png" href="/icon-512.png" />
@@ -27,56 +29,78 @@
       theme: {
         extend: {
           colors: {
-            // Legacy aliases (kept for compatibility during transition)
-            'mag-paper': '#F2F2F7',
+            /* ── 手帳・格柵版（3a / Earth & Washi）── */
+            washi: { white: '#F9F8F4', tint: '#F2ECE1' },
+            wood: { 900: '#5C4033', 600: '#8C6239', 500: '#6E5A46' },
+            vermillion: '#A84836',
+            bamboo: '#7A8B7B',
+            ink: { DEFAULT: '#2B2B2B', 700: '#3E3A33', 600: '#4A443C', 500: '#5A5249', 400: '#6E675E' },
+            rule: { 200: '#EFE9DC', 300: '#E4DBCB', 400: '#E0D8C8', 500: '#DCD3C3', rail: '#D3C7B2', node: '#C9BEA9' },
+
+            /* ── 舊 iOS token 重新指向新色票 ──
+             * 準備／記帳／行李／購物／資訊 五頁仍走這組名稱，
+             * 這裡換掉就整個 App 一起變，不用動那五個檔案的版面。 */
+            'mag-paper': '#F9F8F4',
             'mag-white': '#FFFFFF',
-            'mag-black': '#1C1C1E',
-            'mag-gray': '#8E8E93',
-            'mag-gold': '#B08542',
-            'mag-gold-light': '#F7EFE0',
-            'mag-red': '#FF3B30',
-            // iOS system palette
-            'ios-bg': '#F2F2F7',
-            'ios-bg-grouped': '#F2F2F7',
+            'mag-black': '#2B2B2B',
+            'mag-gray': '#6E675E',
+            'mag-gold': '#5C4033',
+            'mag-gold-light': '#F2ECE1',
+            'mag-red': '#A84836',
+            'ios-bg': '#F9F8F4',
+            'ios-bg-grouped': '#F9F8F4',
             'ios-card': '#FFFFFF',
-            'ios-card-2': '#FAFAFC',
-            'ios-separator': 'rgba(60,60,67,0.12)',
-            'ios-separator-strong': 'rgba(60,60,67,0.29)',
-            'ios-label': '#000000',
-            'ios-label-2': 'rgba(60,60,67,0.60)',
-            'ios-label-3': 'rgba(60,60,67,0.30)',
-            'ios-blue': '#007AFF',
-            'ios-green': '#34C759',
-            'ios-orange': '#FF9500',
-            'ios-red': '#FF3B30',
-            'ios-yellow': '#FFCC00',
-            'ios-purple': '#AF52DE',
-            'ios-pink': '#FF2D92',
-            'ios-teal': '#B08542',
-            'ios-fill-1': 'rgba(120,120,128,0.20)',
-            'ios-fill-2': 'rgba(120,120,128,0.16)',
-            'ios-fill-3': 'rgba(120,120,128,0.12)',
-            'ios-fill-4': 'rgba(118,118,128,0.08)',
+            'ios-card-2': '#FDFCF8',
+            'ios-separator': '#EFE9DC',
+            'ios-separator-strong': '#E4DBCB',
+            'ios-label': '#2B2B2B',
+            'ios-label-2': '#5A5249',
+            'ios-label-3': '#6E675E',
+            'ios-blue': '#5C4033',
+            'ios-green': '#7A8B7B',
+            'ios-orange': '#8C6239',
+            'ios-red': '#A84836',
+            'ios-yellow': '#C9A227',
+            'ios-purple': '#7A6A86',
+            'ios-pink': '#A84836',
+            'ios-teal': '#7A8B7B',
+            'ios-fill-1': '#EFE9DC',
+            'ios-fill-2': '#F2ECE1',
+            'ios-fill-3': '#F2ECE1',
+            'ios-fill-4': '#F6F1E6',
           },
           fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'PingFang TC', 'Heiti TC', 'Microsoft JhengHei', 'sans-serif'],
-            mono: ['"SF Mono"', 'ui-monospace', 'Menlo', 'monospace'],
-            serif: ['Georgia', 'Times New Roman', 'serif'],
+            sans: ['"Noto Sans TC"', '-apple-system', 'BlinkMacSystemFont', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif'],
+            num: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            serif: ['"Noto Serif JP"', 'Georgia', 'serif'],
             noto: ['"Noto Serif JP"', 'serif'],
           },
           borderRadius: {
-            'ios-xs': '8px',
-            'ios-sm': '10px',
-            'ios': '14px',
-            'ios-lg': '20px',
-            'ios-xl': '28px',
+            'tk-xs': '3px',
+            'tk-sm': '4px',
+            'tk': '6px',
+            'tk-md': '7px',
+            'tk-lg': '8px',
+            'tk-frame': '26px',
+            /* 舊名稱一併收斂到 8px 以內 */
+            'ios-xs': '4px',
+            'ios-sm': '6px',
+            'ios': '7px',
+            'ios-lg': '8px',
+            'ios-xl': '8px',
           },
           boxShadow: {
-            'soft': '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03)',
-            'float': '0 8px 24px rgba(0,0,0,0.08)',
-            'ios-card': '0 1px 2px rgba(0,0,0,0.04), 0 1px 1px rgba(0,0,0,0.02)',
-            'ios-elevated': '0 12px 32px rgba(0,0,0,0.12)',
-            'ios-nav': '0 -0.5px 0 rgba(0,0,0,0.08)',
+            'tk-card': '0 2px 8px rgba(43,43,43,0.05)',
+            'tk-card-hover': '0 4px 14px rgba(43,43,43,0.1)',
+            'tk-chip': '0 1px 3px rgba(43,43,43,0.05)',
+            'tk-chip-on': '0 3px 10px rgba(92,64,51,0.26)',
+            'tk-sheet': '0 -6px 28px rgba(43,43,43,0.18)',
+            'soft': '0 1px 3px rgba(43,43,43,0.05)',
+            'float': '0 4px 14px rgba(43,43,43,0.1)',
+            'ios-card': '0 2px 8px rgba(43,43,43,0.05)',
+            'ios-elevated': '0 -6px 28px rgba(43,43,43,0.18)',
+            'ios-nav': '0 -0.5px 0 rgba(43,43,43,0.06)',
           },
           padding: {
             'safe-top': 'env(safe-area-inset-top)',
@@ -87,20 +111,21 @@
             'safe-bottom': 'env(safe-area-inset-bottom)',
           },
           fontSize: {
-            'ios-caption2': ['11px', { lineHeight: '13px', letterSpacing: '0.06px' }],
-            'ios-caption': ['12px', { lineHeight: '16px', letterSpacing: '0px' }],
+            'ios-caption2': ['11px', { lineHeight: '13px' }],
+            'ios-caption': ['12px', { lineHeight: '16px' }],
             'ios-footnote': ['13px', { lineHeight: '18px' }],
             'ios-subhead': ['15px', { lineHeight: '20px' }],
             'ios-callout': ['16px', { lineHeight: '21px' }],
-            'ios-body': ['17px', { lineHeight: '22px' }],
-            'ios-headline': ['17px', { lineHeight: '22px', letterSpacing: '-0.2px' }],
-            'ios-title3': ['20px', { lineHeight: '25px', letterSpacing: '-0.3px' }],
-            'ios-title2': ['22px', { lineHeight: '28px', letterSpacing: '-0.3px' }],
-            'ios-title1': ['28px', { lineHeight: '34px', letterSpacing: '-0.4px' }],
-            'ios-largeTitle': ['34px', { lineHeight: '41px', letterSpacing: '-0.5px' }],
+            'ios-body': ['15px', { lineHeight: '25px' }],
+            'ios-headline': ['15px', { lineHeight: '25px', letterSpacing: '0.01em' }],
+            'ios-title3': ['17px', { lineHeight: '27px', letterSpacing: '0.02em' }],
+            'ios-title2': ['18px', { lineHeight: '28px', letterSpacing: '0.02em' }],
+            'ios-title1': ['20px', { lineHeight: '30px', letterSpacing: '0.02em' }],
+            'ios-largeTitle': ['24px', { lineHeight: '34px', letterSpacing: '0.02em' }],
           },
           backdropBlur: {
-            'ios': '20px',
+            'ios': '12px',
+            'tk': '12px',
           },
           keyframes: {
             'sheet-up': {
@@ -113,8 +138,8 @@
             },
           },
           animation: {
-            'sheet-up': 'sheet-up 320ms cubic-bezier(0.32, 0.72, 0, 1)',
-            'fade-in-soft': 'fade-in-soft 280ms ease-out',
+            'sheet-up': 'sheet-up 300ms ease-in-out',
+            'fade-in-soft': 'fade-in-soft 260ms ease-in-out',
           }
         }
       }
@@ -143,7 +168,7 @@
       padding: 0;
       overflow: hidden;
       overscroll-behavior: none;
-      background-color: #FFFFFF;
+      background-color: #F9F8F4;
     }
 
     body, #root {
@@ -153,7 +178,7 @@
       padding: 0;
       overflow: hidden;
       overscroll-behavior: none;
-      background-color: #FFFFFF;
+      background-color: #F9F8F4;
     }
 
     #root {
@@ -179,7 +204,7 @@
 
     /* Hairline separator helper */
     .ios-hairline {
-      box-shadow: inset 0 -0.5px 0 rgba(60, 60, 67, 0.12);
+      box-shadow: inset 0 -1px 0 #EFE9DC;
     }
 
     /* Safe area — defined here so env() is always resolved correctly on iOS PWA */
@@ -189,7 +214,7 @@
   </style>
 </head>
 
-<body class="bg-mag-paper text-mag-black antialiased selection:bg-mag-gold selection:text-white">
+<body class="bg-washi-white text-ink antialiased selection:bg-wood-900 selection:text-washi-white">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 

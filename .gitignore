@@ -4,3 +4,6 @@
 node_modules
 dist
 .DS_Store
+
+# 設計稿壓縮檔（內容已解壓在 design_handoff_* 裡）
+*.zip
