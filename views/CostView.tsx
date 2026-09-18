@@ -408,32 +408,32 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
               minmax(0,1fr) + min-width:0 + appearance:none 三個一起才壓得住。 */}
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 items-end">
             <div className="flex flex-col min-w-0">
-              <label className="text-[12px] font-semibold text-ios-label-2 mb-1.5 block">日期</label>
+              <label className="text-[13px] font-semibold text-ios-label-2 mb-1.5 block">日期</label>
               <input type="date" value={date} onChange={e => setDate(e.target.value)}
                 style={{ minWidth: 0, WebkitAppearance: 'none', appearance: 'none' }}
-                className="w-full max-w-full block bg-ios-fill-4 px-2.5 py-2.5 rounded-ios text-[14px] font-medium text-ios-label outline-none" />
+                className="w-full max-w-full block h-[46px] bg-ios-fill-4 px-2.5 rounded-ios text-[16px] font-medium text-ios-label outline-none" />
             </div>
             <div className="flex flex-col min-w-0">
-              <label className="text-[12px] font-semibold text-ios-label-2 mb-1.5 block">支付者</label>
-              <div className="flex bg-ios-fill-3 p-[3px] rounded-ios">
+              <label className="text-[13px] font-semibold text-ios-label-2 mb-1.5 block">支付者</label>
+              <div className="flex h-[46px] bg-ios-fill-3 p-[3px] rounded-ios">
                 <button type="button" onClick={() => setPayer('想想')}
-                  className="flex-1 py-2.5 text-[13px] font-semibold rounded-tk-sm transition-all"
+                  className="flex-1 text-[15px] font-semibold rounded-tk-sm transition-all"
                   style={payer === '想想' ? { backgroundColor: XIANG_COLOR, color: '#fff' } : { color: '#3C3C43' }}>想想</button>
                 <button type="button" onClick={() => setPayer('Yian')}
-                  className="flex-1 py-2.5 text-[13px] font-semibold rounded-tk-sm transition-all"
+                  className="flex-1 text-[15px] font-semibold rounded-tk-sm transition-all"
                   style={payer === 'Yian' ? { backgroundColor: QIAN_COLOR, color: '#fff' } : { color: '#3C3C43' }}>Yian</button>
               </div>
             </div>
           </div>
 
           <div>
-            <label className="text-[12px] font-semibold text-ios-label-2 mb-1.5 block">內容</label>
+            <label className="text-[13px] font-semibold text-ios-label-2 mb-1.5 block">內容</label>
             <input type="text" placeholder="輸入消費內容" value={item} onChange={e => setItem(e.target.value)}
-              className="w-full bg-ios-fill-4 px-3 py-2.5 rounded-ios text-[15px] font-medium text-ios-label outline-none placeholder:text-ios-label-3" />
+              className="w-full bg-ios-fill-4 px-3 py-2.5 rounded-ios text-[16px] font-medium text-ios-label outline-none placeholder:text-ios-label-3" />
           </div>
 
           <div>
-            <label className="text-[12px] font-semibold text-ios-label-2 mb-1.5 block">金額</label>
+            <label className="text-[13px] font-semibold text-ios-label-2 mb-1.5 block">金額</label>
             <div className="flex bg-ios-fill-4 items-center rounded-ios px-3 h-[56px] gap-2">
               <input type="number" inputMode="decimal" placeholder="0" value={amount} onChange={e => handleAmountChange(e.target.value)}
                 className="flex-1 min-w-0 bg-transparent py-2 font-bold text-[24px] outline-none text-ios-label placeholder:text-ios-label-3" />
@@ -460,7 +460,7 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
                     onChange={() => handleSplitTypeChange(opt.value)}
                     className="sr-only"
                   />
-                  <span className={`block py-2.5 text-[12px] font-semibold select-none ${splitType === opt.value ? 'bg-mag-gold text-white' : 'bg-white text-ios-label-2'}`}>
+                  <span className={`block py-2.5 text-[14px] font-semibold select-none ${splitType === opt.value ? 'bg-mag-gold text-white' : 'bg-white text-ios-label-2'}`}>
                     {opt.label}
                   </span>
                 </label>
@@ -486,7 +486,7 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
           </div>
 
           <div>
-            <label className="text-[12px] font-semibold text-ios-label-2 mb-1.5 block">備註</label>
+            <label className="text-[13px] font-semibold text-ios-label-2 mb-1.5 block">備註</label>
             <input type="text" placeholder="選填項目細節" value={note} onChange={e => setNote(e.target.value)}
               className="w-full bg-ios-fill-4 px-3 py-2.5 rounded-ios text-[14px] font-medium text-ios-label outline-none placeholder:text-ios-label-3" />
           </div>

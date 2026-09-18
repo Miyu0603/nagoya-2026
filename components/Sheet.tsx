@@ -118,7 +118,7 @@ export const Sheet: React.FC<SheetProps> = ({
         </div>
         {title && (
           <div className="px-5 pt-2 pb-3">
-            <h3 className="text-ios-headline font-semibold text-ios-label">{title}</h3>
+            <h3 className="text-[19px] font-bold text-ios-label tracking-tight">{title}</h3>
           </div>
         )}
         <div ref={scrollRef} className="overflow-y-auto overscroll-contain">
