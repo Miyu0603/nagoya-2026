@@ -18,6 +18,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # VITE_* 是編譯期注入的，secret 放在 github-pages environment 底下，
+    # 所以 build 也要宣告同一個 environment 才讀得到
+    environment: github-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v4
