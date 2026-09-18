@@ -364,9 +364,11 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
       </div>
 
       <div className="text-center mt-10">
+        {GOOGLE_SHEET_URL && (
         <a href={GOOGLE_SHEET_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-ios-label-2 font-medium text-[12px] active:text-mag-gold">
           <SheetIcon className="w-4 h-4" /> 開啟 Google Sheet
         </a>
+        )}
       </div>
 
       {/* Batch action bar */}

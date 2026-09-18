@@ -17,20 +17,23 @@
  * 前端只收 rowIndex >= 3 的列，所以第 1 列是標題、第 2 列是欄位名、第 3 列起是資料。
  */
 
-/** 欄位對應。若你的分頁欄位順序不同，只要改這裡的數字（1 = A 欄）。 */
+/** 欄位對應，已對照 2026名古屋 分頁第 2 列的實際表頭（1 = A 欄）。 */
 var COL = {
-  date: 1,             // A 日期
+  date: 1,             // A 時間
   item: 2,             // B 項目
-  payer: 3,            // C 付款人（想想 / Yian）
+  payer: 3,            // C 付款者（想想 / Yian）
   twd: 4,              // D 台幣
   jpy: 5,              // E 日幣
-  note: 6,             // F 備註
-  splitType: 7,        // G 分帳方式（equal / split65 / manual）
-  splitXiangTwd: 8,    // H 想想台幣
-  splitXiangJpy: 9,    // I 想想日幣
-  splitQianTwd: 10,    // J Yian 台幣
-  splitQianJpy: 11,    // K Yian 日幣
+  splitXiangTwd: 6,    // F 想想（台）
+  splitXiangJpy: 7,    // G 想想（日）
+  splitQianTwd: 8,     // H Yian（台）
+  splitQianJpy: 9,     // I Yian（日）
+  note: 10,            // J 備註
+  splitType: 11,       // K 分帳方式 — 原本沒有這欄，寫入時自動補表頭
 };
+
+var SPLIT_TYPE_HEADER = '分帳方式';
+var HEADER_ROW = 2;
 
 var FIRST_DATA_ROW = 3;
 var LAST_COL = 11;
@@ -113,6 +116,12 @@ function doGet(e) {
   }
 }
 
+/** K 欄原本不存在，第一次寫入時把表頭補上，避免試算表出現無標題欄位 */
+function ensureSplitTypeHeader_(sheet) {
+  var cell = sheet.getRange(HEADER_ROW, COL.splitType);
+  if (!String(cell.getValue()).trim()) cell.setValue(SPLIT_TYPE_HEADER);
+}
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
@@ -140,6 +149,8 @@ function doPost(e) {
     values[COL.splitQianTwd - 1] = num_(body.splitQianTwd);
     values[COL.splitQianJpy - 1] = num_(body.splitQianJpy);
     for (var c = 0; c < LAST_COL; c++) if (values[c] === undefined) values[c] = '';
+
+    ensureSplitTypeHeader_(sheet);
 
     if (body.action === 'edit') {
       var editRow = Number(body.rowIndex);

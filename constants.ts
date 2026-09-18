@@ -14,7 +14,8 @@ import { DaySchedule, ChecklistItem, LocationDetail, UsefulLink, EmergencyContac
 export const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || '';
 // 試算表裡的分頁名稱（不是檔名）
 export const GOOGLE_SHEET_NAME = import.meta.env.VITE_GOOGLE_SHEET_NAME || '2026名古屋';
-export const GOOGLE_SHEET_URL = import.meta.env.VITE_GOOGLE_SHEET_URL || 'https://docs.google.com/spreadsheets/d/1mfWxi3NT0I0W0MQlqCT7FcZjrLoQJ7BRvKDdn73aNQU/edit?gid=70649433#gid=70649433';
+// repo 是公開的，試算表網址只從 .env 讀，不寫死在原始碼裡
+export const GOOGLE_SHEET_URL = import.meta.env.VITE_GOOGLE_SHEET_URL || '';
 
 export const PRE_TRIP_NOTES = [
   "亞運 9/19–10/4 在愛知・名古屋舉行，名古屋段人潮與交通管制都會比平常誇張",
@@ -87,9 +88,13 @@ export const USEFUL_LINKS: UsefulLink[] = [
 
 /* 旅遊憑證：把訂房／票券的雲端連結貼進來就會出現在「準備」頁，空的話整區不顯示 */
 export const VOUCHERS: Voucher[] = [
-  // { name: 'VIA INN 名古屋新幹線口', url: 'https://...', type: 'hotel' },
-  // { name: 'KKday 高山・白川鄉一日遊', url: 'https://...', type: 'tour' },
-  // { name: '新幹線 名古屋→品川', url: 'https://...', type: 'train' },
+  { name: 'VIA INN 名古屋新幹線口', url: 'https://drive.google.com/file/d/1BDD0Y1Nu13TfJIU8htOdT4VI85CBYp6p/view', type: 'hotel' },
+  { name: '阪急 OURS INN（大井町）', url: 'https://drive.google.com/file/d/1VStByV9HAJrSIwXmBm1Vrp9DPcDb16mv/view', type: 'hotel' },
+  { name: 'KKday 高山・白川鄉一日遊', url: 'https://drive.google.com/file/d/1fLWnfRMprUrDgk0X4TBQOP0XDB6worOM/view', type: 'tour' },
+  { name: '南海電鐵（Klook・未劃位）', url: 'https://drive.google.com/file/d/1ktRS_ocwUxZtHq_aqx3_UZfqJY0dSL4p/view', type: 'train' },
+  { name: '新幹線 名古屋→品川　想想', url: 'https://drive.google.com/file/d/1GFAlIBmP0Nqi2zT_Mx6QOKk99Ul7aA0-/view', type: 'train' },
+  { name: 'Skyliner 京成上野→成田', url: 'https://drive.google.com/file/d/1dGCOkT8mJSausVwnRgWdIfqGQyEKb0y_/view', type: 'train' },
+  { name: 'Klook 行李宅配（飯店→成田）', url: 'https://drive.google.com/file/d/1xgLHf0ViZK7ZNo5ubUrxRmXanRVH1j76/view', type: 'ticket' },
 ];
 
 /* 天氣：行程橫跨三個城市，依當天日期自動切換 */
@@ -641,7 +646,7 @@ export const ITINERARY: DaySchedule[] = [
       { time: '13:00', description: '取回行李，緩衝時間', note: '離發車還有 70 分鐘' },
       { time: '14:12', description: '名古屋 → 品川 15:43', locationId: 'shinkansen_tokyo', isHighlight: true, origin: '名古屋', legs: [{ via: '新幹線', to: '品川', arrive: '15:43' }] },
       { time: '15:50', description: '品川站寄行李、買 Suica', note: '放到 9/27 傍晚，確認是 3 天制不是當日制' },
-      { time: '16:10', description: '品川 → 国立 17:10', origin: '品川', legs: [{ via: '山手線', to: '新宿' }, { via: '中央線快速', to: '国立', arrive: '17:10' }] },
+      { time: '16:10', description: '品川 → 国立 17:10', origin: '品川', legs: [{ via: '山手線', to: '新宿', arrive: '16:30' }, { via: '中央線快速', to: '国立', arrive: '17:10' }] },
       { time: '17:20', description: '抵達舞家', locationId: 'maiya_kunitachi' },
     ]
   },

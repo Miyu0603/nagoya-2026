@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { PRE_TRIP_NOTES, VOUCHERS } from '../constants';
 import { ChecklistItem } from '../types';
-import { CheckIcon, TrashIcon, EditIcon, PlusIcon, SheetIcon, ExternalLinkIcon, BedIcon, TrainIcon } from '../components/Icons';
+import { CheckIcon, TrashIcon, EditIcon, PlusIcon, SheetIcon, ExternalLinkIcon, BedIcon, TrainIcon, TicketIcon } from '../components/Icons';
 import { TextInputSheet, ConfirmDeleteSheet } from '../components/TextInputSheet';
 
 interface PrepViewProps {
@@ -73,7 +73,9 @@ export const PrepView: React.FC<PrepViewProps> = ({ checkedItems, toggleItem, li
                   ? <BedIcon className="w-5 h-5 text-mag-gold shrink-0" />
                   : voucher.type === 'train'
                     ? <TrainIcon className="w-5 h-5 text-mag-gold shrink-0" />
-                    : <SheetIcon className="w-5 h-5 text-mag-gold shrink-0" />
+                    : voucher.type === 'ticket'
+                      ? <TicketIcon className="w-5 h-5 text-mag-gold shrink-0" />
+                      : <SheetIcon className="w-5 h-5 text-mag-gold shrink-0" />
                 }
                 <span className="flex-1 text-[15px] font-medium text-ios-label">{voucher.name}</span>
                 <ExternalLinkIcon className="w-4 h-4 text-ios-label-3 shrink-0" />
