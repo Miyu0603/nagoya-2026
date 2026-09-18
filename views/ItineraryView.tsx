@@ -147,7 +147,8 @@ const TransitLink: React.FC<{ via: string }> = ({ via }) => (
 const SHEET_EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
 const SHEET_MS = 320;
 const COLLAPSED_RATIO = 0.88;
-const EXPANDED_RATIO = 0.96;
+/** 展開時兩段至少差這麼多，否則兩個檔位看起來一樣 */
+const DETENT_GAP = 64;
 const DRAG_DOWN_THRESHOLD = 90;
 const DRAG_UP_THRESHOLD = 60;
 
@@ -167,6 +168,8 @@ const EventSheet: React.FC<{
   const [dragY, setDragY] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [viewportH, setViewportH] = useState(() => window.innerHeight);
+  /** 展開的上限：頁首標題那一行的中線。再往上會被狀態列／瀏海疊到看不清楚。 */
+  const [expandedH, setExpandedH] = useState(() => window.innerHeight * 0.9);
   const [contentH, setContentH] = useState(0);
 
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -174,8 +177,9 @@ const EventSheet: React.FC<{
   const dragRef = useRef({ startY: 0, dy: 0, active: false });
   const closeTimer = useRef<number | null>(null);
 
-  const maxH = viewportH * EXPANDED_RATIO;
-  const collapsedH = Math.min(contentH || viewportH * 0.5, viewportH * COLLAPSED_RATIO);
+  const maxH = expandedH;
+  const collapsedCap = Math.min(viewportH * COLLAPSED_RATIO, maxH - DETENT_GAP);
+  const collapsedH = Math.min(contentH || viewportH * 0.5, collapsedCap);
   // 只要還沒撐到最高就能往上拉。不要求「內容超出」——多數彈窗內容不到 88vh，
   // 那樣判斷會讓手勢幾乎永遠不能用。
   const canExpand = collapsedH < maxH - 8;
@@ -206,10 +210,26 @@ const EventSheet: React.FC<{
     return () => ro.disconnect();
   }, [dayIdx, eventIdx]);
 
+  // 展開上限量頁首標題的中線而不是寫死比例，safe-area 多大都會自己算對
   useEffect(() => {
-    const onResize = () => setViewportH(window.innerHeight);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    const measure = () => {
+      const vh = window.innerHeight;
+      setViewportH(vh);
+      const title = document.querySelector('header h1');
+      if (title) {
+        const r = title.getBoundingClientRect();
+        setExpandedH(Math.max(240, vh - (r.top + r.height / 2)));
+      } else {
+        setExpandedH(vh * 0.9);
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    window.addEventListener('orientationchange', measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      window.removeEventListener('orientationchange', measure);
+    };
   }, []);
 
   // Esc 關閉，並鎖住下層捲動（body 與行程的 <main> 都要鎖，否則背景會跟著滑）
