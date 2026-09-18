@@ -117,16 +117,16 @@ const App: React.FC = () => {
           amountJpy: Number(String(row.jpy || 0).replace(/[^0-9.-]/g, '')),
           note: row.note,
           splitType: (() => {
-            if (row.splitType === 'equal' || row.splitType === 'split65' || row.splitType === 'manual') return row.splitType as 'equal' | 'split65' | 'manual';
-            // Fallback: detect from stored split amounts
+            if (row.splitType === 'equal' || row.splitType === 'manual') return row.splitType as 'equal' | 'manual';
+            // 舊資料可能存過已移除的 65:35；金額欄是實際負擔額，當成自訂就好
+            if (row.splitType === 'split65') return 'manual';
+            // 沒存 splitType 的舊紀錄：從兩人負擔金額反推
             const xT = Number(row.splitXiangTwd || 0); const qT = Number(row.splitQianTwd || 0);
             const xJ = Number(row.splitXiangJpy || 0); const qJ = Number(row.splitQianJpy || 0);
             const total = (xT + qT) || (xJ + qJ);
             if (total <= 0) return 'equal';
             const xFrac = (xT || xJ) / total;
-            if (Math.abs(xFrac - 0.5) < 0.02) return 'equal';
-            if (Math.abs(xFrac - 0.35) < 0.03) return 'split65';
-            return 'manual';
+            return Math.abs(xFrac - 0.5) < 0.02 ? 'equal' : 'manual';
           })(),
           splitXiangTwd: Number(row.splitXiangTwd || 0),
           splitXiangJpy: Number(row.splitXiangJpy || 0),

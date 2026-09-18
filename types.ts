@@ -116,7 +116,7 @@ export interface ExpenseRecord {
   amountJpy: number;
   note: string;
   // Split fields — Xiang = 想想, Qian = Yian（沿用試算表既有欄位名）
-  splitType: 'equal' | 'split65' | 'manual';
+  splitType: 'equal' | 'manual';
   splitXiangTwd: number;
   splitXiangJpy: number;
   splitQianTwd: number;

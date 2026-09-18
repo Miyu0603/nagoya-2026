@@ -18,17 +18,15 @@ interface CostViewProps {
 const XIANG_COLOR = '#E91E63';
 const QIAN_COLOR = '#2196F3'; // Yian
 
-type SplitType = 'equal' | 'split65' | 'manual';
+type SplitType = 'equal' | 'manual';
 
 const SPLIT_OPTIONS: { value: SplitType; label: string }[] = [
   { value: 'equal', label: '平均' },
-  { value: 'split65', label: '65:35' },
   { value: 'manual', label: '自訂' },
 ];
 
 function calcSplit(total: number, type: SplitType, manualXiang: number): { xA: number; qA: number } {
   if (type === 'equal') { const xA = total / 2; return { xA, qA: total - xA }; }
-  if (type === 'split65') { const xA = Math.round(total * 0.35); return { xA, qA: total - xA }; }
   return { xA: manualXiang, qA: total - manualXiang };
 }
 
@@ -56,7 +54,6 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [showBatchSplitSheet, setShowBatchSplitSheet] = useState(false);
-  const [batchSplitType, setBatchSplitType] = useState<SplitType>('equal');
   const [isBatchProcessing, setIsBatchProcessing] = useState(false);
 
   const totalTWD = expenses.reduce((sum, r) => sum + r.amountTwd, 0);
@@ -188,12 +185,12 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
       const selected = expenses.filter(r => selectedRows.has(r.rowIndex));
       for (const record of selected) {
         const total = record.amountTwd > 0 ? record.amountTwd : record.amountJpy;
-        const { xA, qA } = calcSplit(total, batchSplitType, 0);
+        const { xA, qA } = calcSplit(total, 'equal', 0);
         const payload = {
           action: 'edit', rowIndex: record.rowIndex,
           date: record.date.replace(/-/g, '/'), item: record.item, payer: record.payer,
           amountTwd: record.amountTwd, amountJpy: record.amountJpy, note: record.note || '',
-          splitType: batchSplitType,
+          splitType: 'equal' as SplitType,
           splitXiangTwd: record.amountTwd > 0 ? xA : 0, splitXiangJpy: record.amountJpy > 0 ? xA : 0,
           splitQianTwd: record.amountTwd > 0 ? qA : 0, splitQianJpy: record.amountJpy > 0 ? qA : 0,
           sheetName: GOOGLE_SHEET_NAME
@@ -340,9 +337,6 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
                 {record.splitType === 'manual' && (
                   <span className="bg-[#FFF4D6] text-[#946800] text-[9px] px-1.5 py-0.5 font-semibold rounded shrink-0">手動分帳</span>
                 )}
-                {record.splitType === 'split65' && (
-                  <span className="bg-[#E8F4FD] text-[#1565C0] text-[9px] px-1.5 py-0.5 font-semibold rounded shrink-0">65:35</span>
-                )}
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -380,10 +374,10 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
             </div>
             <button
               disabled={selectedRows.size === 0 || isBatchProcessing}
-              onClick={() => { setBatchSplitType('equal'); setShowBatchSplitSheet(true); }}
+              onClick={() => setShowBatchSplitSheet(true)}
               className="px-4 py-2 bg-ios-fill-3 text-ios-label text-[13px] font-semibold rounded-ios disabled:opacity-40"
             >
-              更改分帳
+              改平均分帳
             </button>
             <button
               disabled={selectedRows.size === 0 || isBatchProcessing}
@@ -502,26 +496,9 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
       </Sheet>
 
       {/* Batch split type sheet */}
-      <Sheet open={showBatchSplitSheet} onClose={() => setShowBatchSplitSheet(false)} title="批次更改分帳方式">
+      <Sheet open={showBatchSplitSheet} onClose={() => setShowBatchSplitSheet(false)} title="批次改成平均分攤">
         <div className="px-5 pb-5 space-y-4">
-          <p className="text-[13px] text-ios-label-2">將對已選 {selectedRows.size} 筆項目套用新的分帳方式（自訂模式將按各項目金額重新計算）。</p>
-          <div className="flex rounded-ios-sm overflow-hidden border border-ios-separator">
-            {SPLIT_OPTIONS.filter(o => o.value !== 'manual').map((opt, i) => (
-              <label key={opt.value} className={`flex-1 text-center cursor-pointer ${i > 0 ? 'border-l border-ios-separator' : ''}`}>
-                <input
-                  type="radio"
-                  name="batchSplitType"
-                  value={opt.value}
-                  checked={batchSplitType === opt.value}
-                  onChange={() => setBatchSplitType(opt.value)}
-                  className="sr-only"
-                />
-                <span className={`block py-3 text-[13px] font-semibold select-none ${batchSplitType === opt.value ? 'bg-mag-gold text-white' : 'bg-ios-fill-3 text-ios-label-2'}`}>
-                  {opt.value === 'equal' ? '平均分攤' : '65:35 分攤'}
-                </span>
-              </label>
-            ))}
-          </div>
+          <p className="text-[13px] text-ios-label-2">將已選的 {selectedRows.size} 筆改成平均分攤，各筆依自己的金額重新計算。</p>
           <div className="flex gap-3">
             <button type="button" onClick={() => setShowBatchSplitSheet(false)} className="flex-1 py-3.5 bg-ios-fill-3 rounded-ios font-semibold text-[15px] text-ios-label">取消</button>
             <button type="button" disabled={isBatchProcessing} onClick={handleBatchSplitConfirm} className="flex-1 py-3.5 bg-mag-gold text-white rounded-ios font-semibold text-[15px] disabled:opacity-60">
