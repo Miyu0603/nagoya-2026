@@ -23,7 +23,9 @@ export const Header: React.FC<HeaderProps> = ({ weather }) => {
     >
       <div className="flex items-end justify-between gap-3.5 px-5 pb-[15px]">
         <div className="min-w-0">
-          <span className="inline-block font-num text-[10px] font-medium tracking-[0.24em] text-washi-white bg-vermillion rounded-tk-xs px-[9px] py-1 mb-[9px]">
+          {/* 往下推 6px 避開上緣模糊，下方 margin 同步減 6px，標題位置不動。
+              letter-spacing 會在最後一個字後面多留一格，右內距扣掉才會真的置中。 */}
+          <span className="inline-flex items-center justify-center font-num text-[13px] font-medium leading-none tracking-[0.2em] text-washi-white bg-vermillion rounded-tk-xs h-[26px] pl-[10px] pr-[7px] mt-[6px] mb-[4px]">
             2026
           </span>
           <h1 className="font-noto text-[18px] font-bold leading-[1.4] tracking-[0.03em] text-ink">
