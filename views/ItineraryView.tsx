@@ -19,21 +19,8 @@ const CATEGORY_LABEL: Record<EventCategory, string> = {
   stay: '住宿',
 };
 
-/**
- * 沒有在 constants.ts 標 category 的事件，用關鍵字推一個。
- * 規則沿用設計原型的 categorize()，日後把 category 補進資料就會蓋過這裡。
- */
-function inferCategory(description: string): EventCategory {
-  const d = description;
-  if (/入住|退房|飯店|抵達舞家|放行李|寄行李|取回行李|取行李|行李交櫃檯|宅配/.test(d)) return 'stay';
-  if (/→|線|新幹線|特急|ラピート|Skyliner|起飛|下車|集合|解散|步行|走到|走路|前往|回市中心|出發|離開|回飯店|買 Suica/.test(d)) return 'transit';
-  if (/早餐|午餐|晚餐|Coffee|蓬萊軒|うな富士|ひつまぶし|釜匠|BEEF|鯛焼|どら焼き|モンブラン|栗りん|ロッキンロビン|Cheese|うさぎや|超商/.test(d)) return 'food';
-  if (/盆踊り|ART&LIGHTS|活動|プラネタリア|Sky Garden|夜景|AIR CABIN|整理券|排隊/.test(d)) return 'event';
-  return 'spot';
-}
-
-const categoryOf = (event: ItineraryEvent): EventCategory =>
-  event.category ?? inferCategory(event.description);
+/** constants.ts 裡 95 筆事件都標了 category，這裡只留一個保險預設 */
+const categoryOf = (event: ItineraryEvent): EventCategory => event.category ?? 'spot';
 
 /* ── 日期格柵 ── 七天一列排滿，不橫向捲動 ── */
 const DayStrip: React.FC<{ selectedIdx: number; onSelect: (idx: number) => void }> = ({

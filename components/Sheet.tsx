@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface SheetProps {
@@ -25,12 +25,71 @@ export const Sheet: React.FC<SheetProps> = ({
   variant = 'sheet',
   maxWidth = 'max-w-md',
 }) => {
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef({ startY: 0, dy: 0, active: false });
+  const [dragY, setDragY] = useState(0);
+  const [dragging, setDragging] = useState(false);
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
   }, [open]);
+
+  // 每次重新打開都要歸零，否則會停在上次拖到一半的位置
+  useEffect(() => { if (open) { setDragY(0); setDragging(false); } }, [open]);
+
+  /**
+   * 下滑關閉（單段，沒有展開檔位）。內容捲到最上面時才接手勢。
+   * touchmove 要 preventDefault，所以用 passive: false 自己掛原生監聽。
+   */
+  useEffect(() => {
+    if (!open || variant !== 'sheet') return;
+    const el = sheetRef.current;
+    if (!el) return;
+
+    const onStart = (e: TouchEvent) => {
+      const scroller = scrollRef.current;
+      if (scroller && scroller.scrollTop > 0) { dragRef.current.active = false; return; }
+      // 在輸入框上起手就不要攔，讓鍵盤與選字正常運作
+      const target = e.target as HTMLElement;
+      if (target.closest('input, textarea, select')) { dragRef.current.active = false; return; }
+      dragRef.current = { startY: e.touches[0].clientY, dy: 0, active: true };
+    };
+
+    const onMove = (e: TouchEvent) => {
+      if (!dragRef.current.active) return;
+      const dy = e.touches[0].clientY - dragRef.current.startY;
+      if (dy <= 0) return;
+      e.preventDefault();
+      dragRef.current.dy = dy;
+      setDragging(true);
+      setDragY(dy > 120 ? 120 + (dy - 120) * 0.35 : dy);
+    };
+
+    const onEnd = () => {
+      if (!dragRef.current.active) return;
+      const dy = dragRef.current.dy;
+      dragRef.current.active = false;
+      dragRef.current.dy = 0;
+      setDragging(false);
+      setDragY(0);
+      if (dy > 90) onClose();
+    };
+
+    el.addEventListener('touchstart', onStart, { passive: true });
+    el.addEventListener('touchmove', onMove, { passive: false });
+    el.addEventListener('touchend', onEnd);
+    el.addEventListener('touchcancel', onEnd);
+    return () => {
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+      el.removeEventListener('touchcancel', onEnd);
+    };
+  }, [open, variant, onClose]);
 
   if (!open) return null;
 
@@ -45,8 +104,13 @@ export const Sheet: React.FC<SheetProps> = ({
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center animate-fade-in-soft">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
       <div
-        className={`relative ${maxWidth} w-full bg-ios-card rounded-t-ios-xl sm:rounded-ios-xl shadow-ios-elevated overflow-hidden flex flex-col max-h-[88vh] animate-sheet-up sm:animate-fade-in-soft`}
-        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        ref={sheetRef}
+        className={`relative ${maxWidth} w-full bg-ios-card rounded-t-ios-xl sm:rounded-ios-xl shadow-ios-elevated overflow-hidden flex flex-col max-h-[88vh] ${dragging ? '' : 'animate-sheet-up sm:animate-fade-in-soft'}`}
+        style={{
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          transform: `translateY(${dragY}px)`,
+          transition: dragging ? 'none' : 'transform 300ms ease-in-out',
+        }}
       >
         {/* Grab handle */}
         <div className="pt-2 pb-1 flex justify-center sm:hidden">
@@ -57,7 +121,7 @@ export const Sheet: React.FC<SheetProps> = ({
             <h3 className="text-ios-headline font-semibold text-ios-label">{title}</h3>
           </div>
         )}
-        <div className="overflow-y-auto">
+        <div ref={scrollRef} className="overflow-y-auto overscroll-contain">
           {children}
         </div>
       </div>

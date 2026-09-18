@@ -16,7 +16,7 @@ interface CostViewProps {
 }
 
 const XIANG_COLOR = '#E91E63';
-const QIAN_COLOR = '#B45309'; // Yian（燒橘，白字對比 4.9:1）
+const QIAN_COLOR = '#F97316'; // Yian（亮橘）
 
 type SplitType = 'equal' | 'manual';
 
@@ -404,11 +404,14 @@ export const CostView: React.FC<CostViewProps> = ({ expenses, isLoading, fetchEr
       {/* Add / Edit Sheet */}
       <Sheet open={showModal} onClose={() => setShowModal(false)} title={mode === 'edit' ? '編輯消費' : '新增消費'}>
         <form onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} onSubmit={handleSubmit} className="px-5 pb-5 space-y-4">
-          <div className="grid grid-cols-2 gap-3 items-end">
+          {/* iOS Safari 的 input[type=date] 有固有最小寬度，欄位不宣告可縮就會撐破格線壓到隔壁。
+              minmax(0,1fr) + min-width:0 + appearance:none 三個一起才壓得住。 */}
+          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 items-end">
             <div className="flex flex-col min-w-0">
               <label className="text-[12px] font-semibold text-ios-label-2 mb-1.5 block">日期</label>
               <input type="date" value={date} onChange={e => setDate(e.target.value)}
-                className="w-full min-w-0 bg-ios-fill-4 px-3 py-2.5 rounded-ios text-[15px] font-medium text-ios-label outline-none" />
+                style={{ minWidth: 0, WebkitAppearance: 'none', appearance: 'none' }}
+                className="w-full max-w-full block bg-ios-fill-4 px-2.5 py-2.5 rounded-ios text-[14px] font-medium text-ios-label outline-none" />
             </div>
             <div className="flex flex-col min-w-0">
               <label className="text-[12px] font-semibold text-ios-label-2 mb-1.5 block">支付者</label>
