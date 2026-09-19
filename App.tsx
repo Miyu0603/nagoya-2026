@@ -12,21 +12,50 @@ import { CostView } from './views/CostView';
 import { Header } from './components/Header';
 import { TabBar } from './components/TabBar';
 
-// 換行程、或行前清單內容整份改寫時都要 bump，否則裝置上的舊清單會一直留著
+// 換行程時 bump，會清掉裝置上的所有紀錄
 const TRIP_KEY = 'nagoya-2026-r2';
+
+/**
+ * 內建清單（待辦、隨身、托運）改版時 bump。
+ * 只重新載入內建項目，使用者自己新增的會留著，打勾紀錄也不受影響——
+ * 不需要動 TRIP_KEY，所以購物清單與勾選狀態都不會被清掉。
+ */
+const SEED_VERSION = '2026-09-19';
+
+const SEEDED_LISTS = ['dynamic_todo_list', 'dynamic_carryon_list', 'dynamic_checkedbag_list'];
 
 function getTripStorage<T>(key: string, fallback: T): T {
   try {
     const tripKey = localStorage.getItem('trip_key');
     if (tripKey !== TRIP_KEY) {
-      // New trip — wipe all old data
-      ['checked_items', 'dynamic_todo_list', 'dynamic_carryon_list', 'dynamic_checkedbag_list', 'shopping_list'].forEach(k => localStorage.removeItem(k));
+      // 換行程了，舊資料整批丟掉
+      [...SEEDED_LISTS, 'checked_items', 'shopping_list'].forEach(k => localStorage.removeItem(k));
       localStorage.setItem('trip_key', TRIP_KEY);
+      localStorage.setItem('seed_version', SEED_VERSION);
       return fallback;
     }
     const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : fallback;
   } catch (e) { return fallback; }
+}
+
+/** 自己新增的項目 id 是 `<prefix>_<時間戳>`，內建的是 `<prefix>_1`、`<prefix>_2`… */
+const isUserAdded = (id: string) => /_\d{10,}$/.test(id);
+
+/**
+ * 內建清單更新時，把新的內建項目換上去，並保留使用者自己加的。
+ * 刪掉的內建項目會消失，改過字的內建項目會被改回官方版本——
+ * 這是刻意的，內建清單的內容以程式碼為準。
+ */
+function getSeededList(key: string, seed: ChecklistItem[]): ChecklistItem[] {
+  const stored = getTripStorage<ChecklistItem[] | null>(key, null);
+  if (!stored) return seed;
+
+  let storedVersion: string | null = null;
+  try { storedVersion = localStorage.getItem('seed_version'); } catch (e) { /* 無痕模式讀不到 */ }
+  if (storedVersion === SEED_VERSION) return stored;
+
+  return [...seed, ...stored.filter(item => isUserAdded(item.id))];
 }
 
 const App: React.FC = () => {
@@ -47,16 +76,21 @@ const App: React.FC = () => {
   }, [checkedItems]);
 
   const [todoList, setTodoList] = useState<ChecklistItem[]>(() =>
-    getTripStorage('dynamic_todo_list', TODO_LIST)
+    getSeededList('dynamic_todo_list', TODO_LIST)
   );
 
   const [carryOnList, setCarryOnList] = useState<ChecklistItem[]>(() =>
-    getTripStorage('dynamic_carryon_list', PACKING_CARRY_ON)
+    getSeededList('dynamic_carryon_list', PACKING_CARRY_ON)
   );
 
   const [checkedBagList, setCheckedBagList] = useState<ChecklistItem[]>(() =>
-    getTripStorage('dynamic_checkedbag_list', PACKING_CHECKED)
+    getSeededList('dynamic_checkedbag_list', PACKING_CHECKED)
   );
+
+  // 三份清單都讀完才記錄版本，中途失敗下次會重來
+  useEffect(() => {
+    try { localStorage.setItem('seed_version', SEED_VERSION); } catch (e) { console.error(e); }
+  }, []);
 
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(() =>
     getTripStorage('shopping_list', [])
