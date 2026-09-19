@@ -26,13 +26,11 @@ export const PRE_TRIP_NOTES = [
 
 export const TODO_LIST: ChecklistItem[] = [
   { id: 'todo_1', text: 'Visit Japan Web 辦好' },
-  { id: 'todo_2', text: 'eSIM（7 日）' },
-  { id: 'todo_3', text: '名古屋城 9/23 延長閉園與最後入場時間' },
-  { id: 'todo_4', text: 'プラネタリア YOKOHAMA 9/28 場次（五天前才開放）' },
-  { id: 'todo_6', text: 'CENTER BEEF 関内 當日開店時間' },
-  { id: 'todo_7', text: 'World Porters 9/28 閉館時間' },
+  { id: 'todo_2', text: 'eSIM 開通（7 日）' },
+  { id: 'todo_4', text: 'プラネタリア YOKOHAMA 9/28 場次（9/23 才開放）' },
   { id: 'todo_8', text: '深川江戸資料館 9/29 有無臨時休館' },
   { id: 'todo_9', text: 'Suica（企鵝版）' },
+  { id: 'todo_10', text: '9/24 高山老街午餐自理，先查好要吃哪家' },
 ];
 
 export const PACKING_CARRY_ON: ChecklistItem[] = [
@@ -77,6 +75,7 @@ export const PACKING_CHECKED: ChecklistItem[] = [
 
 export const USEFUL_LINKS: UsefulLink[] = [
   { title: 'Visit Japan Web（入境手續）', url: 'https://vjw-lp.digital.go.jp/zh-hant/' },
+  { title: '橫濱逛街地圖（9/28）', url: 'https://claude.ai/artifact/TgSNYCbX4AscXqDAKeZiJd' },
   { title: '名古屋城 官網', url: 'https://www.nagoyajo.city.nagoya.jp/' },
   { title: 'AICHI NAGOYA ART&LIGHTS', url: 'https://www.pref.aichi.jp/' },
   { title: 'プラネタリア YOKOHAMA 場次', url: 'https://planetarium.konicaminolta.jp/' },
@@ -266,8 +265,8 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
   'nagoya_castle': {
     id: 'nagoya_castle',
     title: '名古屋城 大盆踊り大会',
-    description: '秋まつり 9/19–23，17:30–19:10 於正門附近特設櫓，需入城料。9/23 是最後一天，18:00 有平針木遣り音頭。地鐵名古屋城站 7 號出口步行 5 分。',
-    openingHours: '17:30–19:10（9/19–23 秋まつり）',
+    description: '秋まつり 大盆踊り 9/19–23，17:30–19:10 於正門附近特設櫓。9/23 是最後一天，當天有「和洋樂器混成樂團 Neo Japanesque」，18:00 頃是平針木遣り音頭。\n入城料大人 ¥500（10/1 起調為 ¥1,000，這趟還是舊價）。地鐵名古屋城站 7 號出口步行 5 分。',
+    openingHours: '夜間延長 9/19–10/4：最終入場 19:30、閉門 20:00',
     address: '愛知県名古屋市中区本丸1-1',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%9F%8E',
   },
@@ -746,7 +745,7 @@ export const ITINERARY: DaySchedule[] = [
       { time: '18:00', description: '地標塔 → World Porters', category: 'transit', note: '步行約 9 分', origin: '横浜ランドマークタワー', legs: [{ via: '步行 9 分', to: 'World Porters' }] },
       { time: '18:10', description: 'World Porters 3F 古著', category: 'spot', locationId: 'world_porters', note: '18:10–18:45。SPINNS VINTAGE、Mosh Pit、古着屋3peace' },
       { time: '18:50', description: 'AIR CABIN 運河公園 → 桜木町', category: 'transit', locationId: 'air_cabin', note: '單程約 5 分，順路回桜木町。走路的話約 15 分', origin: '運河公園', legs: [{ via: 'YOKOHAMA AIR CABIN', to: '桜木町', arrive: '19:00' }] },
-      { time: '19:05', description: 'コレットマーレ(.st)、CIAL 桜木町(Pensta)', category: 'spot', note: '19:05–19:45。兩棟都跟桜木町駅直結' },
+      { time: '19:05', description: 'コレットマーレ(.st)、CIAL 桜木町(Pensta)', category: 'spot', note: '19:05–19:45。and ST 在 2F、20:00 打烊，先逛那間' },
       { time: '19:45', description: '桜木町晚餐', category: 'food', note: '～20:45' },
       { time: '20:50', description: '桜木町 → 大井町 21:25', category: 'transit', origin: '桜木町', legs: [{ via: '京浜東北線 直達', to: '大井町', arrive: '21:25' }] },
     ]
