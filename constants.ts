@@ -29,6 +29,7 @@ export const TODO_LIST: ChecklistItem[] = [
   { id: 'todo_2', text: 'eSIM 開通' },
   { id: 'todo_4', text: '確認 プラネタリア場次（9/23 開放）' },
   { id: 'todo_10', text: '確認味の与平 9/24 有無公休（不定休），要訂位就先訂' },
+  { id: 'todo_11', text: '下北澤 DIALOGUE 9/27 週日中午訂位' },
 ];
 
 export const PACKING_CARRY_ON: ChecklistItem[] = [
@@ -369,6 +370,14 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
     openingHours: '午餐 11:00–14:30（L.O. 14:00）／不定休',
     address: '岐阜県高山市上三之町7',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%91%B3%E3%81%AE%E4%B8%8E%E5%B9%B3%20%E9%AB%98%E5%B1%B1',
+  },
+  'dialogue_shimokita': {
+    id: 'dialogue_shimokita',
+    title: 'DIALOGUE（ディアログ）',
+    description: '法式小館兼酒吧，米其林必比登 2023／2024／2025 連三年入選。午間套餐 ¥1,600，前菜與主菜各自可選。\n週二公休（另有不定休），週日照常營業。\n⚠️ 在北沢 3 丁目，下北沢駅中央口徒步 7 分——比車站周邊的店遠一點，來回多花 15 分鐘逛街時間。一休可以線上訂位，週日中午建議先訂，訂了就不用賭排隊。\n想留多一點時間逛街的話，近一點的替代：食堂 土土土（東口徒步 2 分）、珉亭（南口徒步 3 分，下北澤老字號中華）、とんかつ とん水（昭和洋食，¥750 上下）。',
+    openingHours: '午餐 12:00–15:00（L.O. 14:00）／週二公休',
+    address: '東京都世田谷区北沢3-23-21 1F',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=DIALOGUE%20%E4%B8%8B%E5%8C%97%E6%B2%A2',
   },
   'osu_kannon': {
     id: 'osu_kannon',
@@ -780,7 +789,8 @@ export const ITINERARY: DaySchedule[] = [
       { time: '10:40', description: '国立 → 豪徳寺 11:30', category: 'transit', origin: '国立', legs: [{ via: '中央線快速', to: '新宿', arrive: '11:10' }, { via: '小田急', to: '豪徳寺', arrive: '11:30' }] },
       { time: '11:35', description: '豪德寺（招財貓）', category: 'spot', locationId: 'gotokuji', note: '11:35–12:10' },
       { time: '12:15', description: '豪徳寺 → 下北沢 12:20', category: 'transit', note: '2 站', origin: '豪徳寺', legs: [{ via: '小田急', to: '下北沢', arrive: '12:20' }] },
-      { time: '12:30', description: '下北澤 午餐＋逛街', category: 'food', locationId: 'shimokitazawa', note: '12:30–15:00' },
+      { time: '12:30', description: 'DIALOGUE 午餐（法式小館）', category: 'food', locationId: 'dialogue_shimokita', isHighlight: true, note: '中央口徒步 7 分。週日中午建議先訂位' },
+      { time: '13:45', description: '下北澤 逛街', category: 'spot', locationId: 'shimokitazawa', note: '～15:00。古著店密度全東京最高' },
       { time: '15:00', description: '下北沢 → 品川 15:30', category: 'transit', origin: '下北沢', legs: [{ via: '井の頭線', to: '渋谷' }, { via: '山手線', to: '品川', arrive: '15:30' }] },
       { time: '15:35', description: '品川 → 蒲田 15:46', category: 'transit', note: '行李續留品川置物櫃，活動後再回頭拿', origin: '品川', legs: [{ via: '京浜東北線', to: '蒲田', arrive: '15:46' }] },
       { time: '15:50', description: '鳴門鯛焼本舗 蒲田駅前店', category: 'food', locationId: 'naruto_taiyaki', note: '就在西口站前，進場前先買先吃掉' },
