@@ -26,11 +26,9 @@ export const PRE_TRIP_NOTES = [
 
 export const TODO_LIST: ChecklistItem[] = [
   { id: 'todo_1', text: 'Visit Japan Web 辦好' },
-  { id: 'todo_2', text: 'eSIM 開通（7 日）' },
-  { id: 'todo_4', text: 'プラネタリア YOKOHAMA 9/28 場次（9/23 才開放）' },
-  { id: 'todo_8', text: '深川江戸資料館 9/29 有無臨時休館' },
-  { id: 'todo_9', text: 'Suica（企鵝版）' },
-  { id: 'todo_10', text: '9/24 高山老街午餐自理，先查好要吃哪家' },
+  { id: 'todo_2', text: 'eSIM 開通' },
+  { id: 'todo_4', text: '確認 プラネタリア場次（9/23 開放）' },
+  { id: 'todo_10', text: '確認 9/24 午餐、25 晚餐、27 晚餐、28 早餐' },
 ];
 
 export const PACKING_CARRY_ON: ChecklistItem[] = [

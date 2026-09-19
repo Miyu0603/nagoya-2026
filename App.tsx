@@ -20,7 +20,7 @@ const TRIP_KEY = 'nagoya-2026-r2';
  * 只重新載入內建項目，使用者自己新增的會留著，打勾紀錄也不受影響——
  * 不需要動 TRIP_KEY，所以購物清單與勾選狀態都不會被清掉。
  */
-const SEED_VERSION = '2026-09-19';
+const SEED_VERSION = '2026-09-19b';
 
 const SEEDED_LISTS = ['dynamic_todo_list', 'dynamic_carryon_list', 'dynamic_checkedbag_list'];
 
