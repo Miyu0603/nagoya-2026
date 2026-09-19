@@ -334,8 +334,8 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
   'sugomi_parco': {
     id: 'sugomi_parco',
     title: '札幌スープカリー SUGOMI 名古屋パルコ店',
-    description: '湯咖哩。在名古屋 PARCO 西館 7F，逛完 PARCO 直接上樓，不用移動。\n各家資料寫的打烊時間不一致（21:30 到 22:00 都有），要晚一點去先撥 052-265-6063 確認。',
-    openingHours: '11:00–22:00（L.O. 21:00，另有資料寫 21:30 打烊）',
+    description: '湯咖哩。在名古屋 PARCO 西館 7F，逛完 PARCO 直接上樓，不用移動。\n時間以 PARCO 官方店鋪頁為準；官網註明可能臨時變動，要晚一點去先撥 052-265-6063。',
+    openingHours: '11:00–21:30（L.O. 20:30）',
     address: '愛知県名古屋市中区栄3-29-1 名古屋PARCO 西館7F',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=SUGOMI%20%E5%90%8D%E5%8F%A4%E5%B1%8BPARCO',
   },
@@ -374,7 +374,7 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
   'dialogue_shimokita': {
     id: 'dialogue_shimokita',
     title: 'DIALOGUE（ディアログ）',
-    description: '法式小館兼酒吧，米其林必比登 2023／2024／2025 連三年入選。午間套餐 ¥1,600，前菜與主菜各自可選。\n週二公休（另有不定休），週日照常營業。\n⚠️ 在北沢 3 丁目，下北沢駅中央口徒步 7 分——比車站周邊的店遠一點，來回多花 15 分鐘逛街時間。一休可以線上訂位，週日中午建議先訂，訂了就不用賭排隊。\n想留多一點時間逛街的話，近一點的替代：食堂 土土土（東口徒步 2 分）、珉亭（南口徒步 3 分，下北澤老字號中華）、とんかつ とん水（昭和洋食，¥750 上下）。',
+    description: '法式小館兼酒吧，米其林必比登 2023／2024／2025 連三年入選。午間套餐 ¥1,600，前菜與主菜各自可選。\n週二公休（另有不定休），週日照常營業。\n⚠️ 在北沢 3 丁目，下北沢駅中央口徒步 7 分——比車站周邊的店遠一點，來回多花 15 分鐘逛街時間。一休可以線上訂位，週日中午建議先訂，訂了就不用賭排隊。\n沒訂到位、或想把時間留給逛街的話，備案是「ミカン下北」——就在車站高架下，A 街區 2F 集中了十幾家餐廳（タイ屋台 999 A-207、11:00–23:30；越南フォー チョップスティックス、台灣焼小籠包 ダパイダン105、韓食ハヌリ 都在同層），週日照常，走進去現挑就好。同棟 A-101 是東洋百貨店別館的古著區，吃完直接逛。',
     openingHours: '午餐 12:00–15:00（L.O. 14:00）／週二公休',
     address: '東京都世田谷区北沢3-23-21 1F',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=DIALOGUE%20%E4%B8%8B%E5%8C%97%E6%B2%A2',
@@ -454,8 +454,8 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
   'sakae_parco': {
     id: 'sakae_parco',
     title: '栄 / 名古屋 PARCO',
-    description: 'Tower Records（東館 6F）、SABON（東館 B1F）、LACHIC、松坂屋、久屋大通 Hisaya-odori Park。PARCO 約 21:00 打烊。',
-    openingHours: '約 21:00 打烊',
+    description: 'Tower Records（東館 6F）、SABON（東館 B1F）、LACHIC、松坂屋、久屋大通 Hisaya-odori Park。\n⚠️ PARCO 的物販樓層 20:00 就打烊，只有餐廳撐到 21:30——要買東西別拖到晚餐後。',
+    openingHours: '物販 10:00–20:00／餐廳 11:00–21:30',
     address: '愛知県名古屋市中区栄3-29-1',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8BPARCO',
   },
@@ -747,9 +747,9 @@ export const ITINERARY: DaySchedule[] = [
       { time: '14:20', description: '和栗モンブラン専門店 栗りん', category: 'food', locationId: 'kurin', isHighlight: true, note: '店內位子中午前多半滿了，走外帶窗口比較實際' },
       { time: '14:50', description: '三輪神社', category: 'spot', locationId: 'miwa_jinja', note: '14:50–15:05' },
       { time: '15:15', description: '若宮八幡社', category: 'spot', locationId: 'wakamiya_hachiman', note: '徒步 12 分，15:15–15:35' },
-      { time: '15:45', description: '栄商圈、PARCO', category: 'spot', locationId: 'sakae_parco', note: 'Tower Records 東館 6F、SABON 東館 B1F' },
-      { time: '18:30', description: '札幌スープカリー SUGOMI（湯咖哩）', category: 'food', locationId: 'sugomi_parco', note: '～19:40。PARCO 西館 7F，逛完直接上樓' },
-      { time: '21:20', description: '回飯店，今晚先把行李整理好', category: 'stay', note: '明天一早要排蓬萊軒' },
+      { time: '15:45', description: '栄商圈、PARCO', category: 'spot', locationId: 'sakae_parco', note: '～19:00。物販 20:00 打烊，要買的先買。Tower Records 東館 6F、SABON 東館 B1F' },
+      { time: '19:00', description: '札幌スープカリー SUGOMI（湯咖哩）', category: 'food', locationId: 'sugomi_parco', isHighlight: true, note: '～20:15。PARCO 西館 7F，逛完直接上樓。L.O. 20:30' },
+      { time: '20:30', description: '回飯店，今晚先把行李整理好', category: 'stay', note: '明天一早要排蓬萊軒' },
     ]
   },
   {
