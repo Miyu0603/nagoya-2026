@@ -30,6 +30,21 @@ VITE_GOOGLE_SHEET_URL=...    # 試算表連結（記帳頁底部的「開啟試�
    - `VITE_GOOGLE_SHEET_URL`
 3. **Settings → Pages → Source** 設為 **GitHub Actions**。
 
+## 紙本行程表
+
+```bash
+npm run build:docx
+```
+
+從 `constants.ts` 生成 `日本行程表-2026.09.23-29.docx`（舊檔會自動備份，備份不進版控）。
+行程資料只有 `constants.ts` 一份，App 與這份 Word 都從它生成，不會出現改了 App 但文件還是舊的。
+
+文件結構：每天一頁的四欄表格（時間／★○／行程／備註），備註欄會把轉乘各段與備選班次攤開；
+表格後面的「今日要點」只收有營業時間、或描述裡帶警語的景點，不是把景點說明整段倒出來。
+最後一頁是待確認清單、旅途叮嚀、緊急聯絡與憑證連結。
+
+腳本副檔名是 `.cjs`——`package.json` 設了 `type: module`，`.js` 會被當 ESM，`require` 會失敗。
+
 ## 換行程時要改的地方
 
 | 項目 | 位置 |
@@ -39,3 +54,5 @@ VITE_GOOGLE_SHEET_URL=...    # 試算表連結（記帳頁底部的「開啟試�
 | 天氣城市切換 | `constants.ts` 的 `WEATHER_SPOTS` |
 | localStorage 重置 | `App.tsx` 的 `TRIP_KEY` |
 | 主色 | `index.html` 的 `mag-gold` |
+| 內建清單推到裝置 | `App.tsx` 的 `SEED_VERSION` |
+| 紙本行程表 | `npm run build:docx` |
