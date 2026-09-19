@@ -28,7 +28,7 @@ export const TODO_LIST: ChecklistItem[] = [
   { id: 'todo_1', text: 'Visit Japan Web 辦好' },
   { id: 'todo_2', text: 'eSIM 開通' },
   { id: 'todo_4', text: '確認 プラネタリア場次（9/23 開放）' },
-  { id: 'todo_10', text: '確認 9/24 午餐、25 晚餐、27 晚餐、28 早餐' },
+  { id: 'todo_10', text: '確認味の与平 9/24 有無公休（不定休），要訂位就先訂' },
 ];
 
 export const PACKING_CARRY_ON: ChecklistItem[] = [
@@ -361,6 +361,14 @@ export const LOCATION_DETAILS: Record<string, LocationDetail> = {
     openingHours: '9:00–18:00，無固定公休',
     address: '東京都江東区深川1-9-10',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=B%C2%B2%20%E3%83%93%E3%83%BC%E3%82%B9%E3%82%AF%E3%82%A8%E3%82%A2%E3%83%BC%E3%83%89%20%E6%B8%85%E6%BE%84%E7%99%BD%E6%B2%B3',
+  },
+  'aji_no_yohei': {
+    id: 'aji_no_yohei',
+    title: '味の与平（舩坂酒造店）',
+    description: '兩百年酒藏舩坂酒造店開的飛騨牛餐廳，就在古い町並み的上三之町，是老街裡唯一的酒藏餐廳。牛排、壽喜燒、燉牛肉都有，配自家日本酒。一樓桌席、二樓大廳，看得到中庭。\n⚠️ 不定休，官網不會預告，出發前查一下當天有沒有開。\nヒトサラ 可以線上預約，怕排隊的話先訂最保險。排太長的備案是路邊攤（みだらしだんご、飛騨牛にぎり）。',
+    openingHours: '午餐 11:00–14:30（L.O. 14:00）／不定休',
+    address: '岐阜県高山市上三之町7',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=%E5%91%B3%E3%81%AE%E4%B8%8E%E5%B9%B3%20%E9%AB%98%E5%B1%B1',
   },
   'osu_kannon': {
     id: 'osu_kannon',
@@ -702,7 +710,8 @@ export const ITINERARY: DaySchedule[] = [
       { time: '07:30', description: '超商早餐', category: 'food', note: 'VIA INN 1F 早餐 6:30 開始，看方案有沒有含' },
       { time: '07:55', description: '出發，飯店走到銀時計約 5 分', category: 'transit' },
       { time: '08:10', description: '集合：JR 名古屋站西口（太閤通口）銀時計前', category: 'transit', locationId: 'kkday_tour', isHighlight: true },
-      { time: '11:00', description: '高山老街', category: 'spot', note: '含午餐，約 2.5 小時' },
+      { time: '11:00', description: '味の与平 午餐（飛騨牛）', category: 'food', locationId: 'aji_no_yohei', isHighlight: true, note: '開店即到最不會排。太長就改吃路邊攤' },
+      { time: '12:15', description: '高山老街 散策', category: 'spot', note: '～13:30。三町筋一帶，吃完再逛' },
       { time: '14:30', description: '白川鄉合掌村', category: 'spot', note: '約 2 小時' },
       { time: '18:30', description: '名古屋站解散', category: 'transit' },
       { time: '18:40', description: '回飯店放東西', category: 'stay' },
