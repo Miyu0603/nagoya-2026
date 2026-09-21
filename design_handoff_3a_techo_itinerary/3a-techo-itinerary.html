@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3a 手帳・格柵版 — 行程頁 design reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Design reference only — the production app uses Tailwind utilities (see README). */
+  body { margin:0; background:#E7E5E0; display:flex; justify-content:center; padding:40px 20px; font-family:'Noto Sans TC','PingFang TC',sans-serif; }
+  .no-sb::-webkit-scrollbar { display:none; }
+  .no-sb { scrollbar-width:none; -ms-overflow-style:none; }
+  a { text-decoration:none; }
+  button { font-family:inherit; }
+</style>
+</head>
+<body>
+
+<div id="phone" style="position:relative; width:390px; height:844px; display:flex; flex-direction:column; overflow:hidden; border-radius:26px; background:#F9F8F4; box-shadow:0 14px 40px rgba(92,64,51,0.16); color:#2B2B2B;">
+
+  <header style="flex:none; padding:19px 20px 15px; background:#FFFFFF; border-bottom:1px solid #E4DBCB;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:14px;">
+      <div>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:9px;">
+          <span style="font-size:10px; font-weight:500; letter-spacing:0.24em; color:#F9F8F4; background:#A84836; border-radius:3px; padding:4px 9px; font-family:'DM Sans',sans-serif;">2026</span>
+        </div>
+        <h1 style="margin:0; font-size:18px; font-weight:700; line-height:1.4; letter-spacing:0.03em; color:#2B2B2B; font-family:'Noto Serif JP',serif;">秋の名古屋 · 東京 · 橫濱</h1>
+      </div>
+      <div style="flex:none; display:flex; align-items:center; gap:9px; background:#F9F8F4; border:1px solid #EFE9DC; border-radius:6px; padding:6px 12px 6px 9px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8C6239" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.6"></circle><line x1="12" y1="1.6" x2="12" y2="3.8"></line><line x1="12" y1="20.2" x2="12" y2="22.4"></line><line x1="1.6" y1="12" x2="3.8" y2="12"></line><line x1="20.2" y1="12" x2="22.4" y2="12"></line><line x1="4.7" y1="4.7" x2="6.3" y2="6.3"></line><line x1="17.7" y1="17.7" x2="19.3" y2="19.3"></line><line x1="4.7" y1="19.3" x2="6.3" y2="17.7"></line><line x1="17.7" y1="6.3" x2="19.3" y2="4.7"></line></svg>
+        <div style="display:flex; flex-direction:column; align-items:flex-start; line-height:1;">
+          <div style="font-size:16px; font-weight:500; letter-spacing:-0.01em; font-family:'DM Sans',sans-serif;">26°</div>
+          <div style="font-size:9px; color:#6E675E; margin-top:4px; letter-spacing:0.14em;">名古屋</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="no-sb" style="flex:1; min-height:0; overflow-y:auto;">
+    <div style="position:sticky; top:0; z-index:5; background:rgba(249,248,244,0.97); backdrop-filter:blur(12px); padding:13px 18px 12px;">
+      <div id="dayRow" style="display:flex; gap:5px;"></div>
+    </div>
+    <div style="padding:10px 18px 14px;">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:11px;">
+        <span id="dayNo" style="flex:none; font-size:10px; font-weight:500; letter-spacing:0.14em; color:#A84836; font-family:'DM Sans',sans-serif;"></span>
+        <span style="flex:none; width:1px; height:11px; background:#E0D8C8;"></span>
+        <span id="dayDate" style="flex:none; font-size:10px; letter-spacing:0.1em; color:#6E675E; font-family:'DM Sans',sans-serif;"></span>
+        <span style="flex:1;"></span>
+        <span style="flex:none; display:flex; align-items:center; gap:6px; max-width:186px;">
+          <svg style="flex:none;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8C6239" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+          <span id="dayAccom" style="font-size:11px; color:#4A443C; letter-spacing:0.02em; line-height:1.35;"></span>
+        </span>
+      </div>
+      <h2 id="dayTitle" style="margin:0; font-size:20px; font-weight:700; line-height:1.5; letter-spacing:0.02em; font-family:'Noto Serif JP',serif;"></h2>
+    </div>
+    <div id="timeline" style="padding:0 18px 30px;"></div>
+  </main>
+
+  <div id="backdrop" style="position:absolute; inset:0; z-index:40; display:none; align-items:flex-end; justify-content:center; background:rgba(43,43,43,0.34); opacity:0; transition:opacity 260ms ease-in-out;">
+    <div id="sheet" class="no-sb" style="width:100%; max-height:92%; overflow-y:auto; background:#F9F8F4; border-radius:8px 8px 26px 26px; box-shadow:0 -6px 28px rgba(43,43,43,0.18); transform:translateY(16px); transition:transform 300ms ease-in-out;"></div>
+  </div>
+
+  <nav style="flex:none; background:#FFFFFF; border-top:1px solid #E4DBCB; padding:7px 6px 13px;">
+    <div id="tabRow" style="display:flex;"></div>
+  </nav>
+</div>
+
+<script>
+/* ── Data: mirrors constants.ts (ITINERARY / LOCATION_DETAILS). Short keys keep this file readable.
+      t=time  d=description  n=note  l=locationId  h=isHighlight ────────────────────────────── */
+const ITINERARY = [
+ { date:'9/23', weekday:'星期三', title:'抵達名古屋・名古屋城夜祭', accommodation:'VIA INN 名古屋新幹線口', events:[
+  {t:'06:40',d:'IT210 桃園 T1 起飛',l:'flight_out',h:1},
+  {t:'10:35',d:'抵達關西機場 T1'},
+  {t:'10:35',d:'入境、提行李',n:'先辦好 Visit Japan Web。KIX 尖峰抓 45 分鐘'},
+  {t:'11:25',d:'走到南海關西空港站',n:'約 5 分'},
+  {t:'11:35',d:'南海ラピート → 難波 12:13',l:'kix_transfer',h:1,n:'落地看狀況選班次，南海難波走到近鐵大阪難波要 8–10 分'},
+  {t:'12:30',d:'近鐵アーバンライナー → 近鐵名古屋 14:49',h:1},
+  {t:'15:00',d:'名古屋站與 Yian 會合',n:'Yian：12:55 中部國際機場 → 14:00 μ-SKY → 14:28 名鐵名古屋'},
+  {t:'15:10',d:'入住 VIA INN 名古屋新幹線口',l:'via_inn_nagoya'},
+  {t:'15:40',d:'車站周邊小逛',n:'SHIRO 高島屋店、エスカ地下街、名鐵百貨、KITTE 名古屋'},
+  {t:'16:40',d:'名古屋 →東山線→ 栄 →名城線→ 名古屋城站',n:'約 15 分'},
+  {t:'17:30',d:'名古屋城 大盆踊り大会',l:'nagoya_castle',h:1,n:'17:30–19:10，18:00 平針木遣り音頭，需入城料'},
+  {t:'19:20',d:'AICHI NAGOYA ART&LIGHTS',l:'art_lights',n:'免費免預約，18:30–19:30 最擠，這時間去剛好錯開'},
+  {t:'20:10',d:'回名古屋站附近晚餐'}]},
+ { date:'9/24', weekday:'星期四', title:'高山老街・白川鄉一日遊', accommodation:'VIA INN 名古屋新幹線口', events:[
+  {t:'07:55',d:'出發，飯店走到銀時計約 5 分'},
+  {t:'08:10',d:'集合：JR 名古屋站西口（太閤通口）銀時計前',l:'kkday_tour',h:1},
+  {t:'11:00',d:'高山老街',n:'含午餐，約 2.5 小時'},
+  {t:'14:30',d:'白川鄉合掌村',n:'約 2 小時'},
+  {t:'18:30',d:'名古屋站解散'},
+  {t:'18:40',d:'回飯店放東西'},
+  {t:'19:00',d:'うな富士 名古屋駅太閤口店 晚餐',l:'unafuji',h:1,n:'已訂位。巴士若明顯延遲先通知店家'},
+  {t:'20:00',d:'オアシス21 & MIRAI TOWER 外觀夜景',l:'oasis21',n:'不上塔。水の宇宙船 21:00 關，燈光到 23:00'}]},
+ { date:'9/25', weekday:'星期五', title:'清洲城・大須寺社巡禮・栄', accommodation:'VIA INN 名古屋新幹線口', events:[
+  {t:'08:25',d:'Bucyo Coffee 早餐',l:'bucyo_coffee',n:'08:25–09:10'},
+  {t:'09:10',d:'前往清洲城',n:'JR 到清洲駅約 7–10 分＋徒步 15–17 分，抓 30 分；或 Uber'},
+  {t:'10:00',d:'清洲城',l:'kiyosu_castle',n:'10:00–11:30'},
+  {t:'11:30',d:'回市中心',n:'清洲→名古屋→鶴舞線大須観音，抓 40 分'},
+  {t:'12:15',d:'大須観音',n:'12:15–12:35'},
+  {t:'12:40',d:'七寺',n:'徒步 3–5 分，12:40–12:55'},
+  {t:'13:00',d:'ロッキンロビン 大須店 午餐',l:'rockin_robin',n:'13:00–13:50'},
+  {t:'13:55',d:'万松寺',n:'13:55–14:15'},
+  {t:'14:20',d:'和栗モンブラン専門店 栗りん',l:'kurin',h:1,n:'店內位子中午前多半滿了，走外帶窗口比較實際'},
+  {t:'14:50',d:'三輪神社',n:'14:50–15:05'},
+  {t:'15:15',d:'若宮八幡社',n:'徒步 12 分，15:15–15:35'},
+  {t:'15:45',d:'栄商圈、PARCO',l:'sakae_parco',n:'Tower Records 東館 6F、SABON 東館 B1F'},
+  {t:'18:30',d:'栄晚餐'},
+  {t:'21:20',d:'回飯店，今晚先把行李整理好',n:'明天一早要排蓬萊軒'}]},
+ { date:'9/26', weekday:'星期六', title:'熱田神宮・蓬萊軒 → 東京', accommodation:'舞家（国立）', events:[
+  {t:'08:00',d:'退房'},
+  {t:'08:05',d:'名古屋站寄行李＋超商買早餐',n:'週六＋亞運置物櫃會滿，早點卡位。早餐帶上車吃'},
+  {t:'08:30',d:'名鉄名古屋 → 神宮前 08:36',n:'約 6 分，班次密集'},
+  {t:'08:50',d:'蓬萊軒本店 開始排隊',l:'horaiken_honten',h:1,n:'從神宮前走過來實際約 10–12 分。排隊派一人即可'},
+  {t:'10:00',d:'領整理券、指定入座時段',n:'發券約 10:00–10:30，忙的日子會提前'},
+  {t:'10:20',d:'熱田神宮 參拜',l:'atsuta_jingu',n:'不要走太深，留一人可隨時折返'},
+  {t:'11:30',d:'ひつまぶし',n:'實際時間依整理券而定，抓 1 小時'},
+  {t:'12:35',d:'神宮前 → 名鉄名古屋',n:'約 9 分＋走路，抓 20 分'},
+  {t:'13:00',d:'取回行李，緩衝時間',n:'離發車還有 70 分鐘'},
+  {t:'14:12',d:'名古屋 → 新幹線 → 品川 15:43',l:'shinkansen_tokyo',h:1},
+  {t:'15:50',d:'品川站寄行李、買 Suica',n:'放到 9/27 傍晚，確認是 3 天制不是當日制'},
+  {t:'16:10',d:'品川 →山手線→ 新宿 →中央線快速→ 国立 17:10'},
+  {t:'17:20',d:'抵達舞家',l:'maiya_kunitachi'}]},
+ { date:'9/27', weekday:'星期日', title:'豪德寺・下北澤・蒲田聲優活動', accommodation:'阪急 OURS INN（大井町）', events:[
+  {t:'10:30',d:'離開舞家',n:'要趕 11:30 到豪德寺就得 10:30 出門，路上 50 分鐘'},
+  {t:'10:40',d:'国立 →中央線快速→ 新宿 11:10 →小田急→ 豪徳寺 11:30'},
+  {t:'11:35',d:'豪德寺（招財貓）',l:'gotokuji',n:'11:35–12:10'},
+  {t:'12:15',d:'豪徳寺 →小田急→ 下北沢 12:20',n:'2 站'},
+  {t:'12:30',d:'下北澤 午餐＋逛街',n:'12:30–15:00'},
+  {t:'15:00',d:'下北沢 →井の頭線→ 渋谷 →山手線→ 品川 15:30'},
+  {t:'15:35',d:'品川取行李'},
+  {t:'15:55',d:'阪急 OURS INN 入住、放行李',l:'ours_inn_hankyu',n:'順路先丟行李，晚上不用再繞回品川'},
+  {t:'16:15',d:'大井町 →京浜東北線→ 蒲田 16:23 → 步行 10 分'},
+  {t:'17:00',d:'入間聲優活動',l:'kogakuin_arena',h:1,n:'先確認開場時間'},
+  {t:'19:30',d:'鳴門鯛焼本舗 蒲田駅前店',l:'naruto_taiyaki',n:'活動結束後順路，時間依散場而定'}]},
+ { date:'9/28', weekday:'星期一', title:'橫濱一日', accommodation:'阪急 OURS INN（大井町）', events:[
+  {t:'08:05',d:'大井町 →京浜東北線→ 横浜 08:28 →ブルーライン→ 新羽 08:53'},
+  {t:'09:00',d:'西方寺',l:'saihoji',n:'彼岸花季末段，09:00–09:25'},
+  {t:'09:33',d:'新羽 →ブルーライン→ 桜木町 09:55'},
+  {t:'10:00',d:'伊勢山皇大神宮 → 成田山橫濱別院 → 掃部山公園',l:'iseyama',n:'同一個丘上，互距 3–5 分，10:00–10:45'},
+  {t:'10:50',d:'步行下坡至関内',n:'約 18 分'},
+  {t:'11:10',d:'CENTER BEEF 関内 午餐',l:'center_beef',n:'11:10–12:00，現場排隊'},
+  {t:'12:05',d:'走路往中華街',n:'約 12 分'},
+  {t:'12:15',d:'橫濱中華街 拍照',l:'chinatown',n:'12:15–12:35，不久留'},
+  {t:'12:40',d:'走到元町・中華街駅 →みなとみらい線→ 新高島 12:52'},
+  {t:'13:10',d:'プラネタリア YOKOHAMA',l:'planetaria',h:1,n:'暫定場次，五天前開放後再確認'},
+  {t:'13:55',d:'新高島 → 横浜 13:58',n:'1 站，或走路 9 分'},
+  {t:'14:05',d:'橫濱站購物',l:'yokohama_station',n:'85 分鐘，東西口都排得進去'},
+  {t:'15:35',d:'横浜 →みなとみらい線→ みなとみらい 15:39'},
+  {t:'15:45',d:'MARK IS みなとみらい',l:'mark_is',n:'15:45–16:15'},
+  {t:'16:20',d:'World Porters：JUMP SHOP、Snoopy Town',l:'world_porters',n:'16:20–16:50'},
+  {t:'17:00',d:'Sky Garden 69F',l:'sky_garden',h:1,n:'日落約 17:28，這個時間不要動'},
+  {t:'18:15',d:'コレットマーレ(.st)、CIAL 桜木町(Pensta)',n:'18:15–18:40'},
+  {t:'18:45',d:'YOKOHAMA AIR CABIN',l:'air_cabin',n:'A 往復後回桜木町吃飯 / B 單程過去逛古著並在當地吃'},
+  {t:'20:30',d:'桜木町 →京浜東北線直達→ 大井町 21:05'}]},
+ { date:'9/29', weekday:'星期二', title:'清澄白河散策・上野 → 成田', accommodation:'', events:[
+  {t:'08:40',d:'退房，行李交櫃檯',l:'klook_baggage',h:1,n:'Klook 宅配收件截止 9:00，不要拖'},
+  {t:'08:50',d:'大井町 →京浜東北線→ 浜松町 →大江戸線（大門）→ 清澄白河 09:25'},
+  {t:'09:30',d:'清澄庭園',l:'kiyosumi_garden',n:'09:30–10:25'},
+  {t:'10:35',d:'江戶土產屋高橋',l:'takahashi',n:'10:35–11:00'},
+  {t:'11:00',d:'深川釜匠 午餐',l:'fukagawa_kamasho',h:1,n:'週二只做午市到 15:00，開店即到避開排隊'},
+  {t:'12:10',d:'深川江戶資料館',l:'fukagawa_edo_museum',n:'12:10–13:00'},
+  {t:'13:05',d:'Cheese no Koe',l:'cheese_no_koe',n:'13:05–13:30'},
+  {t:'13:40',d:'Babaghuri 清澄本店',l:'babaghuri',n:'13:40–14:05，走回清澄白河站約 5 分'},
+  {t:'14:15',d:'清澄白河 →半蔵門線→ 三越前 →銀座線→ 上野広小路 14:35'},
+  {t:'14:40',d:'うさぎや 買どら焼き',l:'usagiya',n:'順路先買，避免下午賣完'},
+  {t:'15:00',d:'上野東照宮 → 花園稲荷神社 → 不忍池',l:'ueno_toshogu',n:'15:00–15:55'},
+  {t:'16:05',d:'湯島天満宮',l:'yushima_tenmangu',n:'16:05–16:30'},
+  {t:'16:40',d:'阿美橫町、晚餐'},
+  {t:'17:40',d:'Skyliner 京成上野發',h:1},
+  {t:'18:27',d:'「成田空港」站下車',l:'flight_home',n:'終點站＝第 1 航廈。不要在空港第2ビル下車'},
+  {t:'18:35',d:'4F 南翼領回行李 → 報到、託運',n:'長榮關櫃約起飛前 60 分（19:40）'},
+  {t:'20:40',d:'BR195 起飛 → 桃園 23:20',h:1}]}
+];
+
+/* LOCATION_DETAILS subset — title/address/hours/description/mapUrl */
+const LOC = {
+ nagoya_castle:{address:'愛知県名古屋市中区本丸1-1',hours:'17:30–19:10（9/19–23 秋まつり）',description:'秋まつり 9/19–23，於正門附近特設櫓，需入城料。9/23 是最後一天，18:00 有平針木遣り音頭。地鐵名古屋城站 7 號出口步行 5 分。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8B%E5%9F%8E'},
+ art_lights:{address:'愛知県名古屋市中区三の丸3-1-2',hours:'9/17–10/24 每晚 18:30–21:00',description:'會場是愛知縣廳與名古屋市役所本廳舍（不在城內）。免費免預約，兩棟各投影 5 分鐘交替。18:30–19:30 最擠，看完盆踊り 19:10 再過去剛好錯開。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%84%9B%E7%9F%A5%E7%9C%8C%E5%BA%81%E6%9C%AC%E5%BA%81%E8%88%8E'},
+ kkday_tour:{address:'JR 名古屋駅 太閤通口 銀の時計前',hours:'8:10 集合／18:30 解散',description:'已訂。8:10 於 JR 名古屋站西口（太閤通口）銀時計前集合，18:30 名古屋站解散。回程塞車是常態，若明顯延遲先通知うな富士。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E9%8A%80%E3%81%AE%E6%99%82%E8%A8%88%E3%80%80%E5%90%8D%E5%8F%A4%E5%B1%8B%E9%A7%85'},
+ unafuji:{address:'愛知県名古屋市中村区椿町',hours:'已訂位 19:00',description:'離近鐵和飯店都很近，解散後可以先回飯店放東西再出來。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%81%86%E3%81%AA%E5%AF%8C%E5%A3%AB'},
+ oasis21:{address:'愛知県名古屋市東区東桜1-11-1',hours:'水の宇宙船 –21:00／燈光 –23:00',description:'只看外觀不上塔。水の宇宙船 21:00 就關，要走上玻璃屋頂得在這之前。20:43 與 21:00 各有 1 分鐘特別燈光演出。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%82%AA%E3%82%A2%E3%82%B7%E3%82%B921'},
+ bucyo_coffee:{address:'愛知県名古屋市中村区則武',hours:'早餐 08:25–09:10',description:'名古屋站太閤通口周邊，飯店步行 5–8 分。',mapUrl:'https://www.google.com/maps/search/?api=1&query=Bucyo+Coffee+Nagoya'},
+ kiyosu_castle:{address:'愛知県清須市朝日城屋敷1-1',hours:'9:00 開館，週一休',description:'JR 到清洲駅約 7–10 分＋徒步 15–17 分；累的話 Uber 直達約 5 分車程。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%B8%85%E6%B4%B2%E5%9F%8E'},
+ rockin_robin:{address:'愛知県名古屋市中区大須',hours:'午餐 13:00–13:50',description:'鐵板漢堡排，在大須商店街內。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%83%AD%E3%83%83%E3%82%AD%E3%83%B3%E3%83%AD%E3%83%93%E3%83%B3%E3%80%80%E5%A4%A7%E9%A0%88'},
+ kurin:{address:'愛知県名古屋市中区大須3-37-40 カノン大須 1F',hours:'11:00–19:00',description:'店內用要當天 10:30 起現場登記、不收電話預約，只有 10 席，中午前通常就滿。直接走外帶窗口買モンブランソフト邊逛邊吃最實際。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%A0%97%E3%82%8A%E3%82%93%E3%80%80%E5%A4%A7%E9%A0%88'},
+ sakae_parco:{address:'愛知県名古屋市中区栄3-29-1',hours:'約 21:00 打烊',description:'Tower Records（東館 6F）、SABON（東館 B1F）、LACHIC、松坂屋、久屋大通 Hisaya-odori Park。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E5%90%8D%E5%8F%A4%E5%B1%8BPARCO'},
+ horaiken_honten:{address:'愛知県名古屋市熱田区神戸町503',hours:'整理券約 10:00–10:30 開始發',description:'不收電話訂位，只能現場登記。忙的日子會提前發券，週六＋亞運再提前一點比較安全。排隊派一人即可。備案：整理券若排到 13:00 以後，改去神宮店或改買外帶。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E3%81%82%E3%81%A4%E3%81%9F%E8%93%AC%E8%8E%B1%E8%BB%92%E6%9C%AC%E5%BA%97'},
+ atsuta_jingu:{address:'愛知県名古屋市熱田区神宮1-1-1',hours:'本宮來回抓 45 分鐘',description:'本店走到南門約 10 分。不要走太深 —— 有人 10:05 領券、10:50 就被叫回去。留一人在可隨時折返的距離。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E7%86%B1%E7%94%B0%E7%A5%9E%E5%AE%AE'},
+ gotokuji:{address:'東京都世田谷区豪徳寺2-24-7',hours:'11:35–12:10',description:'招財貓。小田急豪徳寺站步行約 10 分，到下北沢只有 2 站。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E8%B1%AA%E5%BE%B3%E5%AF%BA'},
+ kogakuin_arena:{address:'東京都大田区西蒲田5-23-22',hours:'活動 17:00',description:'入間聲優活動。JR 蒲田站步行約 10 分。先確認開場時間，若早於 16:30 就別先回大井町入住，行李帶去會場寄物。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E6%97%A5%E6%9C%AC%E5%B7%A5%E5%AD%A6%E9%99%A2%E3%80%80%E7%89%87%E6%9F%B3%E3%82%A2%E3%83%AA%E3%83%BC%E3%83%8A'},
+ naruto_taiyaki:{address:'東京都大田区蒲田',hours:'散場後順路',description:'活動場地附近，回程順路買。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E9%B3%B4%E9%96%80%E9%AF%9B%E7%84%BC%E6%9C%AC%E8%88%97%E3%80%80%E8%92%B2%E7%94%B0'},
+ saihoji:{address:'横浜市港北区新羽町',hours:'09:00–09:25',description:'彼岸花季末段。地鐵藍線新羽站步行 8 分。離市中心 9 公里、單程 45 分鐘，是全天唯一的遠點。',mapUrl:'https://www.google.com/maps/search/?api=1&query=%E8%A5%BF%E6%96%B9%E5%AF%BA%E3%80%80%E6%96%B0%E7%BE%BD'},
+ shinkansen_tokyo:{address:'JR 名古屋駅',hours:'9/26 14:12 發 → 15:43 抵',description:'已訂。13:00 前要取回置物櫃行李。',mapUrl:''},
+ klook_baggage:{address:'阪急 OURS INN 大井町 櫃台',hours:'9:00 前交件',description:'成田 16:00 後在第 1 航廈 4F 出境大廳南翼櫃台領（開到 20:00），跟長榮報到櫃台同一層同一側。護照、現金、電子產品隨身。',mapUrl:''},
+ flight_home:{address:'成田國際機場 第 1 航廈',hours:'20:40 起飛／關櫃 19:40',description:'長榮航空，成田第 1 航廈南翼。Skyliner 坐到終點「成田空港」站，不是「空港第2ビル」。',mapUrl:''}
+};
+
+/* Prototype shortcut — production should store `category` on the event (see README → State Management) */
+const TAPE = { transit:'交通', food:'美食', event:'活動', spot:'景點', stay:'住宿' };
+function categorize(e) {
+  const t = e.d;
+  if (/入住|退房|飯店|抵達舞家|放行李|寄行李|取回行李|取行李|行李交櫃檯|宅配/.test(t)) return 'stay';
+  if (/→|線|新幹線|特急|ラピート|Skyliner|起飛|下車|集合|解散|步行|走到|走路|前往|回市中心|出發|離開|回飯店|買 Suica/.test(t)) return 'transit';
+  if (/早餐|午餐|晚餐|Coffee|蓬萊軒|うな富士|ひつまぶし|釜匠|BEEF|鯛焼|どら焼き|モンブラン|栗りん|ロッキンロビン|Cheese|うさぎや|超商/.test(t)) return 'food';
+  if (/盆踊り|ART&LIGHTS|活動|プラネタリア|Sky Garden|夜景|AIR CABIN|整理券|排隊/.test(t)) return 'event';
+  return 'spot';
+}
+
+const TABS = [['行程',1],['準備',0],['記帳',0],['行李',0],['購物',0],['資訊',0]];
+/* Tab icon paths are the same 24-box strokes as components/TabBar.tsx TAB_META */
+const TAB_SVG = [
+  '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.4" fill="currentColor" stroke="none"/>',
+  '<rect x="4" y="4" width="16" height="17" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-4.5"/>',
+  '<circle cx="12" cy="12" r="9"/><text x="12" y="16.5" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="currentColor">¥</text>',
+  '<rect x="4" y="7" width="16" height="14" rx="3"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M4 13h16"/>',
+  '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+  '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>'
+];
+
+const CLOCK_SVG = '<circle cx="12" cy="12" r="9"></circle><polyline points="12 7.5 12 12 15.5 14"></polyline>';
+const PIN_SVG = '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="2.6"></circle>';
+const MAP_SVG = '<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line>';
+
+let dayIdx = 0, openIdx = null;
+const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function renderDays() {
+  document.getElementById('dayRow').innerHTML = ITINERARY.map((d, i) => {
+    const on = i === dayIdx;
+    return `<button data-day="${i}" style="flex:1; min-width:0; height:56px; border:1px solid ${on?'#5C4033':'#E4DBCB'}; border-radius:6px; cursor:pointer; background:${on?'#5C4033':'#FFFFFF'}; color:${on?'#FFFFFF':'#5A5249'}; box-shadow:${on?'0 3px 10px rgba(92,64,51,0.26)':'0 1px 3px rgba(43,43,43,0.05)'}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; transition:background 240ms ease-in-out, color 240ms ease-in-out;">
+      <span style="font-size:10px; font-weight:500; letter-spacing:0.06em;">${d.weekday[2]}</span>
+      <span style="font-size:19px; font-weight:500; line-height:1; font-family:'DM Sans',sans-serif;">${d.date.split('/')[1]}</span>
+    </button>`;
+  }).join('');
+}
+
+function renderDay() {
+  const d = ITINERARY[dayIdx];
+  document.getElementById('dayNo').textContent = 'DAY ' + (dayIdx + 1);
+  document.getElementById('dayDate').textContent = d.date + '\u3000' + d.weekday;
+  document.getElementById('dayAccom').textContent = d.accommodation || '當日返台・無住宿';
+  document.getElementById('dayTitle').textContent = d.title;
+
+  document.getElementById('timeline').innerHTML = d.events.map((e, i) => {
+    const hl = !!e.h;
+    return `<div style="display:flex; gap:12px;">
+      <div style="flex:none; width:44px; display:flex; flex-direction:column; align-items:center;">
+        <span style="font-size:12px; font-weight:500; letter-spacing:0.01em; color:${hl?'#A84836':'#4A443C'}; font-family:'DM Sans',sans-serif; padding-top:15px;">${esc(e.t)}</span>
+        <span style="width:0; height:9px; border-left:1px dashed #D3C7B2;"></span>
+        <span style="width:11px; height:11px; border-radius:3px; background:${hl?'#A84836':'#FFFFFF'}; border:1.5px solid ${hl?'#A84836':'#C9BEA9'}; box-sizing:border-box; transform:rotate(45deg);"></span>
+        <span style="flex:1; width:0; border-left:1px dashed #D3C7B2;"></span>
+      </div>
+      <div style="flex:1; min-width:0; padding:8px 0 14px;">
+        <button data-event="${i}" style="display:block; width:100%; text-align:left; color:inherit; background:#FFFFFF; border:1px solid #EFE9DC; border-radius:7px; box-shadow:0 2px 8px rgba(43,43,43,0.05); padding:14px 15px; cursor:pointer; transition:box-shadow 240ms ease-in-out;">
+          <p style="margin:0; font-size:14.5px; font-weight:500; line-height:1.68; letter-spacing:0.01em;">${esc(e.d)}</p>
+          ${e.n ? `<p style="margin:7px 0 0; font-size:12px; line-height:1.78; color:#5A5249; letter-spacing:0.01em; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">${esc(e.n)}</p>` : ''}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function metaRow(svg, label, value) {
+  return `<div style="display:flex; align-items:flex-start; gap:10px;">
+    <svg style="flex:none; margin-top:1px;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A8B7B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${svg}</svg>
+    <div>
+      <div style="font-size:9px; letter-spacing:0.2em; color:#6E675E; margin-bottom:3px;">${label}</div>
+      <div style="font-size:12.5px; color:#3E3A33; line-height:1.6;">${esc(value)}</div>
+    </div>
+  </div>`;
+}
+
+function renderSheet() {
+  const d = ITINERARY[dayIdx], e = d.events[openIdx], loc = (e.l && LOC[e.l]) || {};
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('sheet').innerHTML = `
+    <div style="background:#FFFFFF; border-bottom:1px dashed #DCD3C3; padding:16px 20px 14px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+        <span style="font-size:9px; font-weight:500; letter-spacing:0.22em; color:#6E5A46; font-family:'DM Sans',sans-serif;">DAY ${dayIdx+1} ・ ${d.date}（${d.weekday[2]}）</span>
+        <span style="font-size:9px; letter-spacing:0.14em; color:#6E675E; font-family:'DM Sans',sans-serif;">${pad(openIdx+1)} / ${pad(d.events.length)}</span>
+      </div>
+      <div style="display:flex; align-items:flex-start; gap:13px;">
+        <div style="flex:none; display:flex; flex-direction:column; align-items:center; gap:5px; min-width:56px;">
+          <span style="font-size:20px; font-weight:500; letter-spacing:-0.01em; color:#A84836; font-family:'DM Sans',sans-serif; line-height:1;">${esc(e.t)}</span>
+          <span style="font-size:9px; font-weight:500; letter-spacing:0.12em; color:#5C4033; border:1px solid #E0D8C8; border-radius:3px; padding:2px 6px;">${TAPE[categorize(e)]}</span>
+        </div>
+        <span style="flex:none; width:1px; align-self:stretch; background:#EFE9DC;"></span>
+        <h3 style="flex:1; margin:0; font-size:17px; font-weight:700; line-height:1.56; letter-spacing:0.02em; font-family:'Noto Serif JP',serif;">${esc(e.d)}</h3>
+      </div>
+    </div>
+    <div style="padding:16px 20px 22px; display:flex; flex-direction:column; gap:14px;">
+      ${e.n ? `<div>
+        <div style="font-size:9px; font-weight:500; letter-spacing:0.24em; color:#8C6239; margin-bottom:7px;">メモ ・ 備註</div>
+        <div style="background:#FFFFFF; border:1px solid #EFE9DC; border-left:3px solid #A84836; border-radius:4px; padding:12px 13px;">
+          <p style="margin:0; font-size:12.5px; line-height:1.85; color:#3E3A33; letter-spacing:0.01em;">${esc(e.n)}</p>
+        </div></div>` : ''}
+      ${loc.description ? `<div>
+        <div style="font-size:9px; font-weight:500; letter-spacing:0.24em; color:#8C6239; margin-bottom:7px;">案内 ・ 說明</div>
+        <p style="margin:0; font-size:12.5px; line-height:1.9; color:#3E3A33; letter-spacing:0.01em;">${esc(loc.description)}</p>
+      </div>` : ''}
+      ${loc.hours ? `<div style="padding-top:13px; border-top:1px dashed #E0D8C8;">${metaRow(CLOCK_SVG, '時間', loc.hours)}</div>` : ''}
+      ${loc.address ? metaRow(PIN_SVG, '住所', loc.address) : ''}
+      <div style="display:flex; gap:9px; margin-top:2px;">
+        ${loc.mapUrl ? `<a href="${esc(loc.mapUrl)}" target="_blank" rel="noopener noreferrer" style="flex:1; min-height:46px; display:flex; align-items:center; justify-content:center; gap:7px; border-radius:6px; background:#5C4033; color:#F9F8F4; font-size:13px; font-weight:500; letter-spacing:0.06em;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${MAP_SVG}</svg>開啟地圖</a>` : ''}
+        <button id="closeSheet" style="flex:1; min-height:46px; border:1px solid #DCD3C3; border-radius:6px; background:#FFFFFF; color:#4A443C; font-size:13px; font-weight:500; letter-spacing:0.06em; cursor:pointer;">關閉</button>
+      </div>
+    </div>`;
+}
+
+function openSheet(i) {
+  openIdx = i; renderSheet();
+  const bd = document.getElementById('backdrop'), sh = document.getElementById('sheet');
+  bd.style.display = 'flex';
+  requestAnimationFrame(() => { bd.style.opacity = '1'; sh.style.transform = 'translateY(0)'; });
+}
+function closeSheet() {
+  const bd = document.getElementById('backdrop'), sh = document.getElementById('sheet');
+  bd.style.opacity = '0'; sh.style.transform = 'translateY(16px)';
+  setTimeout(() => { bd.style.display = 'none'; openIdx = null; }, 280);
+}
+
+document.getElementById('tabRow').innerHTML = TABS.map(([label, on], i) =>
+  `<button style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:6px 0; border:none; background:none; cursor:pointer; color:${on?'#5C4033':'#6E675E'};">
+    <span style="width:38px; height:26px; border-radius:4px; background:${on?'#F2ECE1':'transparent'}; display:flex; align-items:center; justify-content:center; transition:background 240ms ease-in-out;">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="${on?2.1:1.7}" stroke-linecap="round" stroke-linejoin="round">${TAB_SVG[i]}</svg>
+    </span>
+    <span style="font-size:10.5px; font-weight:500; letter-spacing:0.04em;">${label}</span>
+  </button>`).join('');
+
+document.getElementById('dayRow').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-day]'); if (!b) return;
+  dayIdx = +b.dataset.day; renderDays(); renderDay();
+  document.getElementById('main').scrollTop = 0;
+});
+document.getElementById('timeline').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-event]'); if (b) openSheet(+b.dataset.event);
+});
+document.getElementById('backdrop').addEventListener('click', closeSheet);
+document.getElementById('sheet').addEventListener('click', ev => {
+  ev.stopPropagation();
+  if (ev.target.closest('#closeSheet')) closeSheet();
+});
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && openIdx !== null) closeSheet(); });
+
+renderDays(); renderDay();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+.env
+.env.local
+.env.*.local
+node_modules
+dist
+.DS_Store
+
+# 設計稿壓縮檔（內容已解壓在 design_handoff_* 裡）
+*.zip
+
+# build:docx 每次執行留下的備份
+*.舊版備份.docx
+
+# 住宿真實名稱／地址：公開 repo 不放
+private/
+
+# 個人用 Word 行程表（含住宿真名，由 build:docx 產生）
+日本行程表-*.docx

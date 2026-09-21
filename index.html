@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="no-scrollbar">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="秋の名古屋">
+
+  <!-- 這是私人行程，不要進搜尋引擎。
+       專案型 GitHub Pages 的 robots.txt 必須放在 miyu0603.github.io 根目錄，
+       這個 repo 放不到那裡，所以靠 noindex——而且 noindex 本來就比 robots.txt 有效：
+       robots.txt 只擋抓取，noindex 直接擋收錄。 -->
+  <meta name="robots" content="noindex, nofollow, noarchive">
+
+  <title>秋の名古屋と最高イルマ 2026</title>
+
+  <!-- Google Fonts: Noto Serif JP（標題）／Noto Sans TC（內文）／DM Sans（數字與拉丁 meta） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Favicon (Browser Tab) -->
+  <link rel="icon" type="image/png" href="/icon-512.png" />
+
+  <link rel="apple-touch-icon" href="/icon-512.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            /* ── 手帳・格柵版（3a / Earth & Washi）── */
+            washi: { white: '#F9F8F4', tint: '#F2ECE1' },
+            wood: { 900: '#5C4033', 600: '#8C6239', 500: '#6E5A46' },
+            vermillion: '#A84836',
+            bamboo: '#7A8B7B',
+            ink: { DEFAULT: '#2B2B2B', 700: '#3E3A33', 600: '#4A443C', 500: '#5A5249', 400: '#6E675E' },
+            rule: { 200: '#EFE9DC', 300: '#E4DBCB', 400: '#E0D8C8', 500: '#DCD3C3', rail: '#D3C7B2', node: '#C9BEA9' },
+
+            /* ── 舊 iOS token 重新指向新色票 ──
+             * 準備／記帳／行李／購物／資訊 五頁仍走這組名稱，
+             * 這裡換掉就整個 App 一起變，不用動那五個檔案的版面。 */
+            'mag-paper': '#F9F8F4',
+            'mag-white': '#FFFFFF',
+            'mag-black': '#2B2B2B',
+            'mag-gray': '#6E675E',
+            'mag-gold': '#5C4033',
+            'mag-gold-light': '#F2ECE1',
+            'mag-red': '#A84836',
+            'ios-bg': '#F9F8F4',
+            'ios-bg-grouped': '#F9F8F4',
+            'ios-card': '#FFFFFF',
+            'ios-card-2': '#FDFCF8',
+            'ios-separator': '#EFE9DC',
+            'ios-separator-strong': '#E4DBCB',
+            'ios-label': '#2B2B2B',
+            'ios-label-2': '#5A5249',
+            'ios-label-3': '#6E675E',
+            'ios-blue': '#5C4033',
+            'ios-green': '#7A8B7B',
+            'ios-orange': '#8C6239',
+            'ios-red': '#A84836',
+            'ios-yellow': '#C9A227',
+            'ios-purple': '#7A6A86',
+            'ios-pink': '#A84836',
+            'ios-teal': '#7A8B7B',
+            'ios-fill-1': '#EFE9DC',
+            'ios-fill-2': '#F2ECE1',
+            'ios-fill-3': '#F2ECE1',
+            'ios-fill-4': '#F6F1E6',
+          },
+          fontFamily: {
+            sans: ['"Noto Sans TC"', '-apple-system', 'BlinkMacSystemFont', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif'],
+            num: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            serif: ['"Noto Serif JP"', 'Georgia', 'serif'],
+            noto: ['"Noto Serif JP"', 'serif'],
+          },
+          borderRadius: {
+            'tk-xs': '3px',
+            'tk-sm': '4px',
+            'tk': '6px',
+            'tk-md': '7px',
+            'tk-lg': '8px',
+            'tk-frame': '26px',
+            /* 舊名稱一併收斂到 8px 以內 */
+            'ios-xs': '4px',
+            'ios-sm': '6px',
+            'ios': '7px',
+            'ios-lg': '8px',
+            'ios-xl': '8px',
+          },
+          boxShadow: {
+            'tk-card': '0 2px 8px rgba(43,43,43,0.05)',
+            'tk-card-hover': '0 4px 14px rgba(43,43,43,0.1)',
+            'tk-chip': '0 1px 3px rgba(43,43,43,0.05)',
+            'tk-chip-on': '0 3px 10px rgba(92,64,51,0.26)',
+            'tk-sheet': '0 -6px 28px rgba(43,43,43,0.18)',
+            'soft': '0 1px 3px rgba(43,43,43,0.05)',
+            'float': '0 4px 14px rgba(43,43,43,0.1)',
+            'ios-card': '0 2px 8px rgba(43,43,43,0.05)',
+            'ios-elevated': '0 -6px 28px rgba(43,43,43,0.18)',
+            'ios-nav': '0 -0.5px 0 rgba(43,43,43,0.06)',
+          },
+          padding: {
+            'safe-top': 'env(safe-area-inset-top)',
+            'safe-bottom': 'env(safe-area-inset-bottom)',
+          },
+          height: {
+            'safe-top': 'env(safe-area-inset-top)',
+            'safe-bottom': 'env(safe-area-inset-bottom)',
+          },
+          fontSize: {
+            'ios-caption2': ['11px', { lineHeight: '13px' }],
+            'ios-caption': ['12px', { lineHeight: '16px' }],
+            'ios-footnote': ['13px', { lineHeight: '18px' }],
+            'ios-subhead': ['15px', { lineHeight: '20px' }],
+            'ios-callout': ['16px', { lineHeight: '21px' }],
+            'ios-body': ['15px', { lineHeight: '25px' }],
+            'ios-headline': ['15px', { lineHeight: '25px', letterSpacing: '0.01em' }],
+            'ios-title3': ['17px', { lineHeight: '27px', letterSpacing: '0.02em' }],
+            'ios-title2': ['18px', { lineHeight: '28px', letterSpacing: '0.02em' }],
+            'ios-title1': ['20px', { lineHeight: '30px', letterSpacing: '0.02em' }],
+            'ios-largeTitle': ['24px', { lineHeight: '34px', letterSpacing: '0.02em' }],
+          },
+          backdropBlur: {
+            'ios': '12px',
+            'tk': '12px',
+          },
+          keyframes: {
+            'sheet-up': {
+              '0%': { transform: 'translateY(100%)' },
+              '100%': { transform: 'translateY(0)' },
+            },
+            'fade-in-soft': {
+              '0%': { opacity: 0 },
+              '100%': { opacity: 1 },
+            },
+          },
+          animation: {
+            'sheet-up': 'sheet-up 300ms ease-in-out',
+            'fade-in-soft': 'fade-in-soft 260ms ease-in-out',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /*
+     * iOS PWA 高度修正策略（2026 版）：
+     *
+     * 問題1：iOS 26.1 破壞了 black-translucent，PWA 不再全螢幕
+     * 問題2：viewport-fit=cover 導致 document 向上偏移 safe-area-inset-top，
+     *        底部出現等高的空白條
+     * 問題3：100dvh 在 iOS 冷啟動時值不準確
+     *
+     * 解法：
+     * - html 用 min-height: calc(100% + env(safe-area-inset-top)) 填補底部偏移空白
+     * - body/#root 用 JS 計算的 --app-height 取代 100dvh（最可靠）
+     * - html background-color 覆蓋任何殘留空白
+     */
+
+    html {
+      /* 填補 document 向上偏移後底部空白 (iOS PWA classic fix) */
+      height: 100%;
+      min-height: calc(100% + env(safe-area-inset-top));
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background-color: #F9F8F4;
+    }
+
+    body, #root {
+      /* --app-height 由 JS 在執行時設定為 window.innerHeight，比 100dvh 更可靠 */
+      height: var(--app-height, 100dvh);
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background-color: #F9F8F4;
+    }
+
+    #root {
+      display: flex;
+      flex-direction: column;
+    }
+
+    body {
+      -webkit-tap-highlight-color: transparent;
+      font-feature-settings: "ss01", "cv11";
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    *::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    /* iOS-style focus ring removal for buttons (we use active:scale instead) */
+    button:focus {
+      outline: none;
+    }
+
+    /* Hairline separator helper */
+    .ios-hairline {
+      box-shadow: inset 0 -1px 0 #EFE9DC;
+    }
+
+    /* iOS Safari 的日期輸入框：值預設靠上、部分版本靠右，這裡拉回左上對齊後
+       由 padding 撐出垂直置中 */
+    input[type="date"]::-webkit-date-and-time-value {
+      text-align: left;
+      margin: 0;
+    }
+
+    input[type="date"]::-webkit-datetime-edit {
+      padding: 0;
+      line-height: 24px;
+    }
+
+    /* Safe area — defined here so env() is always resolved correctly on iOS PWA */
+    .safe-area-pb {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+  </style>
+</head>
+
+<body class="bg-washi-white text-ink antialiased selection:bg-wood-900 selection:text-washi-white">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+
+  <!-- iOS PWA 高度修正：用 window.innerHeight 取代不穩定的 100dvh -->
+  <!-- 同時解決冷啟動 timing race：iOS PWA 啟動時 viewport 尚未穩定，需多次重試 + localStorage 記憶上次正確高度 -->
+  <script>
+    (function () {
+      var STORAGE_KEY = 'pwa-device-height';
+      var MIN_SANE_HEIGHT = 500; // 小於此值視為尚未穩定，不採用
+
+      function setAppHeight(h) {
+        document.documentElement.style.setProperty('--app-height', h + 'px');
+      }
+
+      function measureAndSet() {
+        var h = window.innerHeight;
+        setAppHeight(h);
+        // 高度合理才存入 localStorage，供下次冷啟動使用
+        if (h >= MIN_SANE_HEIGHT) {
+          try { localStorage.setItem(STORAGE_KEY, String(h)); } catch (e) {}
+        }
+        return h;
+      }
+
+      // 1. 先用 localStorage 記憶的高度立即填入，避免冷啟動白條閃爍
+      try {
+        var stored = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+        if (stored >= MIN_SANE_HEIGHT) {
+          setAppHeight(stored);
+        }
+      } catch (e) {}
+
+      // 2. 立即測量一次
+      measureAndSet();
+
+      // 3. 冷啟動多次重試：iOS PWA viewport 通常在 300–800ms 內穩定
+      [50, 150, 300, 600, 1000].forEach(function (delay) {
+        setTimeout(measureAndSet, delay);
+      });
+
+      // 4. resize 時更新（橫轉直等）
+      window.addEventListener('resize', measureAndSet);
+
+      // 5. orientationchange 後略等 Safari 穩定
+      window.addEventListener('orientationchange', function () {
+        setTimeout(measureAndSet, 150);
+        setTimeout(measureAndSet, 500);
+      });
+
+      // 6. visualViewport API（iOS 13+ 更精確）
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', measureAndSet);
+      }
+    })();
+  </script>
+</body>
+
+</html>
